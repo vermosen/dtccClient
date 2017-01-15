@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="StdAfx.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="application">
+      <UniqueIdentifier>{a30bc3b1-7950-448f-8b28-ebeaac344241}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pattern">
+      <UniqueIdentifier>{d9ed0240-ee36-42c1-9b9f-77bcb050cffe}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="StdAfx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="script\remove.ps1" />
+    <None Include="script\install.ps1" />
+  </ItemGroup>
+</Project>
