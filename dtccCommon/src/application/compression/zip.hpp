@@ -1,14 +1,15 @@
 #ifndef COMPRESSION_ZIP_HPP_
 #define COMPRESSION_ZIP_HPP_
 
-#include <ioapi.h>
-#include <zip.h>
-#include <string>
-#include <vector>
+#include <sstream>
 #include <iostream>
-#include <time.h>
+
+#include <boost/iostreams/filtering_streambuf.hpp>
+#include <boost/iostreams/copy.hpp>
+#include <boost/iostreams/filter/zlib.hpp>
 
 # include "application/compression.hpp"
+
 
 namespace dtcc
 {
@@ -18,22 +19,7 @@ namespace dtcc
 		zip();
 		~zip(void);
 
-		bool open(const char* filename, bool append = false);
-		void close();
-		bool isOpen();
-
-		bool addEntry(const char* filename);
-		void closeEntry();
-		bool isOpenEntry();
-
-		zip& operator<<(std::istream& is);
-
-	private:
-		void getTime(tm_zip& tmZip);
-
-	private:
-		zipFile			zipFile_;
-		bool			entryOpen_;
+		std::string expand(const std::string &);
 	};
 }
 

@@ -6,6 +6,11 @@
 #include <iostream>
 #include <fstream>
 
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/iostreams/stream_buffer.hpp>
+#include <boost/iostreams/stream.hpp>
+#include <boost/iostreams/device/back_inserter.hpp>
+
 #include <curl/curl.h>
 #include "application/logger.hpp"
 
@@ -14,23 +19,20 @@ namespace dtcc
 	class curl
 	{
 	public:
-		curl(const std::string & path = "");
-		~curl();
+		curl();
+		virtual ~curl();
 
-		void writefile(const std::string & url, const std::string & path, bool unzip = false);
+		virtual std::string get(const std::string & url) = 0;
 
-		inline void setPath(const std::string & path) { path_ = path; }
-	private:
-		void appendBody(const std::string & data, const std::string & file);
-		void appendHeader(const std::string & data);
+	protected:
+		virtual void appendBody(char *, size_t) = 0;
+		virtual void appendHeader(char *, size_t) = 0;
 
 		// callbacks
-		static size_t writeMemoryCallback(char * contents, size_t size, size_t nmemb, std::function<void(std::string)> * writer);
-		static size_t writeHeaderCallback(char * contents, size_t size, size_t nmemb, std::function<void(std::string)> * writer);
+		static size_t writeMemoryCallback(char * contents, size_t size, size_t nmemb, std::function<void(char *, size_t)> * writer);
+		static size_t writeHeaderCallback(char * contents, size_t size, size_t nmemb, std::function<void(char *, size_t)> * writer);
 
 		CURL * curl_;
-		std::string path_;
-		std::ofstream stream_;
 	};
 }
 

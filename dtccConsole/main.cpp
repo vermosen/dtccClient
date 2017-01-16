@@ -12,9 +12,10 @@
 #include <boost/thread.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 
-#include "application/curl.hpp"
+#include "application/curl/fileUrl.hpp"
 #include "application/logger.hpp"
 #include "application/service.hpp"
+#include "application/compression/zip.hpp"
 
 struct asset
 {
@@ -49,7 +50,7 @@ int main(int * argc, char ** argv)
 		const configuration config =
 		{
 			boost::gregorian::from_simple_string("2016-01-05"),
-			boost::gregorian::from_simple_string("2016-03-05"),
+			boost::gregorian::from_simple_string("2016-01-05"),
 			{ asset{ "EQ", "EQUITIES" } },
 			"https://kgc0418-tdw-data-0.s3.amazonaws.com/slices/"
 		};
@@ -59,7 +60,7 @@ int main(int * argc, char ** argv)
 		auto dt = config.start_;
 
 		// build the curl object	
-		dtcc::curl cnx("C:\\Temp\\");
+		dtcc::curl * cnx = new dtcc::fileUrl();
 
 		// main loop
 		while (dt <= config.end_)
@@ -70,12 +71,17 @@ int main(int * argc, char ** argv)
 			{
 				std::ostringstream fileName;
 				fileName.imbue(format);
-				fileName << "CUMULATIVE_" << It->fileStr_ << "_" << dt << ".zip";
+				fileName << config.baseUrl_ << "CUMULATIVE_" << It->fileStr_ << "_" << dt << ".zip";
 
-				LOG_INFO() << "Loading " << It->ticker_ << " data from URL: " << config.baseUrl_ << fileName.str();
+				LOG_INFO() << "Loading " << It->ticker_ << " data from URL: " << fileName.str();
 
-				// open a new connection 
-				cnx.writefile(config.baseUrl_, fileName.str());
+				// get the archive 
+				std::string ar = cnx->get( fileName.str());
+
+				// unzip
+				dtcc::zip uz;
+
+				std::string res = uz.expand(ar);
 			}
 
 			// add a day

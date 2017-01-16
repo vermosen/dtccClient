@@ -1,67 +1,43 @@
 #include "fileUrl.hpp"
 
-#include <functional>
-
 namespace dtcc
 {
-	fileUrl::fileUrl(const std::string & path) : curl(path), path_(path), curl_(curl_easy_init())
+	fileUrl::fileUrl() : curl(), buffer_(std::ios_base::in | std::ios_base::out | std::ios_base::app | std::ios_base::binary)
 	{
-
 	}
 
-	size_t fileUrl::writeMemoryCallback(char * contents, size_t size, size_t nmemb, std::function<void(std::string)> * writer)
-	{
-		size_t realsize = size * nmemb;
-		std::string data(contents, realsize);
-		(*writer)(data);
-		return realsize;
-	}
-
-	size_t fileUrl::writeHeaderCallback(char * contents, size_t size, size_t nmemb, std::function<void(std::string)> * writer)
-	{
-		size_t realsize = size * nmemb;
-		std::string data(contents, realsize);
-		(*writer)(data);
-		return realsize;
-	}
-
-	void fileUrl::appendBody(const std::string & data, const std::string & file)
-	{
-		stream_ << data;
-	}
-
-	void fileUrl::appendHeader(const std::string & header)
+	void fileUrl::appendHeader(char * data, size_t sz)
 	{
 		//std::cout << header << std::endl;
 	}
 
-	void fileUrl::writefile(const std::string & url, const std::string & file, bool unzip)
+	void fileUrl::appendBody(char * data, size_t sz)
 	{
-		if (curl_)
-		{
-			try
-			{
-				stream_.open(path_ + file, std::ios::out | std::ios::app | std::ios::binary);
+		buffer_.write(data, sz);
+	}
 
-				std::function<void(std::string, std::string)> writeBody(std::bind(&fileUrl::appendBody, this, std::placeholders::_1, file));
-				std::function<void(std::string)> writeHeader(std::bind(&fileUrl::appendHeader, this, std::placeholders::_1));
+	std::string fileUrl::get(const std::string & url)
+	{
+		if (!curl_)
+			throw std::exception("uninitialized connection");
 
-				curl_easy_setopt(curl_, CURLOPT_WRITEFUNCTION, fileUrl::writeMemoryCallback);
-				curl_easy_setopt(curl_, CURLOPT_WRITEDATA, &writeBody);
+		buffer_.str(""); buffer_.clear();
 
-				curl_easy_setopt(curl_, CURLOPT_HEADERFUNCTION, fileUrl::writeHeaderCallback);
-				curl_easy_setopt(curl_, CURLOPT_HEADERDATA, &writeHeader);
+		std::function<void(char *, size_t)> writeBody(std::bind(&fileUrl::appendBody, this, std::placeholders::_1, std::placeholders::_2));
+		std::function<void(char *, size_t)> writeHeader(std::bind(&fileUrl::appendHeader, this, std::placeholders::_1, std::placeholders::_2));
 
-				curl_easy_setopt(curl_, CURLOPT_URL, (url + file).c_str());
+		curl_easy_setopt(curl_, CURLOPT_WRITEFUNCTION, fileUrl::writeMemoryCallback);
+		curl_easy_setopt(curl_, CURLOPT_WRITEDATA, &writeBody);
 
-				CURLcode res = curl_easy_perform(curl_);
+		curl_easy_setopt(curl_, CURLOPT_HEADERFUNCTION, fileUrl::writeHeaderCallback);
+		curl_easy_setopt(curl_, CURLOPT_HEADERDATA, &writeHeader);
 
-				stream_.close();
-			}
-			catch (const std::exception & ex)
-			{
-				throw ex;
-			}
-		}
+		curl_easy_setopt(curl_, CURLOPT_URL, url.c_str());
+
+		CURLcode res = curl_easy_perform(curl_);
+
+		std::string ret(buffer_.str());
+		
+		return ret;
 	}
 }
