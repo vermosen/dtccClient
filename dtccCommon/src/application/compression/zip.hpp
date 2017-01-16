@@ -3,23 +3,43 @@
 
 #include <sstream>
 #include <iostream>
+#include <string>
+#include <vector>
 
-#include <boost/iostreams/filtering_streambuf.hpp>
-#include <boost/iostreams/copy.hpp>
-#include <boost/iostreams/filter/zlib.hpp>
+#include <ioapi.h>
+#include <zip.h>
+#include <time.h>
 
 # include "application/compression.hpp"
 
 
 namespace dtcc
 {
+	// a c++ wrapper for minizip
+	// need to compile zlib/contrib/vstudio/vcxx/..
+	// and link the result zlibstat.lib
 	class zip : compression
 	{
 	public:
 		zip();
 		~zip(void);
 
-		std::string expand(const std::string &);
+		bool open(const char* filename, bool append = false);
+		void close();
+		bool isOpen();
+
+		bool addEntry(const char* filename);
+		void closeEntry();
+		bool isOpenEntry();
+
+		zip & operator<<(std::istream& is);
+
+	private:
+		void getTime(tm_zip& tmZip);
+
+	private:
+		zipFile			zipFile_;
+		bool			entryOpen_;
 	};
 }
 

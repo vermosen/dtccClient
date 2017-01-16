@@ -76,13 +76,10 @@ int main(int * argc, char ** argv)
 				LOG_INFO() << "Loading " << It->ticker_ << " data from URL: " << fileName.str();
 
 				// get the archive 
-				std::string ar = cnx->get( fileName.str());
-
-				// unzip
-				dtcc::zip uz;
-
-				std::string res = uz.expand(ar);
+				std::string st = cnx->get(fileName.str());
 			}
+
+			dtcc::zip test;
 
 			// add a day
 			dt += boost::gregorian::date_duration(1);
@@ -102,3 +99,31 @@ int main(int * argc, char ** argv)
 }
 
 #endif
+
+/*	
+	////// begin test
+	std::stringstream sOut;
+	std::stringstream sIn("hello world");
+
+	{
+		boost::iostreams::filtering_streambuf<boost::iostreams::output> out(sOut);
+		boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
+		in.push(boost::iostreams::zlib_compressor());
+		in.push(sIn);
+		boost::iostreams::copy(in, out);
+	}
+
+	sIn.clear(); sIn.seekp(0, std::ios::beg);
+	sOut.seekg(0, std::ios::beg);
+
+	{
+		boost::iostreams::filtering_streambuf<boost::iostreams::output> out(sIn);
+		boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
+		in.push(boost::iostreams::zlib_decompressor());
+		in.push(sOut);
+		boost::iostreams::copy(in, out);
+	}
+
+	std::string res = sIn.str();
+	////// end test
+*/
