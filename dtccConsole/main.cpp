@@ -8,6 +8,7 @@
 #include <unistd.h>
 #endif
 
+#include <fstream>
 #include <exception>
 #include <boost/thread.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -15,7 +16,7 @@
 #include "application/curl/fileUrl.hpp"
 #include "application/logger.hpp"
 #include "application/service.hpp"
-#include "application/compression/zip.hpp"
+#include "application/compression/unzip.hpp"
 
 struct asset
 {
@@ -71,14 +72,29 @@ int main(int * argc, char ** argv)
 			{
 				std::ostringstream fileName;
 				fileName.imbue(format);
-				fileName << config.baseUrl_ << "CUMULATIVE_" << It->fileStr_ << "_" << dt << ".zip";
+				fileName << "CUMULATIVE_" << It->fileStr_ << "_" << dt << ".zip";
 
-				LOG_INFO() << "Loading " << It->ticker_ << " data from URL: " << fileName.str();
+				LOG_INFO() << "Loading " << It->ticker_ << " data from URL: " << config.baseUrl_ + fileName.str();
 
-				std::string st = cnx->get(fileName.str());
+				// for now, we save on the disk
+				std::ofstream out;
+				std::string localPath = "C:\\Temp\\" + fileName.str();
+				out.open(localPath, std::ios_base::out | std::ios_base::trunc | std::ios_base::binary);
+				out << cnx->get(config.baseUrl_ + fileName.str());
+				out.close();
+
+				// we read from the disk
+				dtcc::unzip uz;
+
+				uz.open(localPath.c_str());
+				std::vector<std::string> files;
+				files = uz.getFilenames();
+
+				if (uz.openEntry(files[0].c_str()))
+				{
+					uz >> std::cout;
+				}
 			}
-
-			dtcc::zip test;
 
 			// add a day
 			dt += boost::gregorian::date_duration(1);

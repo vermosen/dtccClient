@@ -109,6 +109,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\application\compression.hpp" />
+    <ClInclude Include="src\application\compression\unzip.hpp" />
     <ClInclude Include="src\application\curl.hpp" />
     <ClInclude Include="src\application\curl\fileUrl.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -120,6 +121,7 @@
     <ClInclude Include="src\pattern\singleton.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\application\compression\unzip.cpp" />
     <ClCompile Include="src\application\compression\zip.cpp" />
     <ClCompile Include="src\application\curl.cpp" />
     <ClCompile Include="src\application\curl\fileUrl.cpp">

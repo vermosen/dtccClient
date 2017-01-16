@@ -27,6 +27,7 @@
     <ClInclude Include="src\application\compression\zip.hpp" />
     <ClInclude Include="src\application\compression.hpp" />
     <ClInclude Include="src\application\curl\fileUrl.hpp" />
+    <ClInclude Include="src\application\compression\unzip.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\curl.cpp">
@@ -34,5 +35,6 @@
     </ClCompile>
     <ClCompile Include="src\application\compression\zip.cpp" />
     <ClCompile Include="src\application\curl\fileUrl.cpp" />
+    <ClCompile Include="src\application\compression\unzip.cpp" />
   </ItemGroup>
 </Project>

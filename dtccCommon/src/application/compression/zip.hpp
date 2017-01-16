@@ -24,7 +24,7 @@ namespace dtcc
 		zip();
 		~zip(void);
 
-		bool open(const char* filename, bool append = false);
+		bool open(const char * filename, bool append = false);
 		void close();
 		bool isOpen();
 
