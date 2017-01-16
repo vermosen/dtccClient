@@ -13,6 +13,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dtccService", "dtccService\dtccService.vcxproj", "{48BB2119-1A66-4451-8D1E-903B6AC85E4B}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testSuite", "testSuite\testSuite.vcxproj", "{E74C7383-D6BE-481D-B41E-5AB1AAEC4F15}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9BEC38F1-F72A-47DD-8232-441DC5E58CC8} = {9BEC38F1-F72A-47DD-8232-441DC5E58CC8}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
