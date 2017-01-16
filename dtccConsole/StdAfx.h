@@ -2,3 +2,4 @@
 * and conditions of the IB API Non-Commercial License or the IB API Commercial License, as applicable. */
 #pragma once
 
+#include <boost/system/config.hpp>
