@@ -10,15 +10,12 @@
 #include <zip.h>
 #include <time.h>
 
-# include "application/compression.hpp"
-
-
 namespace dtcc
 {
 	// a c++ wrapper for minizip
 	// need to compile zlib/contrib/vstudio/vcxx/..
 	// and link the result zlibstat.lib
-	class zip : compression
+	class zip
 	{
 	public:
 		zip();

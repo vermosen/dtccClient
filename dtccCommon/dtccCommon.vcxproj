@@ -108,7 +108,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\application\compression.hpp" />
+    <ClInclude Include="src\application\archive.hpp" />
     <ClInclude Include="src\application\compression\unzip.hpp" />
     <ClInclude Include="src\application\curl.hpp" />
     <ClInclude Include="src\application\curl\fileUrl.hpp">
@@ -118,6 +118,7 @@
     <ClInclude Include="src\application\logger.hpp" />
     <ClInclude Include="src\application\service.hpp" />
     <ClInclude Include="src\application\compression\zip.hpp" />
+    <ClInclude Include="src\application\zip2.hpp" />
     <ClInclude Include="src\pattern\singleton.hpp" />
   </ItemGroup>
   <ItemGroup>

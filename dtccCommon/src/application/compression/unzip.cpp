@@ -3,8 +3,8 @@
 namespace dtcc
 {
 	// Default constructor
-	unzip::unzip() : compression()
-		, zipFile_(0)
+	unzip::unzip()
+		: zipFile_(0)
 		, entryOpen_(false)
 	{
 	}

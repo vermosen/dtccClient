@@ -5,9 +5,9 @@ namespace dtcc
 	const unsigned int BUFSIZE = 2048;
 
 	// Default constructor
-	zip::zip() : compression(),
-		zipFile_(0),
-		entryOpen_(false)
+	zip::zip()
+		: zipFile_(0)
+		, entryOpen_(false)
 	{
 	}
 

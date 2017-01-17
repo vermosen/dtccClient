@@ -16,7 +16,7 @@
 #include "application/curl/fileUrl.hpp"
 #include "application/logger.hpp"
 #include "application/service.hpp"
-#include "application/compression/unzip.hpp"
+#include "application/archive.hpp"
 
 struct asset
 {
@@ -50,9 +50,9 @@ int main(int * argc, char ** argv)
 		 */
 		const configuration config =
 		{
-			boost::gregorian::from_simple_string("2016-01-05"),
-			boost::gregorian::from_simple_string("2016-01-05"),
-			{ asset{ "EQ", "EQUITIES" } },
+			boost::gregorian::from_simple_string("2017-01-10"),
+			boost::gregorian::from_simple_string("2017-01-10"),
+			{ asset{ "CO", "COMMODITIES" } },
 			"https://kgc0418-tdw-data-0.s3.amazonaws.com/slices/"
 		};
 
@@ -74,26 +74,22 @@ int main(int * argc, char ** argv)
 				fileName.imbue(format);
 				fileName << "CUMULATIVE_" << It->fileStr_ << "_" << dt << ".zip";
 
-				LOG_INFO() << "Loading " << It->ticker_ << " data from URL: " << config.baseUrl_ + fileName.str();
+				LOG_INFO()	<< "Loading " 
+							<< It->ticker_ 
+							<< " data from URL: " 
+							<< config.baseUrl_ + fileName.str();
 
-				// for now, we save on the disk
-				std::ofstream out;
-				std::string localPath = "C:\\Temp\\" + fileName.str();
-				out.open(localPath, std::ios_base::out | std::ios_base::trunc | std::ios_base::binary);
-				out << cnx->get(config.baseUrl_ + fileName.str());
-				out.close();
+				// create a string stream
+				std::stringstream ss;
+				ss << cnx->get(config.baseUrl_ + fileName.str());
 
-				// we read from the disk
-				dtcc::unzip uz;
-
-				uz.open(localPath.c_str());
-				std::vector<std::string> files;
-				files = uz.getFilenames();
-
-				if (uz.openEntry(files[0].c_str()))
+				// we create the archive
+				dtcc::archive ar(std::move(ss));
+				if (ar.open())
 				{
-					uz >> std::cout;
+					auto fs = ar.fileSystem();
 				}
+				
 			}
 
 			// add a day
