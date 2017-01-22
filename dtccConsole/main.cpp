@@ -8,8 +8,12 @@
 #include <unistd.h>
 #endif
 
+#include <array>
 #include <fstream>
 #include <exception>
+
+#include <boost/none.hpp>
+#include <boost/optional.hpp>
 #include <boost/thread.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 
@@ -34,13 +38,21 @@ struct configuration
 	std::string baseUrl_;
 };
 
+// the record ready for db insertion
+struct dbRecord
+{
+	int64_t DISSEMINATION_ID;
+	boost::optional<int64_t> ORIGINAL_DISSEMINATION_ID;
+
+};
+
 int main(int * argc, char ** argv)
 {
 	int ret = 1;
 
 	try
 	{
-		dtcc::logger::setLogger("dtccConsole_%Y%m%d_%3N.log", dtcc::logger::Info);
+		dtcc::logger::setLogger("dtccConsole_%Y%m%d.log", dtcc::logger::Info);
 		LOG_INFO() << "Application is starting";
 		LOG_INFO() << "Trying to create a new Windows service";
 
@@ -64,6 +76,9 @@ int main(int * argc, char ** argv)
 		// build the curl object	
 		dtcc::curl * cnx = new dtcc::fileUrl();
 
+		std::array<dbRecord, 100> recs; // data buffer
+
+		auto ptr = recs.begin();
 		// main loop
 		while (dt <= config.end_)
 		{
@@ -85,6 +100,35 @@ int main(int * argc, char ** argv)
 				if (ar.open())
 				{
 					auto fs = ar.fileSystem();
+
+					for (auto it = fs.begin(); it != fs.end(); it++)
+					{
+						std::stringstream file = ar.get(*it);
+						std::string line; 
+						std::getline(file, line, '\n');			// trash the header
+						while (std::getline(file, line, '\n'))
+						{	
+							if (ptr == recs.end())
+							{
+								// release the buffer toward the database
+								ptr = recs.begin();
+							}
+
+							std::string token;
+							std::stringstream ss(line);
+
+							std::getline(ss, token, ',');
+							ptr->DISSEMINATION_ID = boost::lexical_cast<int64_t>(token.substr(1, token.size() - 2));
+
+							std::getline(ss, token, ',');
+							if (token != "\"\"")
+								ptr->ORIGINAL_DISSEMINATION_ID = boost::lexical_cast<int64_t>(token.substr(1, token.size() - 2));
+							else
+								ptr->ORIGINAL_DISSEMINATION_ID = boost::none;
+
+							ptr++; 
+						}
+					}
 				}
 			}
 

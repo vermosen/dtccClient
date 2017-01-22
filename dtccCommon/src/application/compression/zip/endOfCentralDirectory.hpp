@@ -16,6 +16,8 @@ namespace dtcc
 		public:
 			struct eocd
 			{
+				static constexpr std::array<char, 4> signature = { 0x50, 0x4b, 0x05, 0x06 };
+
 				uint16_t nDisk_;
 				uint16_t startCentralDirectoryDisk_;
 				uint16_t nFilesOnThisDisk_;
@@ -25,9 +27,20 @@ namespace dtcc
 				std::string comment_;
 			};
 
-			static constexpr std::array<char, 4> signature = { 0x50, 0x4b, 0x05, 0x06 };
+			struct eocd64
+			{
+				static constexpr std::array<char, 4> signature = { 0x50, 0x4b, 0x06, 0x06 };
+				int64_t size_;
+			};		
+
+			struct eocd64Locator
+			{
+				static constexpr std::array<char, 4> signature = { 0x50, 0x4b, 0x06, 0x07 };
+				int32_t nDisk_;
+			};
 
 			endOfCentralDirectory(std::string::const_iterator archiveStart,
+								  std::string::const_iterator archiveEnd,
 				std::string::const_iterator eocd)	// initially eocd.begin()
 			{
 				auto it = eocd;
@@ -43,6 +56,14 @@ namespace dtcc
 
 				eocd_.comment_.resize(commentLenght);
 				std::copy(it, it + commentLenght, eocd_.comment_.begin());
+				std::advance(it, commentLenght);
+
+				// read eocd64
+				if (it != archiveEnd && std::equal(it, it + 3, eocd64::signature.cbegin()))
+				{
+					// TODO
+					throw std::exception("unsupported archive format");
+				}
 
 				// go to the central directory position
 				it = archiveStart + eocd_.centralDirPos_;
@@ -57,11 +78,23 @@ namespace dtcc
 				}
 			};
 
+			std::string getData(const std::string & fileName)
+			{
+				auto it = std::find_if(files_.begin(), files_.end(),
+				[&fileName](const file& item)
+				{
+					return item.name() == fileName;
+				});
+
+				return std::move(it->getCompressedData());
+			}
+
 			~endOfCentralDirectory() {}
 			const std::set<file> & getFileSystem() const { return files_; }
 
 		private:
 			eocd eocd_;
+			eocd64 eocd64_;
 			std::set<file> files_;
 		};
 	}

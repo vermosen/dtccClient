@@ -45,7 +45,7 @@ namespace dtcc
 				dataStart_ = it;
 			}
 			std::string::const_iterator begin() const { return dataStart_; }
-			std::string::const_iterator end() const { return dataStart_ + compressSize_; }
+			//std::string::const_iterator end() const { return dataStart_ + compressSize_; }
 
 		private:
 			int16_t version_;

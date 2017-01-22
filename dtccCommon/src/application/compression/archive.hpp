@@ -4,6 +4,7 @@
 #include <string>
 #include <set>
 #include <utility>
+#include <sstream>
 
 namespace dtcc
 {
@@ -32,7 +33,7 @@ namespace dtcc
 		}
 		void close() { method_->close(); }
 		void add(const std::string & file) {}
-		std::string get(const std::string &) { return std::string(""); }
+		std::stringstream get(const std::string & file) { return std::move(method_->decompress(file)); }
 
 		std::set<std::string> fileSystem() const { return method_->getFileSystem(); }
 

@@ -88,6 +88,7 @@ namespace dtcc
 			// accessors
 			uint32_t offsetLocalHeader() const { return offsetLocalHeader_; }
 			const std::string & name() const { return name_; }
+			uint32_t compressSize() const { return compressSize_; }
 
 		private:
 			std::tuple<version, uint8_t> version_;

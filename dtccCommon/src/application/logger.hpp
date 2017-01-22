@@ -92,12 +92,12 @@ namespace dtcc
 				boost::make_shared<sinks::text_file_backend>
 				(
 					//keywords::target = "localhost",
-					keywords::auto_flush = true,
-					keywords::file_name = fileName,						// filename
-																		//keywords::file_name = "/tmp/test_%Y%m%d_%4N.log",	// filename
-					keywords::rotation_size = 10 * 1024 * 1024,			// 10 MB
-					keywords::time_based_rotation = sinks::file::rotation_at_time_point(0, 0, 0)
-					);
+					keywords::auto_flush			= false,
+					keywords::file_name				= fileName,						// filename
+					keywords::open_mode				= std::ios_base::app | std::ios_base::out,
+					keywords::rotation_size			= 10 * 1024 * 1024,			// 10 MB
+					keywords::time_based_rotation	= sinks::file::rotation_at_time_point(0, 0, 0)
+				);
 
 			// autoflush
 			//backend->auto_flush(true);
