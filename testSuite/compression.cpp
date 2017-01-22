@@ -9,9 +9,6 @@
 #include <boost/iostreams/copy.hpp>
 #include <boost/iostreams/filter/zlib.hpp>
 
-/* remember to document new and/or updated tests in the Doxygen
-comment block of the corresponding class */
-
 void compressionTest::testBoostCompression()
 {
 	BOOST_TEST_MESSAGE("Testing boost compression using zlib...");

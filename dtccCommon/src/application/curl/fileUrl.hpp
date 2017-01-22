@@ -21,14 +21,16 @@ namespace dtcc
 	public:
 		fileUrl();
 		~fileUrl() {};
-		virtual std::string get(const std::string & url);
+
+		// TODO: make thread safe !
+		virtual boost::shared_ptr<std::string> fetch(const std::string & url, long size = 1024);
 
 	private:
 
 		virtual void appendBody(char *, size_t);
 		virtual void appendHeader(char *, size_t);
 
-		std::stringstream  buffer_;
+		boost::shared_ptr<std::string> buffer_;
 	};
 }
 

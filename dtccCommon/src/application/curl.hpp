@@ -22,7 +22,9 @@ namespace dtcc
 		curl();
 		virtual ~curl();
 
-		virtual std::string get(const std::string & url) = 0;
+		// the reverse key define if the string is loaded 
+		// in the reverse order
+		virtual boost::shared_ptr<std::string> fetch(const std::string & url, long size) = 0;
 
 	protected:
 		virtual void appendBody(char *, size_t) = 0;

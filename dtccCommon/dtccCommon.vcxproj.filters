@@ -24,18 +24,20 @@
     <ClInclude Include="src\application\curl.hpp">
       <Filter>src\application</Filter>
     </ClInclude>
-    <ClInclude Include="src\application\compression\zip.hpp" />
     <ClInclude Include="src\application\curl\fileUrl.hpp" />
-    <ClInclude Include="src\application\compression\unzip.hpp" />
-    <ClInclude Include="src\application\archive.hpp" />
-    <ClInclude Include="src\application\zip2.hpp" />
+    <ClInclude Include="src\application\compression\zip.hpp" />
+    <ClInclude Include="src\application\compression\archive.hpp" />
+    <ClInclude Include="src\utils\converter.hpp" />
+    <ClInclude Include="src\application\compression\zip\centralDirectoryFileHeader.hpp" />
+    <ClInclude Include="src\application\compression\zip\localFileHeader.hpp" />
+    <ClInclude Include="src\application\compression\zip\endOfCentralDirectory.hpp" />
+    <ClInclude Include="src\application\compression\zip\file.hpp" />
+    <ClInclude Include="src\application\compression\zip\method.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\curl.cpp">
       <Filter>src\application</Filter>
     </ClCompile>
-    <ClCompile Include="src\application\compression\zip.cpp" />
     <ClCompile Include="src\application\curl\fileUrl.cpp" />
-    <ClCompile Include="src\application\compression\unzip.cpp" />
   </ItemGroup>
 </Project>

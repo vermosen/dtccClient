@@ -1,43 +1,92 @@
-#ifndef COMPRESSION_ZIP_HPP_
-#define COMPRESSION_ZIP_HPP_
+#ifndef ZIP_HPP_
+#define ZIP_HPP_
 
-#include <sstream>
+#include <bitset>
+#include <set>
+#include <array>
+#include <functional>
 #include <iostream>
-#include <string>
-#include <vector>
+#include <sstream>
 
-#include <ioapi.h>
-#include <zip.h>
-#include <time.h>
+#include <boost/shared_ptr.hpp>
+
+#include "application/compression/zip/endOfCentralDirectory.hpp"
+#include "application/compression/zip/file.hpp"
 
 namespace dtcc
 {
-	// a c++ wrapper for minizip
-	// need to compile zlib/contrib/vstudio/vcxx/..
-	// and link the result zlibstat.lib
-	class zip
+	namespace utils
 	{
-	public:
-		zip();
-		~zip(void);
+		template <class reverseIterator>
+		typename reverseIterator::iterator_type make_forward(reverseIterator rit)
+		{
+			return --(rit.base());
+		}
+	}
 
-		bool open(const char * filename, bool append = false);
-		void close();
-		bool isOpen();
+	namespace zip
+	{
+		// zip class
+		// from https://users.cs.jmu.edu/buchhofp/forensics/formats/pkzip.html
+		class zip
+		{
+		public:
+			zip(const boost::shared_ptr<std::string> & file) 
+				: file_(file) {}
+			~zip() {}
 
-		bool addEntry(const char* filename);
-		void closeEntry();
-		bool isOpenEntry();
+			// for now, we return a single string, i.e. the archive only contains 1 file
+			std::set<std::string> getFileSystem()
+			{
+				std::set<std::string> ret;
 
-		zip & operator<<(std::istream& is);
+				if (readArchiveStructure())
+				{
+					for (auto it = dir_->getFileSystem().cbegin(); it != dir_->getFileSystem().cend(); it++)
+					{
+						ret.insert(it->name());
+					}
+				}
+				
+				return ret;
+			}
 
-	private:
-		void getTime(tm_zip& tmZip);
+			bool readArchiveStructure()
+			{
+				// we start from the bottom and look for the EOCD signature
+				for (auto It = file_->crbegin(); It != file_->crend(); It++)
+				{
+					if (*It == 0x50 && std::equal(It - 3, It, endOfCentralDirectory::signature.crbegin()))
+					{
+						dir_ = boost::shared_ptr<endOfCentralDirectory>(new endOfCentralDirectory(
+							file_->cbegin(), utils::make_forward(It)));
 
-	private:
-		zipFile			zipFile_;
-		bool			entryOpen_;
-	};
+						return true;
+					}
+				}
+				return false;
+			}
+
+			bool open()
+			{
+				// coherence check: should start with a file header
+				if (std::equal(file_->cbegin(), file_->cbegin() + 4, localFileHeader::signature.begin()))
+					return true;
+				else
+					return false;
+			};
+
+			void close()
+			{
+
+			};
+
+		private:
+			boost::shared_ptr<std::string> file_;
+			boost::shared_ptr<endOfCentralDirectory> dir_;
+			bool entryOpen_;
+		};
+	}
 }
 
 #endif

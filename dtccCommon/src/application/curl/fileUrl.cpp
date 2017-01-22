@@ -2,8 +2,9 @@
 
 namespace dtcc
 {
-	fileUrl::fileUrl() : curl(), buffer_(std::ios_base::in | std::ios_base::out | std::ios_base::app | std::ios_base::binary)
+	fileUrl::fileUrl() : curl()
 	{
+		buffer_ = boost::shared_ptr<std::string>(new std::string);
 	}
 
 	void fileUrl::appendHeader(char * data, size_t sz)
@@ -13,15 +14,15 @@ namespace dtcc
 
 	void fileUrl::appendBody(char * data, size_t sz)
 	{
-		buffer_.write(data, sz);
+		buffer_->append(data, sz);
 	}
 
-	std::string fileUrl::get(const std::string & url)
+	boost::shared_ptr<std::string> fileUrl::fetch(const std::string & url, long size)
 	{
 		if (!curl_)
 			throw std::exception("uninitialized connection");
 
-		buffer_.str(""); buffer_.clear();
+		buffer_->reserve(size);
 
 		std::function<void(char *, size_t)> writeBody(std::bind(&fileUrl::appendBody, this, std::placeholders::_1, std::placeholders::_2));
 		std::function<void(char *, size_t)> writeHeader(std::bind(&fileUrl::appendHeader, this, std::placeholders::_1, std::placeholders::_2));
@@ -36,8 +37,9 @@ namespace dtcc
 
 		CURLcode res = curl_easy_perform(curl_);
 
-		std::string ret(buffer_.str());
-		
-		return ret;
+		// once the buffer is filled, we clean the buffer
+		boost::shared_ptr<std::string> retPtr = buffer_;
+		buffer_ = boost::shared_ptr<std::string>(new std::string);
+		return retPtr;
 	}
 }

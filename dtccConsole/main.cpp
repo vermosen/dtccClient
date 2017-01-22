@@ -16,7 +16,8 @@
 #include "application/curl/fileUrl.hpp"
 #include "application/logger.hpp"
 #include "application/service.hpp"
-#include "application/archive.hpp"
+#include "application/compression/archive.hpp"
+#include "application/compression/zip.hpp"
 
 struct asset
 {
@@ -70,7 +71,7 @@ int main(int * argc, char ** argv)
 
 			for (auto It = config.assets_.cbegin(); It != config.assets_.cend(); It++)
 			{
-				std::ostringstream fileName;
+				std::stringstream fileName;
 				fileName.imbue(format);
 				fileName << "CUMULATIVE_" << It->fileStr_ << "_" << dt << ".zip";
 
@@ -79,17 +80,12 @@ int main(int * argc, char ** argv)
 							<< " data from URL: " 
 							<< config.baseUrl_ + fileName.str();
 
-				// create a string stream
-				std::stringstream ss;
-				ss << cnx->get(config.baseUrl_ + fileName.str());
-
-				// we create the archive
-				dtcc::archive ar(std::move(ss));
+				// we create an archive
+				dtcc::archive<dtcc::zip::zip> ar(cnx->fetch(config.baseUrl_ + fileName.str(), 1024 * 1024));
 				if (ar.open())
 				{
 					auto fs = ar.fileSystem();
 				}
-				
 			}
 
 			// add a day

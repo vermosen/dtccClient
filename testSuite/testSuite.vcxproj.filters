@@ -3,9 +3,11 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="compression.cpp" />
+    <ClCompile Include="converter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="compression.hpp" />
+    <ClInclude Include="converter.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
