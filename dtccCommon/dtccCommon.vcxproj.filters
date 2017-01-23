@@ -33,6 +33,7 @@
     <ClInclude Include="src\application\compression\zip\endOfCentralDirectory.hpp" />
     <ClInclude Include="src\application\compression\zip\file.hpp" />
     <ClInclude Include="src\application\compression\zip\method.hpp" />
+    <ClInclude Include="src\pattern\abstractFactory.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\curl.cpp">

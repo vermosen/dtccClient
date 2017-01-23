@@ -16,6 +16,7 @@
 #include <boost/optional.hpp>
 #include <boost/thread.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "application/curl/fileUrl.hpp"
 #include "application/logger.hpp"
@@ -25,6 +26,15 @@
 
 struct asset
 {
+	enum type
+	{
+		rate = 1,
+		commodity = 2,
+		equity = 3,
+		currency = 4,
+		credit = 5
+	};
+
 	std::string ticker_;
 	std::string fileStr_;
 };
@@ -39,11 +49,56 @@ struct configuration
 };
 
 // the record ready for db insertion
-struct dbRecord
+class dbRecord
 {
+public:
+
+	enum class action
+	{
+		new_ = 1,
+		cancel_ = 2,
+		correct_ = 3
+	};
+
+	enum class collateralization
+	{
+		fc = 1,
+		oc = 2,
+		pc = 3,
+		uc = 4
+	};
+
+	dbRecord() {};
+	dbRecord(const std::string & line)
+	{
+		std::string token;
+		std::stringstream ss(line);
+
+		std::getline(ss, token, ',');
+		DISSEMINATION_ID = boost::lexical_cast<int64_t>(token.substr(1, token.size() - 2));
+
+		std::getline(ss, token, ',');
+		if (token != "\"\"")
+			ORIGINAL_DISSEMINATION_ID = boost::lexical_cast<int64_t>(token.substr(1, token.size() - 2));
+		else
+			ORIGINAL_DISSEMINATION_ID = boost::none;
+	}
+private:
 	int64_t DISSEMINATION_ID;
 	boost::optional<int64_t> ORIGINAL_DISSEMINATION_ID;
-
+	action ACTION;
+	boost::posix_time::ptime EXECUTION_TIMESTAMP;
+	bool CLEARED;
+	boost::optional<int64_t> INDICATION_OF_COLLATERALIZATION;
+	boost::optional<bool> INDICATION_OF_END_USER_EXCEPTION;
+	bool INDICATION_OF_OTHER_PRICE_AFFECTING_TERM;
+	bool BLOCK_TRADES_AND_LARGE_NOTIONAL_OFFFACILITY_SWAPS;
+	bool EXECUTION_VENUE;
+	boost::gregorian::date EFFECTIVE_DATE;
+	boost::gregorian::date END_DATE;
+	std::string DAY_COUNT_CONVENTION;
+	char SETTLEMENT_CURRENCY[3];
+	asset::type ASSET_CLASS;
 };
 
 int main(int * argc, char ** argv)
@@ -76,9 +131,10 @@ int main(int * argc, char ** argv)
 		// build the curl object	
 		dtcc::curl * cnx = new dtcc::fileUrl();
 
-		std::array<dbRecord, 100> recs; // data buffer
+		size_t buffSize = 1000;
+		std::vector<dbRecord> recs;			// data buffer
+		recs.reserve(buffSize);
 
-		auto ptr = recs.begin();
 		// main loop
 		while (dt <= config.end_)
 		{
@@ -104,29 +160,22 @@ int main(int * argc, char ** argv)
 					for (auto it = fs.begin(); it != fs.end(); it++)
 					{
 						std::stringstream file = ar.get(*it);
-						std::string line; 
-						std::getline(file, line, '\n');			// trash the header
-						while (std::getline(file, line, '\n'))
+
+						LOG_INFO() << "Zip extraction successfull...";
+
+						std::string linebuf; 
+						std::getline(file, linebuf, '\n');			// trash the header
+						int i = 0; while (std::getline(file, linebuf, '\n'))
 						{	
-							if (ptr == recs.end())
+							if (i == buffSize)
 							{
 								// release the buffer toward the database
-								ptr = recs.begin();
+								recs.clear();
+								i = 0;
 							}
 
-							std::string token;
-							std::stringstream ss(line);
-
-							std::getline(ss, token, ',');
-							ptr->DISSEMINATION_ID = boost::lexical_cast<int64_t>(token.substr(1, token.size() - 2));
-
-							std::getline(ss, token, ',');
-							if (token != "\"\"")
-								ptr->ORIGINAL_DISSEMINATION_ID = boost::lexical_cast<int64_t>(token.substr(1, token.size() - 2));
-							else
-								ptr->ORIGINAL_DISSEMINATION_ID = boost::none;
-
-							ptr++; 
+							recs.push_back(dbRecord(linebuf));
+							i++; 
 						}
 					}
 				}

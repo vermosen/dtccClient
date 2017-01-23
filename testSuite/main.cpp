@@ -5,6 +5,8 @@
 #include <boost/test/framework.hpp>
 
 #include "compression.hpp"
+#include "converter.hpp"
+#include "logger.hpp"
 
 boost::unit_test::test_suite* init_unit_test_suite(int, char*[])
 {
@@ -23,8 +25,9 @@ boost::unit_test::test_suite* init_unit_test_suite(int, char*[])
 	boost::unit_test::test_suite* test = BOOST_TEST_SUITE("Dtcc test suite");
 
 	// individual tests
-	//test->add(BOOST_TEST_CASE(myFunc));
+	test->add(loggerTest::suite());
 	test->add(compressionTest::suite());
+	test->add(converterTest::suite());
 
 	return test;
 }

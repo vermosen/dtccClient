@@ -14,7 +14,7 @@ void converterTest::testCharToInt()
 	forward.t1_ = val;
 
 	dtcc::util::converter<char[4], int32_t> backward;
-	memcpy(forward.t2_, backward.t1_, sizeof(forward.t2_));
+	memcpy(backward.t1_, forward.t2_, sizeof(forward.t2_));
 
 	int32_t res = backward.t2_;
 
