@@ -34,11 +34,13 @@
     <ClInclude Include="src\application\compression\zip\file.hpp" />
     <ClInclude Include="src\application\compression\zip\method.hpp" />
     <ClInclude Include="src\pattern\abstractFactory.hpp" />
+    <ClInclude Include="src\application\database\record.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\curl.cpp">
       <Filter>src\application</Filter>
     </ClCompile>
     <ClCompile Include="src\application\curl\fileUrl.cpp" />
+    <ClCompile Include="src\application\database\record.cpp" />
   </ItemGroup>
 </Project>

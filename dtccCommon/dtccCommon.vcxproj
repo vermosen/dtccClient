@@ -122,6 +122,7 @@
     <ClInclude Include="src\application\logger.hpp" />
     <ClInclude Include="src\application\service.hpp" />
     <ClInclude Include="src\application\compression\zip.hpp" />
+    <ClInclude Include="src\application\database\record.hpp" />
     <ClInclude Include="src\pattern\abstractFactory.hpp" />
     <ClInclude Include="src\pattern\singleton.hpp" />
     <ClInclude Include="src\utils\converter.hpp" />
@@ -132,6 +133,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="src\application\database\record.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
