@@ -5,30 +5,13 @@
 
 #include "application/logger.hpp"
 
-class loggerTest
+namespace testSuite
 {
-public:
-	static void testLogger()
+	class logger
 	{
-		BOOST_TEST_MESSAGE("Testing log creation...");
-
-		try
-		{
-			dtcc::logger::setLogger("dtccTestSuite.log", dtcc::logger::type::Info);
-			LOG_INFO() << "Test is starting";
-			LOG_INFO() << "Hello World!";
-		}
-		catch (const std::exception&)
-		{
-			BOOST_ERROR("\n" << " Failed to write log!");
-		}
-	}
-	static boost::unit_test_framework::test_suite* suite()
-	{
-		boost::unit_test_framework::test_suite * suite = BOOST_TEST_SUITE("compression Tests");
-		suite->add(BOOST_TEST_CASE(&loggerTest::testLogger));
-		return suite;
-	}
-};
-
+	public:
+		static void simpleLog();
+		static boost::unit_test_framework::test_suite* suite();
+	};
+}
 #endif

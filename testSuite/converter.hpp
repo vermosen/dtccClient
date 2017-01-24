@@ -3,11 +3,14 @@
 
 #include <boost/test/unit_test.hpp>
 
-class converterTest
+namespace testSuite
 {
-public:
-	static void testCharToInt();
-	static boost::unit_test_framework::test_suite* suite();
-};
+	class converter
+	{
+	public:
+		static void charToInt();
+		static boost::unit_test_framework::test_suite* suite();
+	};
+}
 
 #endif

@@ -1,15 +1,14 @@
-#ifndef abstract_factory_hpp
-#define abstract_factory_hpp
+#ifndef ABSTRACT_FACTORY_HPP
+#define ABSTRACT_FACTORY_HPP
 
 #include <map>
 #include <boost/shared_ptr.hpp>
 
-// an abstract factory class 
-// with self management functionalities
+// an abstract factory class with self registration
 namespace dtcc
 {
 	template <typename C, typename K>
-	class factory
+	class abstractFactory
 	{
 	protected:
 		typedef K key_type;
@@ -42,11 +41,21 @@ namespace dtcc
 
 	//registration struct
 	template <typename C, typename K, typename T>
-	struct registerType : factory<C, K>
+	struct registerType : abstractFactory<C, K>
 	{
 		registerType(const K & key)
 		{
-			factory<C, K>::getMap()->insert(std::make_pair(key, &create<C, T>));
+			abstractFactory<C, K>::getMap()->insert(std::make_pair(key, &create<C, T>));
+		}
+	};
+
+	//registration struct
+	template <typename C, typename K>
+	struct registerEnum : abstractFactory<C, K>
+	{
+		registerEnum(const K & key)
+		{
+			abstractFactory<C, K>::getMap()->insert(std::make_pair(key, &create<C, C>));
 		}
 	};
 }

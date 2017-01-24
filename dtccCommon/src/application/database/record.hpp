@@ -7,6 +7,8 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+#include "pattern/abstractFactory.hpp"
+
 namespace dtcc
 {
 	namespace database
@@ -17,11 +19,15 @@ namespace dtcc
 
 			enum class assetType
 			{
+				//static registerEnum < assetType, std::string, child> register_;
+
 				rate = 1,
 				commodity = 2,
 				equity = 3,
 				currency = 4,
 				credit = 5
+
+
 			};
 
 			enum class action

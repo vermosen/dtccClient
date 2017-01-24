@@ -4,11 +4,18 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="compression.cpp" />
     <ClCompile Include="converter.cpp" />
+    <ClCompile Include="pattern.cpp" />
+    <ClCompile Include="logger.cpp" />
+    <ClCompile Include="registrable\base.cpp" />
+    <ClCompile Include="registrable\derived.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="compression.hpp" />
     <ClInclude Include="converter.hpp" />
     <ClInclude Include="logger.hpp" />
+    <ClInclude Include="pattern.hpp" />
+    <ClInclude Include="registrable\base.hpp" />
+    <ClInclude Include="registrable\derived.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

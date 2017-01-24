@@ -3,11 +3,15 @@
 
 #include <boost/test/unit_test.hpp>
 
-class compressionTest
+namespace testSuite
 {
-public:
-	static void testBoostCompression();
-	static boost::unit_test_framework::test_suite* suite();
-};
+	class compression
+	{
+	public:
+		static void boostCompression();
+		static boost::unit_test_framework::test_suite* suite();
+	};
+}
+
 
 #endif

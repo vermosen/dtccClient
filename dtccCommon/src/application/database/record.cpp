@@ -1,13 +1,10 @@
 #include "application/database/record.hpp"
 #include "pattern/abstractFactory.hpp"
 
-#pragma init_seg(compiler)
-template<>
-dtcc::factory <dtcc::database::record::action, std::string>::map_type * 
-	dtcc::factory <dtcc::database::record::action, std::string>::map_ = new factory::map_type();
-
-//registerType<dtcc::database::record::action::, std::tuple<int, std::string>, child>
-//child::register_(std::tuple<int, std::string>(1, "A"));
+//#pragma init_seg(compiler)
+//template<>
+//dtcc::abstractFactory <dtcc::database::record::action, std::string>::map_type * 
+//	dtcc::factory <dtcc::database::record::action, std::string>::map_ = new factory::map_type();
 
 namespace dtcc
 {
