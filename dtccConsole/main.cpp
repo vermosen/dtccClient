@@ -12,11 +12,7 @@
 #include <fstream>
 #include <exception>
 
-//#include <boost/none.hpp>
-//#include <boost/optional.hpp>
 #include <boost/thread.hpp>
-//#include <boost/date_time/gregorian/gregorian.hpp>
-//#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "application/curl/fileUrl.hpp"
 #include "application/logger.hpp"

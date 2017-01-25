@@ -13,6 +13,18 @@ namespace dtcc
 	protected:
 		typedef K key_type;
 		typedef std::map<key_type, C*(*)()> map_type;
+		~abstractFactory()
+		{
+			if (map_)
+			{
+				// TODO
+				//for (auto it = map_->begin(); it != map_->end(); it++)
+				//{
+				//	delete it->second;
+				//}
+				delete map_;
+			}
+		}
 
 	public:
 		static boost::shared_ptr<C> createInstance(const K & key)
@@ -46,16 +58,6 @@ namespace dtcc
 		registerType(const K & key)
 		{
 			abstractFactory<C, K>::getMap()->insert(std::make_pair(key, &create<C, T>));
-		}
-	};
-
-	//registration struct
-	template <typename C, typename K>
-	struct registerEnum : abstractFactory<C, K>
-	{
-		registerEnum(const K & key)
-		{
-			abstractFactory<C, K>::getMap()->insert(std::make_pair(key, &create<C, C>));
 		}
 	};
 }

@@ -16,6 +16,4 @@ namespace testSuite
 	};
 }
 
-
-
 #endif

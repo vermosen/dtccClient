@@ -35,6 +35,9 @@
     <ClInclude Include="src\application\compression\zip\method.hpp" />
     <ClInclude Include="src\pattern\abstractFactory.hpp" />
     <ClInclude Include="src\application\database\record.hpp" />
+    <ClInclude Include="src\application\database\enum\action.hpp" />
+    <ClInclude Include="src\application\database\enum\assetType.hpp" />
+    <ClInclude Include="src\application\database\enum\collateralization.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\curl.cpp">
@@ -42,5 +45,8 @@
     </ClCompile>
     <ClCompile Include="src\application\curl\fileUrl.cpp" />
     <ClCompile Include="src\application\database\record.cpp" />
+    <ClCompile Include="src\application\database\enum\action.cpp" />
+    <ClCompile Include="src\application\database\enum\assetType.cpp" />
+    <ClCompile Include="src\application\database\enum\collateralization.cpp" />
   </ItemGroup>
 </Project>

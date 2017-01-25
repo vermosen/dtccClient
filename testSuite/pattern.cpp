@@ -14,6 +14,7 @@ namespace testSuite
 			BOOST_ERROR("\n" << " Failed to create derived class instance");
 		}
 	}
+
 	boost::unit_test_framework::test_suite* pattern::suite()
 	{
 		boost::unit_test_framework::test_suite * suite = BOOST_TEST_SUITE("pattern Tests");

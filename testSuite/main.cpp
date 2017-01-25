@@ -14,7 +14,6 @@
 #include "pattern.hpp"
 
 // WARN: do not include in a namespace
-
 boost::unit_test::test_suite* init_unit_test_suite(int, char*[])
 {
 	int argc = boost::unit_test::framework::master_test_suite().argc;
