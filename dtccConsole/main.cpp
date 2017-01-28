@@ -14,17 +14,19 @@
 
 #include <boost/thread.hpp>
 
+
 #include "application/curl/fileUrl.hpp"
 #include "application/logger.hpp"
 #include "application/service.hpp"
 #include "application/compression/archive.hpp"
 #include "application/compression/zip.hpp"
-#include "application/database/record.hpp"
+
+#include "database/record.hpp"
 
 struct asset
 {
 	// TODO: use the assetType factory
-	std::string ticker_;
+	dtcc::database::assetType type_;
 	std::string fileStr_;
 };
 
@@ -36,7 +38,6 @@ struct configuration
 	std::vector<asset> assets_;
 	std::string baseUrl_;
 };
-
 
 int main(int * argc, char ** argv)
 {
@@ -57,7 +58,7 @@ int main(int * argc, char ** argv)
 		{
 			boost::gregorian::from_simple_string("2017-01-10"),
 			boost::gregorian::from_simple_string("2017-01-10"),
-			{ asset{ "CO", "COMMODITIES" } },
+			{ asset{ dtcc::database::assetType::commodity, "COMMODITIES" } },
 			"https://kgc0418-tdw-data-0.s3.amazonaws.com/slices/"
 		};
 
@@ -84,7 +85,7 @@ int main(int * argc, char ** argv)
 				fileName << "CUMULATIVE_" << It->fileStr_ << "_" << dt << ".zip";
 
 				LOG_INFO()	<< "Loading " 
-							<< It->ticker_ 
+							<< It->fileStr_
 							<< " data from URL: " 
 							<< config.baseUrl_ + fileName.str();
 

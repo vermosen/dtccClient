@@ -119,27 +119,30 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="src\application\database\enum\collateralization.hpp" />
+    <ClInclude Include="src\database\enum.hpp" />
+    <ClInclude Include="src\database\enums\collateralization.hpp" />
+    <ClInclude Include="src\database\enums\optionFamily.hpp" />
+    <ClInclude Include="src\database\enums\priceFormingContinuationData.hpp" />
     <ClInclude Include="src\application\logger.hpp" />
     <ClInclude Include="src\application\service.hpp" />
     <ClInclude Include="src\application\compression\zip.hpp" />
-    <ClInclude Include="src\application\database\record.hpp" />
-    <ClInclude Include="src\application\database\enum\action.hpp" />
-    <ClInclude Include="src\application\database\enum\assetType.hpp" />
+    <ClInclude Include="src\database\record.hpp" />
+    <ClInclude Include="src\database\enums\action.hpp" />
+    <ClInclude Include="src\database\enums\assetType.hpp" />
     <ClInclude Include="src\pattern\abstractFactory.hpp" />
+    <ClInclude Include="src\pattern\enumManager.hpp" />
     <ClInclude Include="src\pattern\singleton.hpp" />
     <ClInclude Include="src\utils\converter.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\application\compression\zip.cpp" />
+    <ClCompile Include="src\application\compression\zip\centralDirectoryFileHeader.cpp" />
     <ClCompile Include="src\application\curl.cpp" />
     <ClCompile Include="src\application\curl\fileUrl.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="src\application\database\enum\collateralization.cpp" />
-    <ClCompile Include="src\application\database\record.cpp" />
-    <ClCompile Include="src\application\database\enum\action.cpp" />
-    <ClCompile Include="src\application\database\enum\assetType.cpp" />
+    <ClCompile Include="src\database\record.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

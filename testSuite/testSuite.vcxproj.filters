@@ -16,6 +16,7 @@
     <ClInclude Include="pattern.hpp" />
     <ClInclude Include="registrable\base.hpp" />
     <ClInclude Include="registrable\derived.hpp" />
+    <ClInclude Include="registrable\enum.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

@@ -15,15 +15,15 @@ namespace dtcc
 		typedef std::map<key_type, C*(*)()> map_type;
 		~abstractFactory()
 		{
-			if (map_)
-			{
-				// TODO
-				//for (auto it = map_->begin(); it != map_->end(); it++)
-				//{
-				//	delete it->second;
-				//}
-				delete map_;
-			}
+			//if (map_)
+			//{
+			//	// TODO
+			//	//for (auto it = map_->begin(); it != map_->end(); it++)
+			//	//{
+			//	//	delete it->second;
+			//	//}
+			//	delete map_;
+			//}
 		}
 
 	public:
@@ -45,7 +45,6 @@ namespace dtcc
 		}
 
 		static map_type * map_;
-
 	};
 
 	// create function

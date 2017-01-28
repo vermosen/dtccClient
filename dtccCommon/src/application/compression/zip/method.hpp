@@ -7,7 +7,7 @@ namespace dtcc
 {
 	namespace zip
 	{
-		enum zipMethod : uint16_t
+		enum method : uint16_t
 		{
 			noCompression = 0,
 			shrunk = 1,

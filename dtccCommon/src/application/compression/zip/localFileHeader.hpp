@@ -50,7 +50,7 @@ namespace dtcc
 		private:
 			int16_t version_;
 			std::bitset<16> flag_;
-			zipMethod compression_;
+			method compression_;
 			uint16_t modTime_;
 			uint16_t modDate_;
 			uint32_t crc32_;

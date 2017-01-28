@@ -3,6 +3,9 @@
 
 #include <string>
 
+#include "centralDirectoryFileHeader.hpp"
+#include "localFileHeader.hpp"
+
 namespace dtcc
 {
 	namespace zip

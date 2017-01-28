@@ -2,6 +2,7 @@
 
 #include "registrable/base.hpp"
 #include "registrable/derived.hpp"
+#include "registrable/enum.hpp"
 
 namespace testSuite
 {
@@ -10,6 +11,19 @@ namespace testSuite
 		boost::shared_ptr<base> myBase = dtcc::abstractFactory<base, std::string>::createInstance("DERIVED");
 
 		if (myBase->foo() != "hello world!")
+		{
+			BOOST_ERROR("\n" << " Failed to create derived class instance");
+		}
+	}
+
+	void pattern::enumManager()
+	{
+		std::stringstream ss;
+		ss << testSuite::foo::A;
+		ss << testSuite::foo::B;
+		ss << testSuite::foo::C;
+
+		if (ss.str() != "ABC")
 		{
 			BOOST_ERROR("\n" << " Failed to create derived class instance");
 		}
