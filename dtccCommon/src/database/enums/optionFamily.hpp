@@ -7,11 +7,11 @@ namespace dtcc
 {
 	namespace database
 	{
-		enum class optionFamily
+		enum class optionFamily : char
 		{
-			  american
-			, european
-			, asian
+			  american = 1
+			, european = 2
+			, asian    = 3
 		};
 	}
 

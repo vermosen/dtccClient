@@ -7,11 +7,11 @@ namespace dtcc
 {
 	namespace database
 	{
-		enum class action 
+		enum class action : char
 		{ 
-			  _new
-			, cancel
-			, correct 
+			  _new		= 1
+			, cancel	= 2
+			, correct	= 3
 		};
 	}
 

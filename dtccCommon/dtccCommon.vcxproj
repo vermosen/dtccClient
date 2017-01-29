@@ -43,15 +43,17 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>.\src;$(Git)\zlib\contrib\minizip;$(INCLUDE);$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>.\src;$(INCLUDE);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <OutDir>$(SolutionDir)lib\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(Plateform)_$(PlatformToolset)_s</TargetName>
+    <LibraryPath>C:\build\soci\lib\$(Configuration);$(LIB);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetName>$(ProjectName)_$(Plateform)_$(PlatformToolset)_sd</TargetName>
     <OutDir>$(SolutionDir)lib\</OutDir>
-    <IncludePath>.\src;$(Git)\zlib\contrib\minizip;$(INCLUDE);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>.\src;$(INCLUDE);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>C:\build\soci\lib\$(Configuration);$(LIB);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -95,6 +97,7 @@
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -119,16 +122,21 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="src\database\connector.hpp" />
+    <ClInclude Include="src\database\connectors\sqlServer.hpp" />
     <ClInclude Include="src\database\enum.hpp" />
     <ClInclude Include="src\database\enums\collateralization.hpp" />
     <ClInclude Include="src\database\enums\optionFamily.hpp" />
+    <ClInclude Include="src\database\enums\optionType.hpp" />
     <ClInclude Include="src\database\enums\priceFormingContinuationData.hpp" />
     <ClInclude Include="src\application\logger.hpp" />
     <ClInclude Include="src\application\service.hpp" />
     <ClInclude Include="src\application\compression\zip.hpp" />
-    <ClInclude Include="src\database\record.hpp" />
+    <ClInclude Include="src\database\recordsets\trade.hpp" />
+    <ClInclude Include="src\database\records\trade.hpp" />
     <ClInclude Include="src\database\enums\action.hpp" />
     <ClInclude Include="src\database\enums\assetType.hpp" />
+    <ClInclude Include="src\database\recordset.hpp" />
     <ClInclude Include="src\pattern\abstractFactory.hpp" />
     <ClInclude Include="src\pattern\enumManager.hpp" />
     <ClInclude Include="src\pattern\singleton.hpp" />
@@ -142,7 +150,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="src\database\record.cpp" />
+    <ClCompile Include="src\database\connectors\sqlServer.cpp" />
+    <ClCompile Include="src\database\records\trade.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

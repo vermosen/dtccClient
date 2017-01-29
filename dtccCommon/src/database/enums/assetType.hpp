@@ -7,13 +7,13 @@ namespace dtcc
 {
 	namespace database
 	{
-		enum class assetType 
+		enum class assetType : char
 		{ 
-			  interestRate
-			, commodity
-			, equity
-			, currency
-			, credit 
+			  commodity		= 1
+			, credit		= 2
+			, equity		= 3
+			, currency		= 4
+			, interestRate	= 5
 		};
 	}
 
@@ -24,7 +24,7 @@ namespace dtcc
 		  { database::assetType::interestRate	, "IR" }
 		, { database::assetType::commodity		, "CO" }
 		, { database::assetType::equity			, "EQ" }
-		, { database::assetType::currency		, "CU" }
+		, { database::assetType::currency		, "FX" }
 		, { database::assetType::credit			, "CR" }
 	};
 }

@@ -68,6 +68,7 @@ artifacts/
 *.pidb
 *.svclog
 *.scc
+*.lib
 
 # Chutzpah Test files
 _Chutzpah*
@@ -240,3 +241,6 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/dtccConsole/My Inspector Results - dtccConsole
+/dtccConsole/My Amplifier XE Results - dtccConsole
+/dtccConsole/My Advisor Results - dtccConsole

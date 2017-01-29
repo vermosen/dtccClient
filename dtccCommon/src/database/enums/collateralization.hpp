@@ -7,12 +7,12 @@ namespace dtcc
 {
 	namespace database
 	{
-		enum class collateralization 
+		enum class collateralization : char
 		{ 
-			  fc
-			, oc
-			, pc
-			, uc 
+			  fc = 1
+			, oc = 2
+			, pc = 3
+			, uc = 4
 		};
 	}
 

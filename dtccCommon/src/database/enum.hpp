@@ -5,6 +5,7 @@
 #include "enums\assetType.hpp"
 #include "enums\collateralization.hpp"
 #include "enums\optionFamily.hpp"
+#include "enums\optionType.hpp"
 #include "enums\priceFormingContinuationData.hpp"
 
 #endif

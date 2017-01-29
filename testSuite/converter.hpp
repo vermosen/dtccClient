@@ -9,6 +9,7 @@ namespace testSuite
 	{
 	public:
 		static void charToInt();
+		static void stringToDoubleThousandSeparator();
 		static boost::unit_test_framework::test_suite* suite();
 	};
 }

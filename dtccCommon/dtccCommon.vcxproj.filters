@@ -34,7 +34,6 @@
     <ClInclude Include="src\application\compression\zip\file.hpp" />
     <ClInclude Include="src\application\compression\zip\method.hpp" />
     <ClInclude Include="src\pattern\abstractFactory.hpp" />
-    <ClInclude Include="src\database\record.hpp" />
     <ClInclude Include="src\database\enum.hpp" />
     <ClInclude Include="src\database\enums\action.hpp" />
     <ClInclude Include="src\database\enums\assetType.hpp" />
@@ -42,14 +41,21 @@
     <ClInclude Include="src\database\enums\optionFamily.hpp" />
     <ClInclude Include="src\database\enums\priceFormingContinuationData.hpp" />
     <ClInclude Include="src\pattern\enumManager.hpp" />
+    <ClInclude Include="src\database\enums\optionType.hpp" />
+    <ClInclude Include="src\database\connector.hpp" />
+    <ClInclude Include="src\database\recordset.hpp" />
+    <ClInclude Include="src\database\records\trade.hpp" />
+    <ClInclude Include="src\database\recordsets\trade.hpp" />
+    <ClInclude Include="src\database\connectors\sqlServer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\curl.cpp">
       <Filter>src\application</Filter>
     </ClCompile>
     <ClCompile Include="src\application\curl\fileUrl.cpp" />
-    <ClCompile Include="src\database\record.cpp" />
     <ClCompile Include="src\application\compression\zip.cpp" />
     <ClCompile Include="src\application\compression\zip\centralDirectoryFileHeader.cpp" />
+    <ClCompile Include="src\database\records\trade.cpp" />
+    <ClCompile Include="src\database\connectors\sqlServer.cpp" />
   </ItemGroup>
 </Project>

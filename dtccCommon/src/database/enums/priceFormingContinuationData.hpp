@@ -7,14 +7,14 @@ namespace dtcc
 {
 	namespace database
 	{
-		enum class priceFormingContinuationData
+		enum class priceFormingContinuationData : char
 		{
-			  amendment
-			, increase
-			, novation
-			, partialTermination
-			, termination
-			, trade
+			  amendment = 1
+			, increase = 2
+			, novation = 3
+			, partialTermination = 4
+			, termination = 5
+			, trade = 6
 		};
 	}
 

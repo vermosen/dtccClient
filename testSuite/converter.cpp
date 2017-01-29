@@ -29,10 +29,32 @@ namespace testSuite
 		}
 	}
 
+	void converter::stringToDoubleThousandSeparator()
+	{
+		std::string input = "1,234,567.89";
+
+		std::istringstream buffer(input);
+		buffer.imbue(std::locale(""));
+
+		double res;
+		buffer >> res;
+
+		double val = 1234567.89;
+
+		if (std::abs(res - val) > 0.001)
+		{
+			BOOST_ERROR("\n" <<
+				" Failed!" <<
+				" Expected result: " << val << "\n"
+				" Obtained: " << res);
+		}
+	}
+
 	boost::unit_test_framework::test_suite * converter::suite()
 	{
 		boost::unit_test_framework::test_suite * suite = BOOST_TEST_SUITE("compression Tests");
 		suite->add(BOOST_TEST_CASE(&converter::charToInt));
+		suite->add(BOOST_TEST_CASE(&converter::stringToDoubleThousandSeparator));
 		return suite;
 	}
 }

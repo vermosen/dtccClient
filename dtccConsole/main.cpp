@@ -13,7 +13,7 @@
 #include <exception>
 
 #include <boost/thread.hpp>
-
+#include <boost/chrono.hpp>
 
 #include "application/curl/fileUrl.hpp"
 #include "application/logger.hpp"
@@ -21,7 +21,7 @@
 #include "application/compression/archive.hpp"
 #include "application/compression/zip.hpp"
 
-#include "database/record.hpp"
+#include "database/records/trade.hpp"
 
 struct asset
 {
@@ -38,6 +38,12 @@ struct configuration
 	std::vector<asset> assets_;
 	std::string baseUrl_;
 };
+
+// locale
+const std::locale format(std::locale::classic(), new boost::gregorian::date_facet("%Y_%m_%d"));
+
+// chrono
+boost::chrono::high_resolution_clock::time_point start;
 
 int main(int * argc, char ** argv)
 {
@@ -61,8 +67,6 @@ int main(int * argc, char ** argv)
 			{ asset{ dtcc::database::assetType::commodity, "COMMODITIES" } },
 			"https://kgc0418-tdw-data-0.s3.amazonaws.com/slices/"
 		};
-
-		const std::locale format(std::locale::classic(), new boost::gregorian::date_facet("%Y_%m_%d"));
 
 		auto dt = config.start_;
 
@@ -103,6 +107,8 @@ int main(int * argc, char ** argv)
 
 						std::string linebuf; 
 						std::getline(file, linebuf, '\n');			// trash the header
+
+						start = boost::chrono::high_resolution_clock::now();
 						int i = 0; while (std::getline(file, linebuf, '\n'))
 						{	
 							if (i == buffSize)
@@ -115,6 +121,10 @@ int main(int * argc, char ** argv)
 							recs.push_back(dtcc::database::record(linebuf));
 							i++; 
 						}
+
+						LOG_INFO()	<< "Conversion done in " 
+									<< boost::chrono::duration_cast<boost::chrono::milliseconds> (
+										boost::chrono::high_resolution_clock::now() - start);
 					}
 				}
 			}
