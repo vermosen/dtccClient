@@ -150,6 +150,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="src\application\logger.cpp" />
     <ClCompile Include="src\database\connectors\sqlServer.cpp" />
     <ClCompile Include="src\database\recordsets\tradeRecordset.cpp" />
     <ClCompile Include="src\database\records\tradeRecord.cpp" />

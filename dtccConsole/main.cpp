@@ -52,8 +52,7 @@ int main(int * argc, char ** argv)
 	{
 		// locale
 		const std::locale format(std::locale::classic(), new boost::gregorian::date_facet("%Y_%m_%d"));
-
-		dtcc::logger::setLogger("dtccConsole_%Y%m%d.log", dtcc::logger::Info);
+		dtcc::logger::initialize("dtccConsole_%Y%m%d.log", dtcc::severity::info);
 		LOG_INFO() << "Application is starting";
 
 		// create the db object

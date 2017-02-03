@@ -25,138 +25,53 @@
 #include <boost/log/utility/value_ref.hpp>
 #include <boost/phoenix/bind/bind_function_object.hpp>
 
-using namespace boost::log;
-
 namespace dtcc
 {
-	namespace logger
+	enum severity : short
 	{
-		enum type : short
-		{
-			Debug	= 0,
-			Info	= 1,
-			Warning = 2,
-			Error	= 3
-		};
-	}
+		debug	= 0,
+		info	= 1,
+		warning = 2,
+		error	= 3,
+		fatal   = 4
+	};
 }
 
 namespace
 {
 	// define the keywords to use in filter and formatter
-	BOOST_LOG_ATTRIBUTE_KEYWORD(severity, "Severity", dtcc::logger::type)
-	BOOST_LOG_ATTRIBUTE_KEYWORD(timestamp, "TimeStamp", attributes::utc_clock::value_type)
-	BOOST_LOG_ATTRIBUTE_KEYWORD(processid, "PID", attributes::current_process_id::value_type)
-	BOOST_LOG_ATTRIBUTE_KEYWORD(threadid, "Thread", attributes::current_thread_id::value_type)
+	BOOST_LOG_ATTRIBUTE_KEYWORD(severity_t	, "Severity"	, dtcc::severity)
+	BOOST_LOG_ATTRIBUTE_KEYWORD(timestamp	, "TimeStamp"	, boost::log::attributes::utc_clock::value_type)
+	BOOST_LOG_ATTRIBUTE_KEYWORD(processid	, "PID"			, boost::log::attributes::current_process_id::value_type)
+	BOOST_LOG_ATTRIBUTE_KEYWORD(threadid	, "Thread"		, boost::log::attributes::current_thread_id::value_type)
 }
+
+// macros to get log streams
+#define LOG_DEBUG()     BOOST_LOG_SEV(dtcc::logger::getLogger(), dtcc::severity::debug	)
+#define LOG_INFO()      BOOST_LOG_SEV(dtcc::logger::getLogger(), dtcc::severity::info	)
+#define LOG_WARNING()   BOOST_LOG_SEV(dtcc::logger::getLogger(), dtcc::severity::warning)
+#define LOG_ERROR()     BOOST_LOG_SEV(dtcc::logger::getLogger(), dtcc::severity::error	)
+#define LOG_FATAL()     BOOST_LOG_SEV(dtcc::logger::getLogger(), dtcc::severity::fatal	)
+#define LOG()           LOG_INFO()
 
 namespace dtcc
 {
-	namespace logger
+	// logger type with severity level and multithread support
+	class logger
 	{
-		// logger type with severity level and multithread support
-		typedef sources::severity_logger_mt<type> logger_t;
+	public:
+		typedef boost::log::sources::severity_logger_mt<severity>							logger_t;
+		typedef boost::log::sinks::synchronous_sink<boost::log::sinks::text_file_backend>	sink_t	;
 
-		// textfile sink with synchronization support
-		typedef sinks::synchronous_sink<sinks::text_file_backend> sink_t;
+		static void			initialize	(const std::string & fileName, severity threshold = warning);
+		static logger_t &	getLogger	();
+		static bool			levelFilter	(boost::log::value_ref<severity, tag::severity_t> const& level);
 
-		static type threshold_;
-		static boost::shared_ptr<logger_t> logger_;
-
-		// the filter used to filter log records according to level
-		static bool levelFilter(value_ref< type, tag::severity> const& level)
-		{
-			return level >= threshold_;
-		}
-
-		static void setLogger(const std::string & fileName, type threshold = Warning)
-		{
-			// TODO Auto-generated constructor stub
-			// create a logger
-			logger_ = boost::shared_ptr<logger_t>(new logger_t());
-
-			threshold_ = threshold;
-
-			auto c = boost::log::core::get();
-
-			// add attributes
-			c->add_global_attribute("TimeStamp", attributes::utc_clock());
-			c->add_global_attribute("ProcessID", attributes::current_process_id());
-			c->add_global_attribute("ThreadID", attributes::current_thread_id());
-
-			// add level filter
-			c->set_filter(boost::phoenix::bind(&levelFilter, severity.or_none()));
-
-			// create a sink with max size and automatic rotation
-			boost::shared_ptr< sinks::text_file_backend > backend =
-				boost::make_shared<sinks::text_file_backend>
-				(
-					//keywords::target = "localhost",
-					keywords::auto_flush			= false,
-					keywords::file_name				= fileName,						// filename
-					keywords::open_mode				= std::ios_base::app | std::ios_base::out,
-					keywords::rotation_size			= 10 * 1024 * 1024,			// 10 MB
-					keywords::time_based_rotation	= sinks::file::rotation_at_time_point(0, 0, 0)
-				);
-
-			// autoflush
-			//backend->auto_flush(true);
-
-			// createe the actual sink
-			boost::shared_ptr<sink_t> sink(new sink_t(backend));
-
-			// sink formatter
-			sink->set_formatter
-			(
-				expressions::stream
-				<< "[" << expressions::format_date_time(timestamp, "%Y-%m-%d %H:%M:%S") << "]"
-				<< " <" << severity << "> "
-				<< expressions::smessage
-			);
-
-			// add sink
-			c->add_sink(sink);
-		}
-
-		// stream output support for log_level
-		static std::ostream& operator<<(std::ostream& stream, type level)
-		{
-			static const char * strings[] =
-			{
-				"debug ",
-				" info ",
-				" warn ",
-				"error "
-			};
-
-			unsigned int l = static_cast<size_t>(level);
-
-			if (l >= 0 && l < sizeof(strings) / sizeof(strings[0]))
-			{
-				stream << strings[l];
-			}
-			else
-			{
-				stream << l;
-			}
-
-			return stream;
-		}
+	private:
+		static severity threshold_	;
+		static logger_t logger_		;
+		static bool		initialized_;
 	};
 } /* namespace dtcc */
-
-namespace
-{
-	// macros to get log streams
-#define LOG_DEBUG()     BOOST_LOG_STREAM_SEV(*dtcc::logger::logger_, dtcc::logger::Debug) \
-		<< __FUNCTION__ << "(): "
-#define LOG_INFO()      BOOST_LOG_STREAM_SEV(*dtcc::logger::logger_, dtcc::logger::Info) \
-		<< __FUNCTION__ << "(): "
-#define LOG_WARNING()   BOOST_LOG_STREAM_SEV(*dtcc::logger::logger_, dtcc::logger::Warning) \
-		<< __FUNCTION__ << "(): "
-#define LOG_ERROR()     BOOST_LOG_STREAM_SEV(*dtcc::logger::logger_, dtcc::logger::Error) \
-		<< __FUNCTION__ << "(): "
-#define LOG()           LOG_INFO()
-}
 
 #endif /* APPLICATION_LOGGER_HPP_ */

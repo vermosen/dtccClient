@@ -37,8 +37,7 @@ namespace dtcc
 			}
 			catch (const std::exception & ex)
 			{
-				BOOST_LOG_STREAM_SEV(*dtcc::logger::logger_, dtcc::logger::Error) << "Failed to insert data in the database: ";
-				//LOG_ERROR() << "Failed to insert data in the database: ";// << ex.what();
+				LOG_ERROR() << "Failed to insert data in the database: " << ex.what();
 				connector_->session()->rollback();
 				return std::vector<keyType>();
 			}

@@ -8,7 +8,7 @@ namespace testSuite
 
 		try
 		{
-			dtcc::logger::setLogger("dtccTestSuite.log", dtcc::logger::type::Info);
+			dtcc::logger::initialize("dtccTestSuite.log", dtcc::severity::info);
 			LOG_INFO() << "Test is starting";
 			LOG_INFO() << "Hello World!";
 		}

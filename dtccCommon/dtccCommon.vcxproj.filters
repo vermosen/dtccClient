@@ -58,5 +58,6 @@
     <ClCompile Include="src\database\connectors\sqlServer.cpp" />
     <ClCompile Include="src\database\records\tradeRecord.cpp" />
     <ClCompile Include="src\database\recordsets\tradeRecordset.cpp" />
+    <ClCompile Include="src\application\logger.cpp" />
   </ItemGroup>
 </Project>
