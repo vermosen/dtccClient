@@ -44,9 +44,9 @@
     <ClInclude Include="src\database\enums\optionType.hpp" />
     <ClInclude Include="src\database\connector.hpp" />
     <ClInclude Include="src\database\recordset.hpp" />
-    <ClInclude Include="src\database\records\trade.hpp" />
-    <ClInclude Include="src\database\recordsets\trade.hpp" />
     <ClInclude Include="src\database\connectors\sqlServer.hpp" />
+    <ClInclude Include="src\database\records\tradeRecord.hpp" />
+    <ClInclude Include="src\database\recordsets\tradeRecordset.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\curl.cpp">
@@ -55,7 +55,8 @@
     <ClCompile Include="src\application\curl\fileUrl.cpp" />
     <ClCompile Include="src\application\compression\zip.cpp" />
     <ClCompile Include="src\application\compression\zip\centralDirectoryFileHeader.cpp" />
-    <ClCompile Include="src\database\records\trade.cpp" />
     <ClCompile Include="src\database\connectors\sqlServer.cpp" />
+    <ClCompile Include="src\database\records\tradeRecord.cpp" />
+    <ClCompile Include="src\database\recordsets\tradeRecordset.cpp" />
   </ItemGroup>
 </Project>

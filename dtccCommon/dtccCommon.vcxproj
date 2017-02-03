@@ -53,7 +53,7 @@
     <TargetName>$(ProjectName)_$(Plateform)_$(PlatformToolset)_sd</TargetName>
     <OutDir>$(SolutionDir)lib\</OutDir>
     <IncludePath>.\src;$(INCLUDE);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>C:\build\soci\lib\$(Configuration);$(LIB);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -132,8 +132,8 @@
     <ClInclude Include="src\application\logger.hpp" />
     <ClInclude Include="src\application\service.hpp" />
     <ClInclude Include="src\application\compression\zip.hpp" />
-    <ClInclude Include="src\database\recordsets\trade.hpp" />
-    <ClInclude Include="src\database\records\trade.hpp" />
+    <ClInclude Include="src\database\recordsets\tradeRecordset.hpp" />
+    <ClInclude Include="src\database\records\tradeRecord.hpp" />
     <ClInclude Include="src\database\enums\action.hpp" />
     <ClInclude Include="src\database\enums\assetType.hpp" />
     <ClInclude Include="src\database\recordset.hpp" />
@@ -151,7 +151,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="src\database\connectors\sqlServer.cpp" />
-    <ClCompile Include="src\database\records\trade.cpp" />
+    <ClCompile Include="src\database\recordsets\tradeRecordset.cpp" />
+    <ClCompile Include="src\database\records\tradeRecord.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

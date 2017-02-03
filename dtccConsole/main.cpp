@@ -21,7 +21,9 @@
 #include "application/compression/archive.hpp"
 #include "application/compression/zip.hpp"
 
-#include "database/records/trade.hpp"
+#include "database/records/tradeRecord.hpp"
+#include "database/connectors/sqlServer.hpp"
+#include "database/recordsets/tradeRecordset.hpp"
 
 struct asset
 {
@@ -39,9 +41,6 @@ struct configuration
 	std::string baseUrl_;
 };
 
-// locale
-const std::locale format(std::locale::classic(), new boost::gregorian::date_facet("%Y_%m_%d"));
-
 // chrono
 boost::chrono::high_resolution_clock::time_point start;
 
@@ -51,9 +50,17 @@ int main(int * argc, char ** argv)
 
 	try
 	{
+		// locale
+		const std::locale format(std::locale::classic(), new boost::gregorian::date_facet("%Y_%m_%d"));
+
 		dtcc::logger::setLogger("dtccConsole_%Y%m%d.log", dtcc::logger::Info);
 		LOG_INFO() << "Application is starting";
-		LOG_INFO() << "Trying to create a new Windows service";
+
+		// create the db object
+		LOG_INFO() << "Trying to connect to sql server";
+		boost::shared_ptr<dtcc::database::connector> db(new dtcc::database::sqlServer());
+		db->connect("dsn=sqlServer");
+		dtcc::database::tradeRecordset rs(db);
 
 		/*
 		 * we load the settings here. For now we'll
@@ -74,7 +81,7 @@ int main(int * argc, char ** argv)
 		dtcc::curl * cnx = new dtcc::fileUrl();
 
 		size_t buffSize = 1000;
-		std::vector<dtcc::database::record> recs;			// data buffer
+		std::vector<dtcc::database::tradeRecord> recs;			// data buffer
 		recs.reserve(buffSize);
 
 		// main loop
@@ -111,14 +118,15 @@ int main(int * argc, char ** argv)
 						start = boost::chrono::high_resolution_clock::now();
 						int i = 0; while (std::getline(file, linebuf, '\n'))
 						{	
-							if (i == buffSize)
+							if (i >= buffSize)
 							{
 								// release the buffer toward the database
+								rs.insert(recs);
 								recs.clear();
 								i = 0;
 							}
 
-							recs.push_back(dtcc::database::record(linebuf));
+							recs.push_back(dtcc::database::tradeRecord(linebuf));
 							i++; 
 						}
 

@@ -16,9 +16,6 @@ namespace dtcc
 {
 	namespace database
 	{
-		/*
-		* K is the key, T is the record
-		*/
 		class sqlServer : public connector
 		{
 		public:
@@ -27,4 +24,4 @@ namespace dtcc
 		};
 	}
 }
-#endif /* RECORDSET_HPP_ */
+#endif /* CONNECTORS_SQL_SERVER_HPP_ */
