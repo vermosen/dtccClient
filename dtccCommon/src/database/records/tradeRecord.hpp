@@ -1,5 +1,5 @@
-#ifndef RECORD_HPP_
-#define RECORD_HPP_
+#ifndef TRADE_RECORD_HPP_
+#define TRADE_RECORD_HPP_
 
 #include <string>
 
@@ -7,13 +7,13 @@
 #include <boost/optional.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/config/warning_disable.hpp>
-#include <boost/spirit/include/qi.hpp>
-#include <boost/spirit/include/phoenix_core.hpp>
-#include <boost/spirit/include/phoenix_operator.hpp>
-#include <boost/spirit/include/phoenix_object.hpp>
-#include <boost/fusion/include/adapt_struct.hpp>
-#include <boost/fusion/include/io.hpp>
+//#include <boost/config/warning_disable.hpp>
+//#include <boost/spirit/include/qi.hpp>
+//#include <boost/spirit/include/phoenix_core.hpp>
+//#include <boost/spirit/include/phoenix_operator.hpp>
+//#include <boost/spirit/include/phoenix_object.hpp>
+//#include <boost/fusion/include/adapt_struct.hpp>
+//#include <boost/fusion/include/io.hpp>
 
 #include "pattern/abstractFactory.hpp"
 
@@ -23,6 +23,9 @@ namespace dtcc
 {
 	namespace database
 	{
+		typedef boost::optional<boost::gregorian::date> tOptDate;
+		typedef boost::posix_time::ptime tTime;
+
 		class tradeRecord
 		{
 			friend class tradeRecordset;
@@ -31,18 +34,18 @@ namespace dtcc
 			typedef std::array<char, 3> ccy;
 
 		//private:
-			int64_t									DISSEMINATION_ID;
-			boost::optional<int64_t>				ORIGINAL_DISSEMINATION_ID;
+			int										DISSEMINATION_ID;
+			boost::optional<int>					ORIGINAL_DISSEMINATION_ID;
 			action									ACTION;
-			boost::posix_time::ptime				EXECUTION_TIMESTAMP;
+			tTime									EXECUTION_TIMESTAMP;
 			cleared									CLEARED;
 			collateralization						INDICATION_OF_COLLATERALIZATION;
 			boost::optional<bool>					INDICATION_OF_END_USER_EXCEPTION;
 			bool									INDICATION_OF_OTHER_PRICE_AFFECTING_TERM;
 			bool									BLOCK_TRADES_AND_LARGE_NOTIONAL_OFFFACILITY_SWAPS;
 			boost::optional<bool>					EXECUTION_VENUE;
-			boost::optional<boost::gregorian::date>	EFFECTIVE_DATE;
-			boost::optional<boost::gregorian::date> END_DATE;
+			tOptDate								EFFECTIVE_DATE;
+			tOptDate								END_DATE;
 			//std::string								DAY_COUNT_CONVENTION;
 			//boost::optional<ccy>					SETTLEMENT_CURRENCY;
 			//assetType								ASSET_CLASS;

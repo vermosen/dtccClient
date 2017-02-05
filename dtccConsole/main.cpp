@@ -8,24 +8,12 @@
 #include <unistd.h>
 #endif
 
-#include <array>
-#include <fstream>
-#include <exception>
+#include <vector>
 
-#include <boost/thread.hpp>
 #include <boost/chrono.hpp>
-#include <boost/optional/optional_io.hpp>
 
-#include "application/curl/fileUrl.hpp"
-#include "application/logger.hpp"
-#include "application/service.hpp"
-#include "application/compression/archive.hpp"
-#include "application/compression/zip.hpp"
-
-#include "database/records/tradeRecord.hpp"
 #include "database/recordsets/tradeRecordset.hpp"
 #include "database/records/tradeRecordGrammar.hpp"
-#include "database/connectors/sqlServer.hpp"
 
 #define TESTT
 #ifdef TESTT
@@ -34,16 +22,18 @@ boost::chrono::high_resolution_clock::time_point start;
 
 int main(int * argc, char ** argv)
 {
-	dtcc::database::tradeRecordGrammar<std::string::const_iterator> g; // Our grammar
+	tradeRecordGrammar<std::string::const_iterator> g; // Our grammar
 
 	start = boost::chrono::high_resolution_clock::now();
 	int i = 0;  while (i++ < 1)
 	{
 		std::vector<std::string> recs = 
 		{
-			"\"58919739\",\"58919739\",\"NEW\",\"2017-01-24T05:47:46\",\"U\",\"\",\"Y\",\"Y\",\"Y\",\"ON\"",
-			"\"58919739\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"FC\",\"\",\"N\",\"Y\",\"\"",
-			"\"58919739\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"UC\",\"N\",\"Y\",\"Y\",\"OFF\""
+			"\"1\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"U\",\"OC\",\"\",\"Y\",\"N\",\"ON\",\"2016-01-12\",\"\"",
+			"\"3\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"FC\",\"\",\"N\",\"Y\",\"\",\"\",\"2027-03-24\"",
+			"\"4\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"OC\",\"N\",\"Y\",\"Y\",\"OFF\",\"2017-04-24\",\"2027-04-24\"",
+			"\"5\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"UC\",\"N\",\"Y\",\"Y\",\"OFF\",\"\",\"\"",
+			"\"2\",\"58919739\",\"NEW\",\"2017-01-24T05:47:46\",\"U\",\"\",\"Y\",\"Y\",\"Y\",\"ON\",\"2017-02-24\",\"\"",
 		};
 
 		for (auto it = recs.begin(); it != recs.end(); it++)
@@ -90,6 +80,20 @@ int main(int * argc, char ** argv)
 }
 
 #else
+#include <fstream>
+#include <exception>
+#include <array>
+
+#include <boost/thread.hpp>
+
+#include "application/curl/fileUrl.hpp"
+#include "application/logger.hpp"
+#include "application/service.hpp"
+#include "application/compression/archive.hpp"
+#include "application/compression/zip.hpp"
+
+#include "database/connectors/sqlServer.hpp"
+
 // temporary
 struct configuration
 {
