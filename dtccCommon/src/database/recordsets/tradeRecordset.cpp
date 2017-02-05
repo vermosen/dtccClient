@@ -8,12 +8,13 @@ namespace dtcc
 
 		using ::operator<<;
 
-		tradeRecordset::tradeRecordset(boost::shared_ptr<connector> conn) : recordset<keyType, recordType>(conn) {}
+		tradeRecordset::tradeRecordset(boost::shared_ptr<connector> conn) 
+			: recordset<keyType, recordType>(conn) {}
 
-		std::vector<tradeRecordset::keyType> tradeRecordset::insert(const std::vector<tradeRecordset::recordType> & records)
+		std::vector<tradeRecordset::keyType> tradeRecordset::insert(
+			const std::vector<tradeRecordset::recordType> & records)
 		{
 			std::vector<keyType> ids;
-
 			connector_->session()->begin();
 
 			try
@@ -21,14 +22,14 @@ namespace dtcc
 				// step 2: insert into index and get index ids in return
 				for (auto it = records.cbegin(); it != records.cend(); ++it)
 				{
-					int id;
+					int id = 0;
 
-					connector_->session()->once
-						<< "INSERT INTO dbo.testTable (text)"
-						<< " VALUES 'toto'"
-						<< " RETURNING id",
-						soci::use(it->TAXONOMY, "toto"),
-						soci::into(id);
+					//connector_->session()->once
+					//	<< "INSERT INTO dbo.testTable (text)"
+					//	<< " VALUES 'toto'"
+					//	<< " RETURNING id",
+					//	soci::use(it->TAXONOMY, "toto"),
+					//	soci::into(id);
 
 					ids.push_back(id);
 				}

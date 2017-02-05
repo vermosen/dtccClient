@@ -47,7 +47,7 @@
     <OutDir>$(SolutionDir)lib\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(Plateform)_$(PlatformToolset)_s</TargetName>
-    <LibraryPath>C:\build\soci\lib\$(Configuration);$(LIB);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetName>$(ProjectName)_$(Plateform)_$(PlatformToolset)_sd</TargetName>
@@ -125,6 +125,7 @@
     <ClInclude Include="src\database\connector.hpp" />
     <ClInclude Include="src\database\connectors\sqlServer.hpp" />
     <ClInclude Include="src\database\enum.hpp" />
+    <ClInclude Include="src\database\enums\cleared.hpp" />
     <ClInclude Include="src\database\enums\collateralization.hpp" />
     <ClInclude Include="src\database\enums\optionFamily.hpp" />
     <ClInclude Include="src\database\enums\optionType.hpp" />
@@ -133,6 +134,7 @@
     <ClInclude Include="src\application\service.hpp" />
     <ClInclude Include="src\application\compression\zip.hpp" />
     <ClInclude Include="src\database\recordsets\tradeRecordset.hpp" />
+    <ClInclude Include="src\database\records\tradeRecordGrammar.hpp" />
     <ClInclude Include="src\database\records\tradeRecord.hpp" />
     <ClInclude Include="src\database\enums\action.hpp" />
     <ClInclude Include="src\database\enums\assetType.hpp" />

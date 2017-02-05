@@ -47,6 +47,8 @@
     <ClInclude Include="src\database\connectors\sqlServer.hpp" />
     <ClInclude Include="src\database\records\tradeRecord.hpp" />
     <ClInclude Include="src\database\recordsets\tradeRecordset.hpp" />
+    <ClInclude Include="src\database\records\tradeRecordGrammar.hpp" />
+    <ClInclude Include="src\database\enums\cleared.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\curl.cpp">

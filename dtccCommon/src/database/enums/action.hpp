@@ -20,7 +20,7 @@ namespace dtcc
 		enumConversions<database::action>::enumToStringVector =
 	{
 		 { database::action::_new	, "NEW"		}
-		,{ database::action::cancel	, "DELETE"	}
+		,{ database::action::cancel	, "CANCEL"	}
 		,{ database::action::correct, "CORRECT" }
 	};
 }

@@ -8,11 +8,6 @@
 #ifndef APPLICATION_LOGGER_HPP_
 #define APPLICATION_LOGGER_HPP_
 
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <fstream>
-#include <boost/smart_ptr/make_shared_object.hpp>
 #include <boost/log/core.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/log/attributes.hpp>
@@ -21,9 +16,7 @@
 #include <boost/log/sources/record_ostream.hpp>
 #include <boost/log/sinks/sync_frontend.hpp>
 #include <boost/log/sinks/text_file_backend.hpp>
-#include <boost/log/support/date_time.hpp>
 #include <boost/log/utility/value_ref.hpp>
-#include <boost/phoenix/bind/bind_function_object.hpp>
 
 namespace dtcc
 {

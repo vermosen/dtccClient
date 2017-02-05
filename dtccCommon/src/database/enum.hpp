@@ -7,5 +7,6 @@
 #include "enums\optionFamily.hpp"
 #include "enums\optionType.hpp"
 #include "enums\priceFormingContinuationData.hpp"
+#include "enums\cleared.hpp"
 
 #endif

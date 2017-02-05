@@ -14,6 +14,7 @@
 
 #include <boost/thread.hpp>
 #include <boost/chrono.hpp>
+#include <boost/optional/optional_io.hpp>
 
 #include "application/curl/fileUrl.hpp"
 #include "application/logger.hpp"
@@ -22,23 +23,88 @@
 #include "application/compression/zip.hpp"
 
 #include "database/records/tradeRecord.hpp"
-#include "database/connectors/sqlServer.hpp"
 #include "database/recordsets/tradeRecordset.hpp"
+#include "database/records/tradeRecordGrammar.hpp"
+#include "database/connectors/sqlServer.hpp"
 
-struct asset
+#define TESTT
+#ifdef TESTT
+
+boost::chrono::high_resolution_clock::time_point start;
+
+int main(int * argc, char ** argv)
 {
-	// TODO: use the assetType factory
-	dtcc::database::assetType type_;
-	std::string fileStr_;
-};
+	dtcc::database::tradeRecordGrammar<std::string::const_iterator> g; // Our grammar
 
+	start = boost::chrono::high_resolution_clock::now();
+	int i = 0;  while (i++ < 1)
+	{
+		std::vector<std::string> recs = 
+		{
+			"\"58919739\",\"58919739\",\"NEW\",\"2017-01-24T05:47:46\",\"U\",\"\",\"Y\",\"Y\",\"Y\",\"ON\"",
+			"\"58919739\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"FC\",\"\",\"N\",\"Y\",\"\"",
+			"\"58919739\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"UC\",\"N\",\"Y\",\"Y\",\"OFF\""
+		};
+
+		for (auto it = recs.begin(); it != recs.end(); it++)
+		{
+			dtcc::database::tradeRecord emp;
+			std::string::const_iterator iter = it->begin(), end = it->end(); 
+			if (boost::spirit::qi::phrase_parse(iter, end, g, boost::spirit::ascii::space, emp) && iter == end)
+			{
+				std::cout << "DISSEMINATION_ID: " << emp.DISSEMINATION_ID << std::endl;
+				std::cout << "ORIGINAL_DISSEMINATION_ID: " << emp.ORIGINAL_DISSEMINATION_ID << std::endl;
+				std::cout << "ACTION: " << emp.ACTION << std::endl;
+				std::cout << "EXECUTION_TIMESTAMP: " << emp.EXECUTION_TIMESTAMP << std::endl;
+				std::cout << "CLEARED: " << emp.CLEARED << std::endl;
+				std::cout << "INDICATION_OF_COLLATERALIZATION: " << emp.INDICATION_OF_COLLATERALIZATION << std::endl;
+				if (!emp.INDICATION_OF_END_USER_EXCEPTION)
+					std::cout << "INDICATION_OF_END_USER_EXCEPTION: (none)" << std::endl;
+				else
+					std::cout << "INDICATION_OF_END_USER_EXCEPTION: " << emp.INDICATION_OF_END_USER_EXCEPTION.get() << std::endl;
+
+				std::cout << "INDICATION_OF_OTHER_PRICE_AFFECTING_TERM: " << emp.INDICATION_OF_OTHER_PRICE_AFFECTING_TERM << std::endl;
+				std::cout << "BLOCK_TRADES_AND_LARGE_NOTIONAL_OFFFACILITY_SWAPS: " << emp.BLOCK_TRADES_AND_LARGE_NOTIONAL_OFFFACILITY_SWAPS << std::endl;
+				
+				if (!emp.EXECUTION_VENUE)
+					std::cout << "EXECUTION_VENUE: (none)" << std::endl;
+				else
+					std::cout << "EXECUTION_VENUE: " << emp.EXECUTION_VENUE.get() << std::endl;
+
+				std::cout << "-------------------------" << std::endl;
+			}
+			else
+			{
+				std::cout << "-------------------------\n";
+				std::cout << "Parsing failed\n";
+				std::cout << "-------------------------\n";
+			}
+		}
+	}
+
+	std::cout << "Conversion done in " << boost::chrono::duration_cast<boost::chrono::milliseconds> (
+		boost::chrono::high_resolution_clock::now() - start) << std::endl;
+
+	system("pause");
+	return 0;
+}
+
+#else
 // temporary
 struct configuration
 {
+	struct asset
+	{
+		// TODO: use the assetType factory
+		dtcc::database::assetType type_;
+		std::string fileStr_;
+	};
+
 	boost::gregorian::date start_;
 	boost::gregorian::date end_;
 	std::vector<asset> assets_;
 	std::string baseUrl_;
+	int bufferSize_;
 };
 
 // chrono
@@ -70,18 +136,17 @@ int main(int * argc, char ** argv)
 		{
 			boost::gregorian::from_simple_string("2017-01-10"),
 			boost::gregorian::from_simple_string("2017-01-10"),
-			{ asset{ dtcc::database::assetType::commodity, "COMMODITIES" } },
-			"https://kgc0418-tdw-data-0.s3.amazonaws.com/slices/"
+			{ configuration::asset { dtcc::database::assetType::commodity, "COMMODITIES" } },
+			"https://kgc0418-tdw-data-0.s3.amazonaws.com/slices/",
+			1000
 		};
 
 		auto dt = config.start_;
 
 		// build the curl object	
 		dtcc::curl * cnx = new dtcc::fileUrl();
-
-		size_t buffSize = 1000;
 		std::vector<dtcc::database::tradeRecord> recs;			// data buffer
-		recs.reserve(buffSize);
+		recs.reserve(config.bufferSize_);
 
 		// main loop
 		while (dt <= config.end_)
@@ -112,14 +177,13 @@ int main(int * argc, char ** argv)
 						LOG_INFO() << "Zip extraction successfull...";
 
 						std::string linebuf; 
-						std::getline(file, linebuf, '\n');			// trash the header
+						std::getline(file, linebuf, '\n');								// trash the header
 
 						start = boost::chrono::high_resolution_clock::now();
 						int i = 0; while (std::getline(file, linebuf, '\n'))
 						{	
-							if (i >= buffSize)
+							if (i >= config.bufferSize_)								// release the buffer toward the database
 							{
-								// release the buffer toward the database
 								rs.insert(recs);
 								recs.clear();
 								i = 0;
@@ -131,7 +195,7 @@ int main(int * argc, char ** argv)
 
 						LOG_INFO()	<< "Conversion done in " 
 									<< boost::chrono::duration_cast<boost::chrono::milliseconds> (
-										boost::chrono::high_resolution_clock::now() - start);
+									   boost::chrono::high_resolution_clock::now() - start);
 					}
 				}
 			}
@@ -152,33 +216,5 @@ int main(int * argc, char ** argv)
 	system("pause");
 	return ret;
 }
-
 #endif
-
-/*
-////// begin test
-std::stringstream sOut;
-std::stringstream sIn("hello world");
-
-{
-boost::iostreams::filtering_streambuf<boost::iostreams::output> out(sOut);
-boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
-in.push(boost::iostreams::zlib_compressor());
-in.push(sIn);
-boost::iostreams::copy(in, out);
-}
-
-sIn.clear(); sIn.seekp(0, std::ios::beg);
-sOut.seekg(0, std::ios::beg);
-
-{
-boost::iostreams::filtering_streambuf<boost::iostreams::output> out(sIn);
-boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
-in.push(boost::iostreams::zlib_decompressor());
-in.push(sOut);
-boost::iostreams::copy(in, out);
-}
-
-std::string res = sIn.str();
-////// end test
-*/
+#endif
