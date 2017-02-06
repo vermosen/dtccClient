@@ -29,11 +29,11 @@ int main(int * argc, char ** argv)
 	{
 		std::vector<std::string> recs = 
 		{
-			"\"1\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"U\",\"OC\",\"\",\"Y\",\"N\",\"ON\",\"2016-01-12\",\"\"",
-			"\"3\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"FC\",\"\",\"N\",\"Y\",\"\",\"\",\"2027-03-24\"",
-			"\"4\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"OC\",\"N\",\"Y\",\"Y\",\"OFF\",\"2017-04-24\",\"2027-04-24\"",
-			"\"5\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"UC\",\"N\",\"Y\",\"Y\",\"OFF\",\"\",\"\"",
-			"\"2\",\"58919739\",\"NEW\",\"2017-01-24T05:47:46\",\"U\",\"\",\"Y\",\"Y\",\"Y\",\"ON\",\"2017-02-24\",\"\"",
+			"\"1\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"U\",\"OC\",\"\",\"Y\",\"N\",\"ON\",\"2016-01-12\",\"\",\"ACT/360\",\"USD\",\"CO\",\"Energy\",\"Commodity:Agricultural:GrainsOilSeeds:Option:Physical\",\"Termination\",\"\",\"\",\"\",\"-1,123.235\"",
+			"\"3\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"FC\",\"\",\"N\",\"Y\",\"\",\"\",\"2027-03-24\",\"ACT/360\",\"USD\",\"CO\",\"Metal\",\"Commodity:Agricultural:GrainsOilSeeds:Option:Physical\",\"Termination\",\"CNY-CNREPOFIX=CFXS-Reuters\",\"\",\"Percent\",\"\"",
+			"\"4\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"OC\",\"N\",\"Y\",\"Y\",\"OFF\",\"2017-04-24\",\"2027-04-24\",\"\",\"USD\",\"CO\",\"Metal\",\"Commodity:Agricultural:GrainsOilSeeds:Option:Physical\",\"Termination\",\"\",\"FIXED\",\"Percent\",\"1.2365\"",
+			"\"5\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"UC\",\"N\",\"Y\",\"Y\",\"OFF\",\"\",\"\",\"ACT/360\",\"USD\",\"IR\",\"\",\"InterestRate:IRSwap:FixedFloat\",\"Termination\",\"CNY-CNREPOFIX=CFXS-Reuters\",\"FIXED\",\"Percent\",\"\"",
+			"\"2\",\"58919739\",\"NEW\",\"2017-01-24T05:47:46\",\"U\",\"\",\"Y\",\"Y\",\"Y\",\"ON\",\"2017-02-24\",\"\",\"\",\"\",\"FX\",\"\",\"\",\"Trade\",\"CNY-CNREPOFIX=CFXS-Reuters\",\"FIXED\",\"Percent\",\"2,000.000\"",
 		};
 
 		for (auto it = recs.begin(); it != recs.end(); it++)
@@ -60,6 +60,55 @@ int main(int * argc, char ** argv)
 					std::cout << "EXECUTION_VENUE: (none)" << std::endl;
 				else
 					std::cout << "EXECUTION_VENUE: " << emp.EXECUTION_VENUE.get() << std::endl;
+
+				if (!emp.EFFECTIVE_DATE)
+					std::cout << "EFFECTIVE_DATE: (none)" << std::endl;
+				else
+					std::cout << "EFFECTIVE_DATE: " << emp.EFFECTIVE_DATE.get() << std::endl;
+
+				if (!emp.END_DATE)
+					std::cout << "END_DATE: (none)" << std::endl;
+				else
+					std::cout << "END_DATE: " << emp.END_DATE.get() << std::endl;
+
+				if (!emp.SETTLEMENT_CURRENCY)
+					std::cout << "SETTLEMENT_CURRENCY: (none)" << std::endl;
+				else
+					std::cout << "SETTLEMENT_CURRENCY: " << emp.SETTLEMENT_CURRENCY.get() << std::endl;
+
+				std::cout << "ASSET_TYPE: " << emp.ASSET_CLASS << std::endl;
+
+				if (emp.SUBASSET_CLASS_FOR_OTHER_COMMODITY == "")
+					std::cout << "SUBASSET_CLASS_FOR_OTHER_COMMODITY: (none)" << std::endl;
+				else
+					std::cout << "SUBASSET_CLASS_FOR_OTHER_COMMODITY: " << emp.SUBASSET_CLASS_FOR_OTHER_COMMODITY << std::endl;
+
+				if (emp.TAXONOMY == "")
+					std::cout << "TAXONOMY: (none)" << std::endl;
+				else
+					std::cout << "TAXONOMY: " << emp.TAXONOMY << std::endl;
+
+				std::cout << "PRICE_FORMING_CONTINUATION_DATA: " << emp.PRICE_FORMING_CONTINUATION_DATA << std::endl;
+				
+				if (emp.UNDERLYING_ASSET_1 == "")
+					std::cout << "UNDERLYING_ASSET_1: (none)" << std::endl;
+				else
+					std::cout << "UNDERLYING_ASSET_1: " << emp.UNDERLYING_ASSET_1 << std::endl;
+
+				if (emp.UNDERLYING_ASSET_2 == "")
+					std::cout << "UNDERLYING_ASSET_2: (none)" << std::endl;
+				else
+					std::cout << "UNDERLYING_ASSET_2: " << emp.UNDERLYING_ASSET_2 << std::endl;
+
+				if (emp.PRICE_NOTATION_TYPE == "")
+					std::cout << "PRICE_NOTATION_TYPE: (none)" << std::endl;
+				else
+					std::cout << "PRICE_NOTATION_TYPE: " << emp.PRICE_NOTATION_TYPE << std::endl;
+
+				if (!emp.PRICE_NOTATION)
+					std::cout << "PRICE_NOTATION: (none)" << std::endl;
+				else
+					std::cout << "PRICE_NOTATION: " << emp.PRICE_NOTATION << std::endl;
 
 				std::cout << "-------------------------" << std::endl;
 			}

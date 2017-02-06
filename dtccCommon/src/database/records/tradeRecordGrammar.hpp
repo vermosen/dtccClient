@@ -41,8 +41,8 @@ BOOST_FUSION_ADAPT_STRUCT(
 	(boost::optional<bool>, EXECUTION_VENUE)
 	(boost::optional<boost::gregorian::date>, EFFECTIVE_DATE)
 	(boost::optional<boost::gregorian::date>, END_DATE)
-	/*(std::string, DAY_COUNT_CONVENTION)
-	(boost::optional<dtcc::database::tradeRecord::ccy>, SETTLEMENT_CURRENCY)
+	(std::string, DAY_COUNT_CONVENTION)
+	(dtcc::database::tOptCcy, SETTLEMENT_CURRENCY)
 	(dtcc::database::assetType, ASSET_CLASS)
 	(std::string, SUBASSET_CLASS_FOR_OTHER_COMMODITY)
 	(std::string, TAXONOMY)
@@ -51,7 +51,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 	(std::string, UNDERLYING_ASSET_2)
 	(std::string, PRICE_NOTATION_TYPE)
 	(boost::optional<double>, PRICE_NOTATION)
-	(std::string, ADDITIONAL_PRICE_NOTATION_TYPE)
+	/*(std::string, ADDITIONAL_PRICE_NOTATION_TYPE)
 	(std::string, ADDITIONAL_PRICE_NOTATION)
 	(std::string, NOTIONAL_CURRENCY_1)
 	(std::string, NOTIONAL_CURRENCY_2)
@@ -123,6 +123,36 @@ struct boost::spirit::traits::transform_attribute< dtcc::database::cleared, char
 };
 
 template<>
+struct boost::spirit::traits::transform_attribute< dtcc::database::assetType, std::string, boost::spirit::qi::domain>
+{
+	typedef std::string type;
+
+	static type pre(dtcc::database::assetType a) { return type(); }
+
+	static void post(dtcc::database::assetType& d, type const& v)
+	{
+		d = dtcc::EnumManager<dtcc::database::assetType>::toEnum(v);
+	}
+
+	static void fail(dtcc::database::assetType&) {}
+};
+
+template<>
+struct boost::spirit::traits::transform_attribute< dtcc::database::priceFormingContinuationData, std::string, boost::spirit::qi::domain>
+{
+	typedef std::string type;
+
+	static type pre(dtcc::database::priceFormingContinuationData a) { return type(); }
+
+	static void post(dtcc::database::priceFormingContinuationData& d, type const& v)
+	{
+		d = dtcc::EnumManager<dtcc::database::priceFormingContinuationData>::toEnum(v);
+	}
+
+	static void fail(dtcc::database::priceFormingContinuationData&) {}
+};
+
+template<>
 struct boost::spirit::traits::transform_attribute< dtcc::database::tTime, timeAdaptator, boost::spirit::qi::domain>
 {
 	typedef timeAdaptator type;
@@ -154,6 +184,70 @@ struct boost::spirit::traits::transform_attribute<dtcc::database::tOptDate, optD
 	static void fail(dtcc::database::tOptDate&) {}
 };
 
+
+// currency amount policy
+template <typename T>
+struct currencyPolicy : boost::spirit::qi::real_policies<T>
+{
+	//  No exponent
+	template <typename Iterator>
+	static bool
+		parse_exp(Iterator&, Iterator const&)
+	{
+		return false;
+	}
+
+	//  No exponent
+	template <typename Iterator, typename Attribute>
+	static bool
+		parse_exp_n(Iterator&, Iterator const&, Attribute&)
+	{
+		return false;
+	}
+
+	//  Thousands separated numbers
+	template <typename Iterator, typename Attribute>
+	static bool
+		parse_n(Iterator& first, Iterator const& last, Attribute& attr)
+	{
+		using boost::spirit::qi::uint_parser;
+		namespace qi = boost::spirit::qi;
+
+		uint_parser<unsigned, 10, 1, 3> uint3;
+		uint_parser<unsigned, 10, 3, 3> uint3_3;
+		uint_parser<unsigned, 10, 1, 6> uint1_6; // max 6 digits after the period
+
+		T result = 0;
+		if (parse(first, last, uint3, result))
+		{
+			bool hit = false;
+			T n;
+			Iterator save = first;
+
+			// TODO
+			while (qi::parse(first, last, ',') && qi::parse(first, last, uint3_3, n))
+			{
+				result = result * 1000 + n;
+				save = first;
+				hit = true;
+
+				if (*first == '.')
+				{
+					T result = 0;
+					if (parse(first, last, uint3, result))
+				}
+			}
+
+			first = save;
+
+			if (hit)
+				attr = result;
+			return hit;
+		}
+		return false;
+	}
+};
+
 using namespace boost::spirit;
 
 template <typename Iterator>
@@ -169,7 +263,10 @@ struct tradeRecordGrammar : qi::grammar<Iterator, dtcc::database::tradeRecord(),
 					|
 				qi::lexeme['"' >> (qi::int_) >> '"'];
 
-		rAction 
+		rOptString
+			%= qi::lexeme['"' >> *(ascii::char_ - '"') >> '"'];
+
+		rString 
 			%= qi::lexeme['"' >> +(ascii::char_ - '"') >> '"'];
 
 		rTime 
@@ -199,11 +296,23 @@ struct tradeRecordGrammar : qi::grammar<Iterator, dtcc::database::tradeRecord(),
 			%= qi::lexeme['"' >> qi::no_case[qi::eps > (qi::lit("ON")	[_val = true		] |
 														qi::lit("OFF")	[_val = false		] |
 														qi::lit("")		[_val = boost::none	])] >> '"'];
+		rOptCcy
+			%= ascii::no_case["\"\""]
+					|
+				qi::lexeme['"' >> ascii::char_ >> ascii::char_ >> ascii::char_ >> '"'];
+
+		rAssetClass
+			%= qi::lexeme['"' >> ascii::char_ >> ascii::char_ >> '"'];
+
+		rOptDouble
+			%= ascii::no_case["\"\""]
+					|
+				qi::lexeme['"' >> pCurrency >> '"'];
 
 		start %=
 			rInt >> ',' >>
 			rOptInt >> ',' >>
-			rAction >> ',' >>
+			rString >> ',' >>
 			rTime >> ',' >>
 			rCleared >> ',' >>
 			rIndOfCollat >> ',' >>
@@ -212,7 +321,17 @@ struct tradeRecordGrammar : qi::grammar<Iterator, dtcc::database::tradeRecord(),
 			rBool >> "," >>
 			rOptVenue >> "," >>
 			rOptDate >> ',' >>
-			rOptDate
+			rOptDate >> ',' >>
+			rOptString >> ',' >>
+			rOptCcy >> ',' >>
+			rAssetClass >> ',' >>
+			rOptString >> ',' >>
+			rOptString >> ',' >>
+			rString		>> ',' >>
+			rOptString	>> ',' >>
+			rOptString	>> ',' >>
+			rOptString >> ',' >>
+			rOptDouble
 			;
 	}
 
@@ -220,14 +339,20 @@ struct tradeRecordGrammar : qi::grammar<Iterator, dtcc::database::tradeRecord(),
 	qi::rule<Iterator, int(), ascii::space_type> rOptInt;
 	qi::rule<Iterator, timeAdaptator(), ascii::space_type> rTime;
 	qi::rule<Iterator, optDateAdaptator(), ascii::space_type> rOptDate;
-	qi::rule<Iterator, std::string(), ascii::space_type> rAction;
+	qi::rule<Iterator, std::string(), ascii::space_type> rString;
+	qi::rule<Iterator, std::string(), ascii::space_type> rOptString;
 	qi::rule<Iterator, char(), ascii::space_type> rCleared;
 	qi::rule<Iterator, std::string(), ascii::space_type> rIndOfCollat;
 	qi::rule<Iterator, boost::optional<bool>(), ascii::space_type>	rOptBool;
 	qi::rule<Iterator, bool(), ascii::space_type> rBool;
 	qi::rule<Iterator, boost::optional<bool>(), ascii::space_type> rOptVenue;
+	qi::rule<Iterator, dtcc::database::tOptCcy(), ascii::space_type> rOptCcy;
+	qi::rule<Iterator, std::string(), ascii::space_type> rAssetClass;
+	qi::rule<Iterator, boost::optional<double>(), ascii::space_type> rOptDouble;
 
 	qi::rule<Iterator, dtcc::database::tradeRecord(), ascii::space_type> start;
+
+	qi::real_parser<double, currencyPolicy<double> > pCurrency;
 };
 
 #endif

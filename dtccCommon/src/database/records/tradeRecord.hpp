@@ -7,13 +7,6 @@
 #include <boost/optional.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-//#include <boost/config/warning_disable.hpp>
-//#include <boost/spirit/include/qi.hpp>
-//#include <boost/spirit/include/phoenix_core.hpp>
-//#include <boost/spirit/include/phoenix_operator.hpp>
-//#include <boost/spirit/include/phoenix_object.hpp>
-//#include <boost/fusion/include/adapt_struct.hpp>
-//#include <boost/fusion/include/io.hpp>
 
 #include "pattern/abstractFactory.hpp"
 
@@ -25,15 +18,13 @@ namespace dtcc
 	{
 		typedef boost::optional<boost::gregorian::date> tOptDate;
 		typedef boost::posix_time::ptime tTime;
+		//typedef boost::optional<std::array<char, 3> > tOptCcy;
+		typedef boost::optional<std::string> tOptCcy;
 
 		class tradeRecord
 		{
 			friend class tradeRecordset;
 		public:
-			//tradeRecord(const std::string & line);
-			typedef std::array<char, 3> ccy;
-
-		//private:
 			int										DISSEMINATION_ID;
 			boost::optional<int>					ORIGINAL_DISSEMINATION_ID;
 			action									ACTION;
@@ -46,16 +37,16 @@ namespace dtcc
 			boost::optional<bool>					EXECUTION_VENUE;
 			tOptDate								EFFECTIVE_DATE;
 			tOptDate								END_DATE;
-			//std::string								DAY_COUNT_CONVENTION;
-			//boost::optional<ccy>					SETTLEMENT_CURRENCY;
-			//assetType								ASSET_CLASS;
-			//std::string								SUBASSET_CLASS_FOR_OTHER_COMMODITY;
-			//std::string								TAXONOMY;
-			//priceFormingContinuationData			PRICE_FORMING_CONTINUATION_DATA;
-			//std::string								UNDERLYING_ASSET_1;
-			//std::string								UNDERLYING_ASSET_2;
-			//std::string								PRICE_NOTATION_TYPE;
-			//boost::optional<double>					PRICE_NOTATION;
+			std::string								DAY_COUNT_CONVENTION;
+			tOptCcy									SETTLEMENT_CURRENCY;
+			assetType								ASSET_CLASS;
+			std::string								SUBASSET_CLASS_FOR_OTHER_COMMODITY;
+			std::string								TAXONOMY;
+			priceFormingContinuationData			PRICE_FORMING_CONTINUATION_DATA;
+			std::string								UNDERLYING_ASSET_1;
+			std::string								UNDERLYING_ASSET_2;
+			std::string								PRICE_NOTATION_TYPE;
+			boost::optional<double>					PRICE_NOTATION;
 			//std::string								ADDITIONAL_PRICE_NOTATION_TYPE;
 			//std::string								ADDITIONAL_PRICE_NOTATION;
 			//std::string								NOTIONAL_CURRENCY_1;
@@ -84,6 +75,6 @@ namespace dtcc
 	}
 }
 
-//const static std::string testString("\"58919739\", \"\", \"NEW\", \"2017-01-10T07:52:46\", \"U\", \"FC\", \"\", \"N\", \"N\", \"OFF\", \"2017-02-01\", \"2017-02-28\", \"\", \"\", \"CO\", \"Energy\", \"Commodity:Energy:Elec:Swap:Cash\", \"Trade\", \"ELECTRICITY-DAILY PHELIX BASE SPOT-EEX\", \"\", \"EUR:MWh\", \"40.9775\", \"\", \"\", \"MWH\", \"MWH\", \"3,400\", \"3,400\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"");
+//const static std::string testString("\"58919739\",\"\",\"NEW\",\"2017-01-10T07:52:46\",\"U\",\"FC\",\"\",\"N\",\"N\",\"OFF\",\"2017-02-01\",\"2017-02-28\",\"\",\"\",\"CO\",\"Energy\",\"Commodity:Energy:Elec:Swap:Cash\",\"Trade\",\"ELECTRICITY-DAILY PHELIX BASE SPOT-EEX\",\"\",\"EUR:MWh\",\"40.9775\",\"\",\"\",\"MWH\",\"MWH\",\"3,400\",\"3,400\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"");
 
 #endif
