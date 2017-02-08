@@ -32,7 +32,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 	(int, DISSEMINATION_ID)
 	(boost::optional<int>, ORIGINAL_DISSEMINATION_ID)
 	(dtcc::database::action, ACTION)
-	(boost::posix_time::ptime, EXECUTION_TIMESTAMP)
+	(dtcc::database::tTime, EXECUTION_TIMESTAMP)
 	(dtcc::database::cleared, CLEARED)
 	(dtcc::database::collateralization, INDICATION_OF_COLLATERALIZATION)
 	(boost::optional<bool>, INDICATION_OF_END_USER_EXCEPTION)
@@ -51,15 +51,13 @@ BOOST_FUSION_ADAPT_STRUCT(
 	(std::string, UNDERLYING_ASSET_2)
 	(std::string, PRICE_NOTATION_TYPE)
 	(boost::optional<double>, PRICE_NOTATION)
-	/*(std::string, ADDITIONAL_PRICE_NOTATION_TYPE)
-	(std::string, ADDITIONAL_PRICE_NOTATION)
+	(std::string, ADDITIONAL_PRICE_NOTATION_TYPE)
+	(boost::optional<double>, ADDITIONAL_PRICE_NOTATION)
 	(std::string, NOTIONAL_CURRENCY_1)
 	(std::string, NOTIONAL_CURRENCY_2)
-	(boost::optional<double>, ROUNDED_NOTIONAL_AMOUNT_1)
-	(bool, ROUNDED_NOTIONAL_AMOUNT_1_PLUS)
-	(boost::optional<double>, ROUNDED_NOTIONAL_AMOUNT_2)
-	(bool, ROUNDED_NOTIONAL_AMOUNT_2_PLUS)
-	(std::string, PAYMENT_FREQUENCY_1)
+	(dtcc::database::tOptCcyPlus, ROUNDED_NOTIONAL_AMOUNT_1)
+	(dtcc::database::tOptCcyPlus, ROUNDED_NOTIONAL_AMOUNT_2)
+	/*(std::string, PAYMENT_FREQUENCY_1)
 	(std::string, PAYMENT_FREQUENCY_2)
 	(std::string, RESET_FREQUENCY_1)
 	(std::string, RESET_FREQUENCY_2)
@@ -215,34 +213,20 @@ struct currencyPolicy : boost::spirit::qi::real_policies<T>
 
 		uint_parser<unsigned, 10, 1, 3> uint3;
 		uint_parser<unsigned, 10, 3, 3> uint3_3;
-		uint_parser<unsigned, 10, 1, 6> uint1_6; // max 6 digits after the period
 
 		T result = 0;
 		if (parse(first, last, uint3, result))
 		{
-			bool hit = false;
-			T n;
-			Iterator save = first;
-
-			// TODO
-			while (qi::parse(first, last, ',') && qi::parse(first, last, uint3_3, n))
+			T n; Iterator save = first;
+			while (qi::parse(first, last, ",") && qi::parse(first, last, uint3_3, n))
 			{
 				result = result * 1000 + n;
 				save = first;
-				hit = true;
-
-				if (*first == '.')
-				{
-					T result = 0;
-					if (parse(first, last, uint3, result))
-				}
 			}
 
 			first = save;
-
-			if (hit)
-				attr = result;
-			return hit;
+			attr = result;
+			return true;
 		}
 		return false;
 	}
@@ -309,6 +293,11 @@ struct tradeRecordGrammar : qi::grammar<Iterator, dtcc::database::tradeRecord(),
 					|
 				qi::lexeme['"' >> pCurrency >> '"'];
 
+		rOptCcyPlus
+			%= ascii::no_case["\"\""]
+					|
+				qi::lexeme['"' >> pCurrency >> qi::eps >> qi::lit("+")[std::get<1>(*_val) = true] >> '"'];
+
 		start %=
 			rInt >> ',' >>
 			rOptInt >> ',' >>
@@ -331,7 +320,11 @@ struct tradeRecordGrammar : qi::grammar<Iterator, dtcc::database::tradeRecord(),
 			rOptString	>> ',' >>
 			rOptString	>> ',' >>
 			rOptString >> ',' >>
-			rOptDouble
+			rOptDouble >> ',' >>
+			rOptString >> ',' >>
+			rOptDouble >> ',' >>
+			rOptString >> ',' >>
+			rOptString
 			;
 	}
 
@@ -349,10 +342,10 @@ struct tradeRecordGrammar : qi::grammar<Iterator, dtcc::database::tradeRecord(),
 	qi::rule<Iterator, dtcc::database::tOptCcy(), ascii::space_type> rOptCcy;
 	qi::rule<Iterator, std::string(), ascii::space_type> rAssetClass;
 	qi::rule<Iterator, boost::optional<double>(), ascii::space_type> rOptDouble;
-
+	qi::rule<Iterator, dtcc::database::tOptCcyPlus(), ascii::space_type> rOptCcyPlus;
 	qi::rule<Iterator, dtcc::database::tradeRecord(), ascii::space_type> start;
 
-	qi::real_parser<double, currencyPolicy<double> > pCurrency;
+	qi::real_parser<double, currencyPolicy<int> > pCurrency;
 };
 
 #endif

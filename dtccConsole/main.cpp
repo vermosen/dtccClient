@@ -29,11 +29,12 @@ int main(int * argc, char ** argv)
 	{
 		std::vector<std::string> recs = 
 		{
-			"\"1\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"U\",\"OC\",\"\",\"Y\",\"N\",\"ON\",\"2016-01-12\",\"\",\"ACT/360\",\"USD\",\"CO\",\"Energy\",\"Commodity:Agricultural:GrainsOilSeeds:Option:Physical\",\"Termination\",\"\",\"\",\"\",\"-1,123.235\"",
-			"\"3\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"FC\",\"\",\"N\",\"Y\",\"\",\"\",\"2027-03-24\",\"ACT/360\",\"USD\",\"CO\",\"Metal\",\"Commodity:Agricultural:GrainsOilSeeds:Option:Physical\",\"Termination\",\"CNY-CNREPOFIX=CFXS-Reuters\",\"\",\"Percent\",\"\"",
-			"\"4\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"OC\",\"N\",\"Y\",\"Y\",\"OFF\",\"2017-04-24\",\"2027-04-24\",\"\",\"USD\",\"CO\",\"Metal\",\"Commodity:Agricultural:GrainsOilSeeds:Option:Physical\",\"Termination\",\"\",\"FIXED\",\"Percent\",\"1.2365\"",
-			"\"5\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"UC\",\"N\",\"Y\",\"Y\",\"OFF\",\"\",\"\",\"ACT/360\",\"USD\",\"IR\",\"\",\"InterestRate:IRSwap:FixedFloat\",\"Termination\",\"CNY-CNREPOFIX=CFXS-Reuters\",\"FIXED\",\"Percent\",\"\"",
-			"\"2\",\"58919739\",\"NEW\",\"2017-01-24T05:47:46\",\"U\",\"\",\"Y\",\"Y\",\"Y\",\"ON\",\"2017-02-24\",\"\",\"\",\"\",\"FX\",\"\",\"\",\"Trade\",\"CNY-CNREPOFIX=CFXS-Reuters\",\"FIXED\",\"Percent\",\"2,000.000\"",
+			"\"1\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"U\",\"OC\",\"\",\"Y\",\"N\",\"ON\",\"2016-01-12\",\"\",\"ACT/360\",\"USD\",\"CO\",\"Energy\",\"Commodity:Agricultural:GrainsOilSeeds:Option:Physical\",\"Termination\",\"\",\"\",\"\",\"-1,123.235\",\"Basis points\",\"1.023\",\"\",\"\"",
+			"\"2\",\"58919739\",\"NEW\",\"2017-01-24T05:47:46\",\"U\",\"\",\"Y\",\"Y\",\"Y\",\"ON\",\"2017-02-24\",\"\",\"\",\"\",\"FX\",\"\",\"\",\"Trade\",\"CNY-CNREPOFIX=CFXS-Reuters\",\"FIXED\",\"Percent\",\"2,000.000\",\"Basis points\",\"1.023\",\"USD\",\"USD\"",
+			"\"3\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"FC\",\"\",\"N\",\"Y\",\"\",\"\",\"2027-03-24\",\"ACT/360\",\"USD\",\"CO\",\"Metal\",\"Commodity:Agricultural:GrainsOilSeeds:Option:Physical\",\"Termination\",\"CNY-CNREPOFIX=CFXS-Reuters\",\"\",\"Percent\",\"\",\"Basis points\",\"\",\"\",\"\"",
+			"\"4\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"OC\",\"N\",\"Y\",\"Y\",\"OFF\",\"2017-04-24\",\"2027-04-24\",\"\",\"USD\",\"CO\",\"Metal\",\"Commodity:Agricultural:GrainsOilSeeds:Option:Physical\",\"Termination\",\"\",\"FIXED\",\"Percent\",\"1.2365\",\"Basis points\",\"0\",\"USD\",\"USD\"",
+			"\"5\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"UC\",\"N\",\"Y\",\"Y\",\"OFF\",\"\",\"\",\"ACT/360\",\"USD\",\"IR\",\"\",\"InterestRate:IRSwap:FixedFloat\",\"Termination\",\"CNY-CNREPOFIX=CFXS-Reuters\",\"FIXED\",\"Percent\",\"\",\"Basis points\",\"1.023\",\"USD\",\"USD\"",
+			"\"5\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"UC\",\"N\",\"Y\",\"Y\",\"OFF\",\"\",\"\",\"ACT/360\",\"USD\",\"IR\",\"\",\"InterestRate:IRSwap:FixedFloat\",\"Termination\",\"CNY-CNREPOFIX=CFXS-Reuters\",\"FIXED\",\"Percent\",\"2,000,001.00004\",\"Basis points\",\"-135,001.01\",\"USD\",\"USD\""
 		};
 
 		for (auto it = recs.begin(); it != recs.end(); it++)
@@ -108,8 +109,27 @@ int main(int * argc, char ** argv)
 				if (!emp.PRICE_NOTATION)
 					std::cout << "PRICE_NOTATION: (none)" << std::endl;
 				else
-					std::cout << "PRICE_NOTATION: " << emp.PRICE_NOTATION << std::endl;
+					std::cout << "PRICE_NOTATION: " << std::fixed << std::setprecision(6) << emp.PRICE_NOTATION << std::endl;
 
+				if (emp.ADDITIONAL_PRICE_NOTATION_TYPE == "")
+					std::cout << "ADDITIONAL_PRICE_NOTATION_TYPE: (none)" << std::endl;
+				else
+					std::cout << "ADDITIONAL_PRICE_NOTATION_TYPE: " << emp.ADDITIONAL_PRICE_NOTATION_TYPE << std::endl;
+
+				if (!emp.ADDITIONAL_PRICE_NOTATION)
+					std::cout << "ADDITIONAL_PRICE_NOTATION: (none)" << std::endl;
+				else
+					std::cout << "ADDITIONAL_PRICE_NOTATION: " << std::fixed << std::setprecision(6) << emp.ADDITIONAL_PRICE_NOTATION << std::endl;
+				
+				if (emp.NOTIONAL_CURRENCY_1 == "")
+					std::cout << "NOTIONAL_CURRENCY_1: (none)" << std::endl;
+				else
+					std::cout << "NOTIONAL_CURRENCY_1: " << emp.NOTIONAL_CURRENCY_1 << std::endl;
+				
+				if (emp.NOTIONAL_CURRENCY_2 == "")
+					std::cout << "NOTIONAL_CURRENCY_2: (none)" << std::endl;
+				else
+					std::cout << "NOTIONAL_CURRENCY_2: " << emp.NOTIONAL_CURRENCY_2 << std::endl;
 				std::cout << "-------------------------" << std::endl;
 			}
 			else
