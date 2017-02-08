@@ -293,11 +293,18 @@ struct tradeRecordGrammar : qi::grammar<Iterator, dtcc::database::tradeRecord(),
 					|
 				qi::lexeme['"' >> pCurrency >> '"'];
 
+		//works
+		//rOptCcyPlus
+		//	%= ascii::no_case["\"\""]
+		//			|
+		//		qi::lexeme['"' >> pCurrency >> qi::bool_ >> '"'];
+
 		rOptCcyPlus
 			%= ascii::no_case["\"\""]
 					|
-				qi::lexeme['"' >> pCurrency >> qi::eps >> qi::lit("+")[std::get<1>(*_val) = true] >> '"'];
-
+				qi::lexeme['"' >> pCurrency >> qi::eps > (	qi::lit("+")[std::get<1>(*_val) = true] |
+															qi::lit("")[std::get<1>(*_val) = false]) >> '"'];
+				
 		start %=
 			rInt >> ',' >>
 			rOptInt >> ',' >>
@@ -324,7 +331,9 @@ struct tradeRecordGrammar : qi::grammar<Iterator, dtcc::database::tradeRecord(),
 			rOptString >> ',' >>
 			rOptDouble >> ',' >>
 			rOptString >> ',' >>
-			rOptString
+			rOptString >> ',' >>
+			rOptCcyPlus >> ',' >>
+			rOptCcyPlus
 			;
 	}
 
