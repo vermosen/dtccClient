@@ -245,7 +245,7 @@ struct tradeRecordGrammar : qi::grammar<Iterator, dtcc::database::tradeRecord(),
 		rOptInt
 			%= ascii::no_case["\"\""]
 					|
-				qi::lexeme['"' >> (qi::int_) >> '"'];
+				qi::lexeme['"' >> qi::int_ >> '"'];
 
 		rOptString
 			%= qi::lexeme['"' >> *(ascii::char_ - '"') >> '"'];
@@ -263,7 +263,7 @@ struct tradeRecordGrammar : qi::grammar<Iterator, dtcc::database::tradeRecord(),
 				qi::lexeme['"' >> qi::int_ >> "-" >> qi::int_ >> "-" >> qi::int_ >> '"'];
 		
 		rCleared 
-			%= qi::lexeme['"' >> (ascii::char_("CU")) >> '"'];
+			%= qi::lexeme['"' >> ascii::char_("CU") >> '"'];
 
 		rIndOfCollat 
 			%= qi::lexeme['"' >> *(ascii::char_("FOPUC")) >> '"'];
@@ -293,17 +293,16 @@ struct tradeRecordGrammar : qi::grammar<Iterator, dtcc::database::tradeRecord(),
 					|
 				qi::lexeme['"' >> pCurrency >> '"'];
 
-		//works
-		//rOptCcyPlus
-		//	%= ascii::no_case["\"\""]
-		//			|
-		//		qi::lexeme['"' >> pCurrency >> qi::bool_ >> '"'];
-
 		rOptCcyPlus
 			%= ascii::no_case["\"\""]
 					|
-				qi::lexeme['"' >> pCurrency >> qi::eps > (	qi::lit("+")[std::get<1>(*_val) = true] |
-															qi::lit("")[std::get<1>(*_val) = false]) >> '"'];
+				qi::lexeme['"' >> pCurrency >> qi::bool_ >> '"'];
+
+		//rOptCcyPlus
+		//	%= ascii::no_case["\"\""]
+		//			|
+		//		qi::lexeme['"' >> pCurrency >> qi::eps > (	qi::lit("+")[std::get<1>(*_val) = true] |
+		//													qi::lit("")[std::get<1>(*_val) = false]) >> '"'];
 				
 		start %=
 			rInt >> ',' >>
