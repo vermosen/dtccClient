@@ -3,7 +3,6 @@
 
 #include <string>
 
-// 3 hours wasted on this one...
 #define FUSION_MAX_VECTOR_SIZE 45
 
 #include <boost/config/warning_disable.hpp>
@@ -55,15 +54,15 @@ BOOST_FUSION_ADAPT_STRUCT(
 	(boost::optional<double>, ADDITIONAL_PRICE_NOTATION)
 	(std::string, NOTIONAL_CURRENCY_1)
 	(std::string, NOTIONAL_CURRENCY_2)
-	(dtcc::database::tOptCcyPlus, ROUNDED_NOTIONAL_AMOUNT_1)
-	(dtcc::database::tOptCcyPlus, ROUNDED_NOTIONAL_AMOUNT_2)
-	/*(std::string, PAYMENT_FREQUENCY_1)
+	(dtcc::database::tOptNomPlus, ROUNDED_NOTIONAL_AMOUNT_1)
+	(dtcc::database::tOptNomPlus, ROUNDED_NOTIONAL_AMOUNT_2)
+	(std::string, PAYMENT_FREQUENCY_1)
 	(std::string, PAYMENT_FREQUENCY_2)
 	(std::string, RESET_FREQUENCY_1)
 	(std::string, RESET_FREQUENCY_2)
 	(bool, EMBEDED_OPTION)
 	(boost::optional<double>, OPTION_STRIKE_PRICE)
-	(boost::optional<dtcc::database::optionType>, OPTION_TYPE)
+	/*(boost::optional<dtcc::database::optionType>, OPTION_TYPE)
 	(boost::optional<dtcc::database::optionFamily>, OPTION_FAMILY)
 	(boost::optional<dtcc::database::tradeRecord::ccy>, OPTION_CURRENCY)
 	(boost::optional<double>, OPTION_PREMIUM)
@@ -182,7 +181,6 @@ struct boost::spirit::traits::transform_attribute<dtcc::database::tOptDate, optD
 	static void fail(dtcc::database::tOptDate&) {}
 };
 
-
 // currency amount policy
 template <typename T>
 struct currencyPolicy : boost::spirit::qi::real_policies<T>
@@ -243,9 +241,9 @@ struct tradeRecordGrammar : qi::grammar<Iterator, dtcc::database::tradeRecord(),
 			%= qi::lexeme['"' >> int_ >> '"'];
 
 		rOptInt
-			%= ascii::no_case["\"\""]
-					|
-				qi::lexeme['"' >> qi::int_ >> '"'];
+			%= "\"\""
+				|
+			qi::lexeme['"' >> qi::int_ >> '"'];
 
 		rOptString
 			%= qi::lexeme['"' >> *(ascii::char_ - '"') >> '"'];
@@ -258,52 +256,56 @@ struct tradeRecordGrammar : qi::grammar<Iterator, dtcc::database::tradeRecord(),
 								qi::int_ >> ":" >> qi::int_ >> ":" >> qi::int_ >> '"'];
 
 		rOptDate 
-			%= ascii::no_case["\"\""] 
-					| 
-				qi::lexeme['"' >> qi::int_ >> "-" >> qi::int_ >> "-" >> qi::int_ >> '"'];
+			%= "\"\"" 
+				| 
+			qi::lexeme['"' >> qi::int_ >> "-" >> qi::int_ >> "-" >> qi::int_ >> '"'];
 		
 		rCleared 
-			%= qi::lexeme['"' >> ascii::char_("CU") >> '"'];
+			%= qi::lexeme['"' >> (ascii::char_("CU")) >> '"'];
 
 		rIndOfCollat 
 			%= qi::lexeme['"' >> *(ascii::char_("FOPUC")) >> '"'];
 		
 		rOptBool 
-			%= qi::lexeme['"' >> qi::no_case[qi::eps > (qi::lit("Y")[_val = true		] |
-														qi::lit("N")[_val = false		] |
-														qi::lit("" )[_val = boost::none	])] >> '"'];
+			%= qi::lexeme['"' >> qi::eps > (qi::lit("Y")[_val = true		] |
+											qi::lit("N")[_val = false		] |
+											qi::lit("" )[_val = boost::none	]) >> '"'];
 		rBool 
-			%= qi::lexeme['"' >> qi::no_case[qi::eps > (qi::lit("Y")[_val = true] |
-														qi::lit("N")[_val = false])] >> '"'];
+			%= qi::lexeme['"' >> qi::eps > (qi::lit("Y")[_val = true] |
+											qi::lit("N")[_val = false]) >> '"'];
 
 		rOptVenue 
-			%= qi::lexeme['"' >> qi::no_case[qi::eps > (qi::lit("ON")	[_val = true		] |
-														qi::lit("OFF")	[_val = false		] |
-														qi::lit("")		[_val = boost::none	])] >> '"'];
+			%= qi::lexeme['"' >> qi::eps > (qi::lit("ON")	[_val = true		] |
+											qi::lit("OFF")	[_val = false		] |
+											qi::lit("")		[_val = boost::none	]) >> '"'];
 		rOptCcy
-			%= ascii::no_case["\"\""]
-					|
-				qi::lexeme['"' >> ascii::char_ >> ascii::char_ >> ascii::char_ >> '"'];
+			%= "\"\""
+				|
+			qi::lexeme['"' >> ascii::char_ >> ascii::char_ >> ascii::char_ >> '"'];
 
 		rAssetClass
 			%= qi::lexeme['"' >> ascii::char_ >> ascii::char_ >> '"'];
 
-		rOptDouble
-			%= ascii::no_case["\"\""]
-					|
-				qi::lexeme['"' >> pCurrency >> '"'];
+		rOptNom
+			%= "\"\""
+				|
+			qi::lexeme['"' >> pCurrency >> '"'];
+		
+		rOptNomPlus
+			%= "\"\""
+				|
+			qi::lexeme['"' >> pCurrency >> -ascii::char_("+") >> '"'];
 
-		rOptCcyPlus
-			%= ascii::no_case["\"\""]
-					|
-				qi::lexeme['"' >> pCurrency >> qi::bool_ >> '"'];
+		rEmbedded
+			%= "\"\""
+				|
+			qi::lexeme['"' >> qi::eps > (qi::lit("EMBED1")[_val = true] | qi::lit("")[_val = false]) >> '"'];
 
-		//rOptCcyPlus
-		//	%= ascii::no_case["\"\""]
-		//			|
-		//		qi::lexeme['"' >> pCurrency >> qi::eps > (	qi::lit("+")[std::get<1>(*_val) = true] |
-		//													qi::lit("")[std::get<1>(*_val) = false]) >> '"'];
-				
+		//rOptCcyPlus.name("rOptCcyPlus");
+		//BOOST_SPIRIT_DEBUG_NODE(rOptCcyPlus);
+		//debug(rOptCcyPlus);
+
+		
 		start %=
 			rInt >> ',' >>
 			rOptInt >> ',' >>
@@ -326,31 +328,38 @@ struct tradeRecordGrammar : qi::grammar<Iterator, dtcc::database::tradeRecord(),
 			rOptString	>> ',' >>
 			rOptString	>> ',' >>
 			rOptString >> ',' >>
-			rOptDouble >> ',' >>
+			rOptNom		>> ',' >>
 			rOptString >> ',' >>
-			rOptDouble >> ',' >>
+			rOptNom		>> ',' >>
 			rOptString >> ',' >>
 			rOptString >> ',' >>
-			rOptCcyPlus >> ',' >>
-			rOptCcyPlus
+			rOptNomPlus >> ',' >>
+			rOptNomPlus >> ',' >>
+			rOptString >> ',' >>
+			rOptString >> ',' >>
+			rOptString >> ',' >>
+			rOptString >> ',' >>
+			rEmbedded >> ',' >>
+			rOptNom
 			;
 	}
 
-	qi::rule<Iterator, int(), ascii::space_type> rInt;
-	qi::rule<Iterator, int(), ascii::space_type> rOptInt;
-	qi::rule<Iterator, timeAdaptator(), ascii::space_type> rTime;
-	qi::rule<Iterator, optDateAdaptator(), ascii::space_type> rOptDate;
-	qi::rule<Iterator, std::string(), ascii::space_type> rString;
-	qi::rule<Iterator, std::string(), ascii::space_type> rOptString;
-	qi::rule<Iterator, char(), ascii::space_type> rCleared;
-	qi::rule<Iterator, std::string(), ascii::space_type> rIndOfCollat;
-	qi::rule<Iterator, boost::optional<bool>(), ascii::space_type>	rOptBool;
-	qi::rule<Iterator, bool(), ascii::space_type> rBool;
-	qi::rule<Iterator, boost::optional<bool>(), ascii::space_type> rOptVenue;
-	qi::rule<Iterator, dtcc::database::tOptCcy(), ascii::space_type> rOptCcy;
-	qi::rule<Iterator, std::string(), ascii::space_type> rAssetClass;
-	qi::rule<Iterator, boost::optional<double>(), ascii::space_type> rOptDouble;
-	qi::rule<Iterator, dtcc::database::tOptCcyPlus(), ascii::space_type> rOptCcyPlus;
+	qi::rule<Iterator, int()						, ascii::space_type> rInt;
+	qi::rule<Iterator, int()						, ascii::space_type> rOptInt;
+	qi::rule<Iterator, timeAdaptator()				, ascii::space_type> rTime;
+	qi::rule<Iterator, optDateAdaptator()			, ascii::space_type> rOptDate;
+	qi::rule<Iterator, std::string()				, ascii::space_type> rString;
+	qi::rule<Iterator, std::string()				, ascii::space_type> rOptString;
+	qi::rule<Iterator, char()						, ascii::space_type> rCleared;
+	qi::rule<Iterator, std::string()				, ascii::space_type> rIndOfCollat;
+	qi::rule<Iterator, boost::optional<bool>()		, ascii::space_type> rOptBool;
+	qi::rule<Iterator, bool()						, ascii::space_type> rBool;
+	qi::rule<Iterator, boost::optional<bool>()		, ascii::space_type> rOptVenue;
+	qi::rule<Iterator, dtcc::database::tOptCcy()	, ascii::space_type> rOptCcy;
+	qi::rule<Iterator, std::string()				, ascii::space_type> rAssetClass;
+	qi::rule<Iterator, boost::optional<double>()	, ascii::space_type> rOptNom;
+	qi::rule<Iterator, dtcc::database::tOptNomPlus(), ascii::space_type> rOptNomPlus;
+	qi::rule<Iterator, bool()						, ascii::space_type> rEmbedded;
 	qi::rule<Iterator, dtcc::database::tradeRecord(), ascii::space_type> start;
 
 	qi::real_parser<double, currencyPolicy<int> > pCurrency;

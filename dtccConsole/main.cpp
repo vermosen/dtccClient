@@ -11,6 +11,7 @@
 #include <vector>
 
 #include <boost/chrono.hpp>
+#include <boost/tuple/tuple.hpp>
 
 #include "database/recordsets/tradeRecordset.hpp"
 #include "database/records/tradeRecordGrammar.hpp"
@@ -29,12 +30,12 @@ int main(int * argc, char ** argv)
 	{
 		std::vector<std::string> recs = 
 		{
-			"\"1\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"U\",\"OC\",\"\",\"Y\",\"N\",\"ON\",\"2016-01-12\",\"\",\"ACT/360\",\"USD\",\"CO\",\"Energy\",\"Commodity:Agricultural:GrainsOilSeeds:Option:Physical\",\"Termination\",\"\",\"\",\"\",\"-1,123.235\",\"Basis points\",\"1.023\",\"\",\"\"",
-			"\"2\",\"58919739\",\"NEW\",\"2017-01-24T05:47:46\",\"U\",\"\",\"Y\",\"Y\",\"Y\",\"ON\",\"2017-02-24\",\"\",\"\",\"\",\"FX\",\"\",\"\",\"Trade\",\"CNY-CNREPOFIX=CFXS-Reuters\",\"FIXED\",\"Percent\",\"2,000.000\",\"Basis points\",\"1.023\",\"USD\",\"USD\"",
-			"\"3\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"FC\",\"\",\"N\",\"Y\",\"\",\"\",\"2027-03-24\",\"ACT/360\",\"USD\",\"CO\",\"Metal\",\"Commodity:Agricultural:GrainsOilSeeds:Option:Physical\",\"Termination\",\"CNY-CNREPOFIX=CFXS-Reuters\",\"\",\"Percent\",\"\",\"Basis points\",\"\",\"\",\"\"",
-			"\"4\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"OC\",\"N\",\"Y\",\"Y\",\"OFF\",\"2017-04-24\",\"2027-04-24\",\"\",\"USD\",\"CO\",\"Metal\",\"Commodity:Agricultural:GrainsOilSeeds:Option:Physical\",\"Termination\",\"\",\"FIXED\",\"Percent\",\"1.2365\",\"Basis points\",\"0\",\"USD\",\"USD\"",
-			"\"5\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"UC\",\"N\",\"Y\",\"Y\",\"OFF\",\"\",\"\",\"ACT/360\",\"USD\",\"IR\",\"\",\"InterestRate:IRSwap:FixedFloat\",\"Termination\",\"CNY-CNREPOFIX=CFXS-Reuters\",\"FIXED\",\"Percent\",\"\",\"Basis points\",\"1.023\",\"USD\",\"USD\"",
-			"\"5\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"UC\",\"N\",\"Y\",\"Y\",\"OFF\",\"\",\"\",\"ACT/360\",\"USD\",\"IR\",\"\",\"InterestRate:IRSwap:FixedFloat\",\"Termination\",\"CNY-CNREPOFIX=CFXS-Reuters\",\"FIXED\",\"Percent\",\"2,000,001.00004\",\"Basis points\",\"-135,001.01\",\"USD\",\"USD\""
+			"\"1\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"U\",\"OC\",\"\",\"Y\",\"N\",\"ON\",\"2016-01-12\",\"\",\"ACT/360\",\"USD\",\"CO\",\"Energy\",\"Commodity:Agricultural:GrainsOilSeeds:Option:Physical\",\"Termination\",\"\",\"\",\"\",\"-1,123.235\",\"Basis points\",\"1.023\",\"\",\"\",\"1.0+\",\"1.0+\",\"12M\",\"12M\",\"\",\"\",\"EMBED1\",\"0.214\"",
+			"\"2\",\"58919739\",\"NEW\",\"2017-01-24T05:47:46\",\"U\",\"\",\"Y\",\"Y\",\"Y\",\"ON\",\"2017-02-24\",\"\",\"\",\"\",\"FX\",\"\",\"\",\"Trade\",\"CNY-CNREPOFIX=CFXS-Reuters\",\"FIXED\",\"Percent\",\"2,000.000\",\"Basis points\",\"1.023\",\"USD\",\"USD\",\"2,000,000\",\"2,000,000\",\"717D\",\"12/21/2020\",\"multiple\",\"multiple\",\"\",\"\"",
+			"\"3\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"FC\",\"\",\"N\",\"Y\",\"\",\"\",\"2027-03-24\",\"ACT/360\",\"USD\",\"CO\",\"Metal\",\"Commodity:Agricultural:GrainsOilSeeds:Option:Physical\",\"Termination\",\"CNY-CNREPOFIX=CFXS-Reuters\",\"\",\"Percent\",\"\",\"Basis points\",\"\",\"\",\"\",\"-1.235+\",\"1.25\",\"\",\"\",\"\",\"\",\"\"",
+			"\"4\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"OC\",\"N\",\"Y\",\"Y\",\"OFF\",\"2017-04-24\",\"2027-04-24\",\"\",\"USD\",\"CO\",\"Metal\",\"Commodity:Agricultural:GrainsOilSeeds:Option:Physical\",\"Termination\",\"\",\"FIXED\",\"Percent\",\"1.2365\",\"Basis points\",\"0\",\"USD\",\"USD\",\"\",\"\",\"\",\"\",\"\",\"\",\"EMBED1\",\"15,029.21\"",
+			"\"5\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"UC\",\"N\",\"Y\",\"Y\",\"OFF\",\"\",\"\",\"ACT/360\",\"USD\",\"IR\",\"\",\"InterestRate:IRSwap:FixedFloat\",\"Termination\",\"CNY-CNREPOFIX=CFXS-Reuters\",\"FIXED\",\"Percent\",\"\",\"Basis points\",\"1.023\",\"USD\",\"USD\",\"2,000,000+\",\"2,000,000\",\"\",\"\",\"\",\"\",\"EMBED1\",\"\"",
+			"\"5\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"UC\",\"N\",\"Y\",\"Y\",\"OFF\",\"\",\"\",\"ACT/360\",\"USD\",\"IR\",\"\",\"InterestRate:IRSwap:FixedFloat\",\"Termination\",\"CNY-CNREPOFIX=CFXS-Reuters\",\"FIXED\",\"Percent\",\"2,000,001.00004\",\"Basis points\",\"-135,001.01\",\"USD\",\"USD\",\"\",\"\",\"\",\"\",\"\",\"\",\"EMBED1\",\"15,029\""
 		};
 
 		for (auto it = recs.begin(); it != recs.end(); it++)
@@ -130,6 +131,65 @@ int main(int * argc, char ** argv)
 					std::cout << "NOTIONAL_CURRENCY_2: (none)" << std::endl;
 				else
 					std::cout << "NOTIONAL_CURRENCY_2: " << emp.NOTIONAL_CURRENCY_2 << std::endl;
+
+				if (!emp.ROUNDED_NOTIONAL_AMOUNT_1)
+					std::cout << "ROUNDED_NOTIONAL_AMOUNT_1: (none)" << std::endl;
+				else
+				{
+					std::cout << "ROUNDED_NOTIONAL_AMOUNT_1: "
+						<< boost::get<0>(*emp.ROUNDED_NOTIONAL_AMOUNT_1);
+
+					if (boost::get<1>(*emp.ROUNDED_NOTIONAL_AMOUNT_1) == true)
+					{
+						std::cout << " (Plus)" << std::endl;
+					}
+					else std::cout << std::endl;
+				}
+
+				if (!emp.ROUNDED_NOTIONAL_AMOUNT_2)
+					std::cout << "ROUNDED_NOTIONAL_AMOUNT_2: (none)" << std::endl;
+				else
+				{
+					std::cout << "ROUNDED_NOTIONAL_AMOUNT_2: "
+						<< boost::get<0>(*emp.ROUNDED_NOTIONAL_AMOUNT_2);
+
+					if (boost::get<1>(*emp.ROUNDED_NOTIONAL_AMOUNT_2) == true)
+					{
+						std::cout  << " (Plus)" << std::endl;
+					}
+					else std::cout << std::endl;
+				}	
+
+				if (emp.PAYMENT_FREQUENCY_1 == "")
+					std::cout << "PAYMENT_FREQUENCY_1: (none)" << std::endl;
+				else
+					std::cout << "PAYMENT_FREQUENCY_1: " << emp.PAYMENT_FREQUENCY_1 << std::endl;
+
+				if (emp.PAYMENT_FREQUENCY_2 == "")
+					std::cout << "PAYMENT_FREQUENCY_2: (none)" << std::endl;
+				else
+					std::cout << "PAYMENT_FREQUENCY_2: " << emp.PAYMENT_FREQUENCY_2 << std::endl;
+
+				if (emp.RESET_FREQUENCY_1 == "")
+					std::cout << "RESET_FREQUENCY_1: (none)" << std::endl;
+				else
+					std::cout << "RESET_FREQUENCY_1: " << emp.RESET_FREQUENCY_1 << std::endl;
+
+				if (emp.RESET_FREQUENCY_2 == "")
+					std::cout << "RESET_FREQUENCY_2: (none)" << std::endl;
+				else
+					std::cout << "RESET_FREQUENCY_2: " << emp.RESET_FREQUENCY_2 << std::endl;
+
+				if (emp.EMBEDED_OPTION)
+					std::cout << "EMBEDED_OPTION: true" << std::endl;
+				else
+					std::cout << "EMBEDED_OPTION: false" << std::endl;
+
+				if (!emp.OPTION_STRIKE_PRICE)
+					std::cout << "OPTION_STRIKE_PRICE: (none)" << std::endl;
+				else
+					std::cout << "OPTION_STRIKE_PRICE: " << emp.OPTION_STRIKE_PRICE << std::endl;
+
 				std::cout << "-------------------------" << std::endl;
 			}
 			else

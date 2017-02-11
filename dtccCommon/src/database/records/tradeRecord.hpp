@@ -5,6 +5,7 @@
 
 #include <boost/none.hpp>
 #include <boost/optional.hpp>
+#include <boost/tuple/tuple.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
@@ -20,7 +21,7 @@ namespace dtcc
 		typedef boost::posix_time::ptime tTime;
 		//typedef boost::optional<std::array<char, 3> > tOptCcy;
 		typedef boost::optional<std::string> tOptCcy;
-		typedef boost::optional<std::tuple<double, bool>> tOptCcyPlus;
+		typedef boost::optional<boost::tuple<double, bool> > tOptNomPlus;
 
 		class tradeRecord
 		{
@@ -52,14 +53,14 @@ namespace dtcc
 			boost::optional<double>				ADDITIONAL_PRICE_NOTATION;
 			std::string							NOTIONAL_CURRENCY_1;
 			std::string							NOTIONAL_CURRENCY_2;
-			tOptCcyPlus							ROUNDED_NOTIONAL_AMOUNT_1;
-			tOptCcyPlus							ROUNDED_NOTIONAL_AMOUNT_2;
-			//std::string							PAYMENT_FREQUENCY_1;
-			//std::string							PAYMENT_FREQUENCY_2;
-			//std::string							RESET_FREQUENCY_1;
-			//std::string							RESET_FREQUENCY_2;
-			//bool									EMBEDED_OPTION;
-			//boost::optional<double>					OPTION_STRIKE_PRICE;
+			tOptNomPlus							ROUNDED_NOTIONAL_AMOUNT_1;
+			tOptNomPlus							ROUNDED_NOTIONAL_AMOUNT_2;
+			std::string							PAYMENT_FREQUENCY_1;
+			std::string							PAYMENT_FREQUENCY_2;
+			std::string							RESET_FREQUENCY_1;
+			std::string							RESET_FREQUENCY_2;
+			bool								EMBEDED_OPTION;
+			boost::optional<double>				OPTION_STRIKE_PRICE;
 			//boost::optional<optionType>				OPTION_TYPE; // TODO: find a taxonomy
 			//boost::optional<optionFamily>			OPTION_FAMILY;
 			//boost::optional<ccy>					OPTION_CURRENCY;
