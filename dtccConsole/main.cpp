@@ -21,27 +21,31 @@
 
 boost::chrono::high_resolution_clock::time_point start;
 
+const static std::string testString("\"58919739\",\"\",\"NEW\",\"2017-01-10T07:52:46\",\"U\",\"FC\",\"\",\"N\",\"N\",\"OFF\",\"2017-02-01\",\"2017-02-28\",\"\",\"\",\"CO\",\"Energy\",\"Commodity:Energy:Elec:Swap:Cash\",\"Trade\",\"ELECTRICITY-DAILY PHELIX BASE SPOT-EEX\",\"\",\"EUR:MWh\",\"40.9775\",\"\",\"\",\"MWH\",\"MWH\",\"3,400\",\"3,400\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"");
+
 int main(int * argc, char ** argv)
 {
 	tradeRecordGrammar<std::string::const_iterator> g; // Our grammar
 
-	start = boost::chrono::high_resolution_clock::now();
-	int i = 0;  while (i++ < 1)
-	{
-		std::vector<std::string> recs = 
-		{
-			"\"1\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"U\",\"OC\",\"\",\"Y\",\"N\",\"ON\",\"2016-01-12\",\"\",\"ACT/360\",\"USD\",\"CO\",\"Energy\",\"Commodity:Agricultural:GrainsOilSeeds:Option:Physical\",\"Termination\",\"\",\"\",\"\",\"-1,123.235\",\"Basis points\",\"1.023\",\"\",\"\",\"1.0+\",\"1.0+\",\"12M\",\"12M\",\"\",\"\",\"EMBED1\",\"0.214\"",
-			"\"2\",\"58919739\",\"NEW\",\"2017-01-24T05:47:46\",\"U\",\"\",\"Y\",\"Y\",\"Y\",\"ON\",\"2017-02-24\",\"\",\"\",\"\",\"FX\",\"\",\"\",\"Trade\",\"CNY-CNREPOFIX=CFXS-Reuters\",\"FIXED\",\"Percent\",\"2,000.000\",\"Basis points\",\"1.023\",\"USD\",\"USD\",\"2,000,000\",\"2,000,000\",\"717D\",\"12/21/2020\",\"multiple\",\"multiple\",\"\",\"\"",
-			"\"3\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"FC\",\"\",\"N\",\"Y\",\"\",\"\",\"2027-03-24\",\"ACT/360\",\"USD\",\"CO\",\"Metal\",\"Commodity:Agricultural:GrainsOilSeeds:Option:Physical\",\"Termination\",\"CNY-CNREPOFIX=CFXS-Reuters\",\"\",\"Percent\",\"\",\"Basis points\",\"\",\"\",\"\",\"-1.235+\",\"1.25\",\"\",\"\",\"\",\"\",\"\"",
-			"\"4\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"OC\",\"N\",\"Y\",\"Y\",\"OFF\",\"2017-04-24\",\"2027-04-24\",\"\",\"USD\",\"CO\",\"Metal\",\"Commodity:Agricultural:GrainsOilSeeds:Option:Physical\",\"Termination\",\"\",\"FIXED\",\"Percent\",\"1.2365\",\"Basis points\",\"0\",\"USD\",\"USD\",\"\",\"\",\"\",\"\",\"\",\"\",\"EMBED1\",\"15,029.21\"",
-			"\"5\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"UC\",\"N\",\"Y\",\"Y\",\"OFF\",\"\",\"\",\"ACT/360\",\"USD\",\"IR\",\"\",\"InterestRate:IRSwap:FixedFloat\",\"Termination\",\"CNY-CNREPOFIX=CFXS-Reuters\",\"FIXED\",\"Percent\",\"\",\"Basis points\",\"1.023\",\"USD\",\"USD\",\"2,000,000+\",\"2,000,000\",\"\",\"\",\"\",\"\",\"EMBED1\",\"\"",
-			"\"5\",\"\",\"CANCEL\",\"2017-01-24T05:47:46\",\"C\",\"UC\",\"N\",\"Y\",\"Y\",\"OFF\",\"\",\"\",\"ACT/360\",\"USD\",\"IR\",\"\",\"InterestRate:IRSwap:FixedFloat\",\"Termination\",\"CNY-CNREPOFIX=CFXS-Reuters\",\"FIXED\",\"Percent\",\"2,000,001.00004\",\"Basis points\",\"-135,001.01\",\"USD\",\"USD\",\"\",\"\",\"\",\"\",\"\",\"\",\"EMBED1\",\"15,029\""
-		};
+	size_t t = 100000;
+	std::vector<dtcc::database::tradeRecord> recs; 
+	recs.reserve(t);
 
-		for (auto it = recs.begin(); it != recs.end(); it++)
+	start = boost::chrono::high_resolution_clock::now();
+
+	int i = 0;  while (i++ < t)
+	{
+		dtcc::database::tradeRecord emp;
+
+		std::string::const_iterator iter = testString.begin(), end = testString.end();
+		if (boost::spirit::qi::phrase_parse(iter, end, g, boost::spirit::ascii::space, emp) && iter == end)
+		{
+			recs.push_back(emp);
+		}
+		/*for (auto it = recs.begin(); it != recs.end(); it++)
 		{
 			dtcc::database::tradeRecord emp;
-			std::string::const_iterator iter = it->begin(), end = it->end(); 
+			 
 			if (boost::spirit::qi::phrase_parse(iter, end, g, boost::spirit::ascii::space, emp) && iter == end)
 			{
 				std::cout << "DISSEMINATION_ID: " << emp.DISSEMINATION_ID << std::endl;
@@ -53,7 +57,7 @@ int main(int * argc, char ** argv)
 				if (!emp.INDICATION_OF_END_USER_EXCEPTION)
 					std::cout << "INDICATION_OF_END_USER_EXCEPTION: (none)" << std::endl;
 				else
-					std::cout << "INDICATION_OF_END_USER_EXCEPTION: " << emp.INDICATION_OF_END_USER_EXCEPTION.get() << std::endl;
+					std::cout << "INDICATION_OF_END_USER_EXCEPTION: " << *emp.INDICATION_OF_END_USER_EXCEPTION << std::endl;
 
 				std::cout << "INDICATION_OF_OTHER_PRICE_AFFECTING_TERM: " << emp.INDICATION_OF_OTHER_PRICE_AFFECTING_TERM << std::endl;
 				std::cout << "BLOCK_TRADES_AND_LARGE_NOTIONAL_OFFFACILITY_SWAPS: " << emp.BLOCK_TRADES_AND_LARGE_NOTIONAL_OFFFACILITY_SWAPS << std::endl;
@@ -61,22 +65,22 @@ int main(int * argc, char ** argv)
 				if (!emp.EXECUTION_VENUE)
 					std::cout << "EXECUTION_VENUE: (none)" << std::endl;
 				else
-					std::cout << "EXECUTION_VENUE: " << emp.EXECUTION_VENUE.get() << std::endl;
+					std::cout << "EXECUTION_VENUE: " << *emp.EXECUTION_VENUE << std::endl;
 
 				if (!emp.EFFECTIVE_DATE)
 					std::cout << "EFFECTIVE_DATE: (none)" << std::endl;
 				else
-					std::cout << "EFFECTIVE_DATE: " << emp.EFFECTIVE_DATE.get() << std::endl;
+					std::cout << "EFFECTIVE_DATE: " << *emp.EFFECTIVE_DATE << std::endl;
 
 				if (!emp.END_DATE)
 					std::cout << "END_DATE: (none)" << std::endl;
 				else
-					std::cout << "END_DATE: " << emp.END_DATE.get() << std::endl;
+					std::cout << "END_DATE: " << *emp.END_DATE << std::endl;
 
 				if (!emp.SETTLEMENT_CURRENCY)
 					std::cout << "SETTLEMENT_CURRENCY: (none)" << std::endl;
 				else
-					std::cout << "SETTLEMENT_CURRENCY: " << emp.SETTLEMENT_CURRENCY.get() << std::endl;
+					std::cout << "SETTLEMENT_CURRENCY: " << *emp.SETTLEMENT_CURRENCY << std::endl;
 
 				std::cout << "ASSET_TYPE: " << emp.ASSET_CLASS << std::endl;
 
@@ -190,6 +194,16 @@ int main(int * argc, char ** argv)
 				else
 					std::cout << "OPTION_STRIKE_PRICE: " << emp.OPTION_STRIKE_PRICE << std::endl;
 
+				if (!emp.OPTION_TYPE)
+					std::cout << "OPTION_TYPE: (none)" << std::endl;
+				else
+					std::cout << "OPTION_TYPE: " << *emp.OPTION_TYPE << std::endl;
+
+				if (!emp.OPTION_FAMILY)
+					std::cout << "OPTION_FAMILY: (none)" << std::endl;
+				else
+					std::cout << "OPTION_FAMILY: " << *emp.OPTION_FAMILY << std::endl;
+
 				std::cout << "-------------------------" << std::endl;
 			}
 			else
@@ -198,10 +212,10 @@ int main(int * argc, char ** argv)
 				std::cout << "Parsing failed\n";
 				std::cout << "-------------------------\n";
 			}
-		}
+		}*/
 	}
 
-	std::cout << "Conversion done in " << boost::chrono::duration_cast<boost::chrono::milliseconds> (
+	std::cout << recs.size() << " conversions done in " << boost::chrono::duration_cast<boost::chrono::milliseconds> (
 		boost::chrono::high_resolution_clock::now() - start) << std::endl;
 
 	system("pause");

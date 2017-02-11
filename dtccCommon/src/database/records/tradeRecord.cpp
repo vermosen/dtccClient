@@ -1,4 +1,4 @@
-#include <boost/algorithm/string/split.hpp>
+ #include <boost/algorithm/string/split.hpp>
 #include <boost/locale.hpp>
 
 #include "database/records/tradeRecord.hpp"

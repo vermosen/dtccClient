@@ -38,8 +38,8 @@ BOOST_FUSION_ADAPT_STRUCT(
 	(bool, INDICATION_OF_OTHER_PRICE_AFFECTING_TERM)
 	(bool, BLOCK_TRADES_AND_LARGE_NOTIONAL_OFFFACILITY_SWAPS)
 	(boost::optional<bool>, EXECUTION_VENUE)
-	(boost::optional<boost::gregorian::date>, EFFECTIVE_DATE)
-	(boost::optional<boost::gregorian::date>, END_DATE)
+	(dtcc::database::tOptDate, EFFECTIVE_DATE)
+	(dtcc::database::tOptDate, END_DATE)
 	(std::string, DAY_COUNT_CONVENTION)
 	(dtcc::database::tOptCcy, SETTLEMENT_CURRENCY)
 	(dtcc::database::assetType, ASSET_CLASS)
@@ -62,17 +62,53 @@ BOOST_FUSION_ADAPT_STRUCT(
 	(std::string, RESET_FREQUENCY_2)
 	(bool, EMBEDED_OPTION)
 	(boost::optional<double>, OPTION_STRIKE_PRICE)
-	/*(boost::optional<dtcc::database::optionType>, OPTION_TYPE)
-	(boost::optional<dtcc::database::optionFamily>, OPTION_FAMILY)
-	(boost::optional<dtcc::database::tradeRecord::ccy>, OPTION_CURRENCY)
+	(dtcc::database::tOptType, OPTION_TYPE)
+	(dtcc::database::tOptFamily, OPTION_FAMILY)
+	(dtcc::database::tOptCcy, OPTION_CURRENCY)
 	(boost::optional<double>, OPTION_PREMIUM)
-	(boost::optional<boost::gregorian::date>, OPTION_LOCK_PERIOD)
-	(boost::optional<boost::gregorian::date>, OPTION_EXPIRATION_DATE)
+	(dtcc::database::tOptDate, OPTION_LOCK_PERIOD)
+	(dtcc::database::tOptDate, OPTION_EXPIRATION_DATE)
 	(std::string, PRICE_NOTATION_TYPE_2)
 	(boost::optional<double>, PRICE_NOTATION_2)
 	(std::string, PRICE_NOTATION_TYPE_3)
-	(boost::optional<double>, PRICE_NOTATION_3)*/
+	(boost::optional<double>, PRICE_NOTATION_3)
 )
+
+template<>
+struct boost::spirit::traits::transform_attribute< dtcc::database::tOptFamily, std::string, boost::spirit::qi::domain>
+{
+	typedef std::string type;
+
+	static type pre(dtcc::database::tOptFamily a) { return type(); }
+
+	static void post(dtcc::database::tOptFamily& d, type const& v)
+	{
+		if (v == "")
+			d = boost::none;
+		else
+			d = dtcc::EnumManager<dtcc::database::optionFamily>::toEnum(v);
+	}
+
+	static void fail(dtcc::database::tOptFamily&) {}
+};
+
+template<>
+struct boost::spirit::traits::transform_attribute< dtcc::database::tOptType, std::string, boost::spirit::qi::domain>
+{
+	typedef std::string type;
+
+	static type pre(dtcc::database::tOptType a) { return type(); }
+
+	static void post(dtcc::database::tOptType& d, type const& v)
+	{
+		if (v == "")
+			d = boost::none;
+		else
+			d = dtcc::EnumManager<dtcc::database::optionType>::toEnum(v);
+	}
+
+	static void fail(dtcc::database::tOptType&) {}
+};
 
 template<>
 struct boost::spirit::traits::transform_attribute< dtcc::database::action, std::string, boost::spirit::qi::domain>
@@ -305,41 +341,50 @@ struct tradeRecordGrammar : qi::grammar<Iterator, dtcc::database::tradeRecord(),
 		//BOOST_SPIRIT_DEBUG_NODE(rOptCcyPlus);
 		//debug(rOptCcyPlus);
 
-		
 		start %=
-			rInt >> ',' >>
-			rOptInt >> ',' >>
-			rString >> ',' >>
-			rTime >> ',' >>
-			rCleared >> ',' >>
-			rIndOfCollat >> ',' >>
-			rOptBool >> "," >>
-			rBool >> "," >>
-			rBool >> "," >>
-			rOptVenue >> "," >>
-			rOptDate >> ',' >>
-			rOptDate >> ',' >>
-			rOptString >> ',' >>
-			rOptCcy >> ',' >>
-			rAssetClass >> ',' >>
-			rOptString >> ',' >>
-			rOptString >> ',' >>
-			rString		>> ',' >>
-			rOptString	>> ',' >>
-			rOptString	>> ',' >>
-			rOptString >> ',' >>
-			rOptNom		>> ',' >>
-			rOptString >> ',' >>
-			rOptNom		>> ',' >>
-			rOptString >> ',' >>
-			rOptString >> ',' >>
-			rOptNomPlus >> ',' >>
-			rOptNomPlus >> ',' >>
-			rOptString >> ',' >>
-			rOptString >> ',' >>
-			rOptString >> ',' >>
-			rOptString >> ',' >>
-			rEmbedded >> ',' >>
+			rInt			>> ',' >>
+			rOptInt			>> ',' >>
+			rString			>> ',' >>
+			rTime			>> ',' >>
+			rCleared		>> ',' >>
+			rIndOfCollat	>> ',' >>
+			rOptBool		>> "," >>
+			rBool			>> "," >>
+			rBool			>> "," >>
+			rOptVenue		>> "," >>
+			rOptDate		>> ',' >>
+			rOptDate		>> ',' >>
+			rOptString		>> ',' >>
+			rOptCcy			>> ',' >>
+			rAssetClass		>> ',' >>
+			rOptString		>> ',' >>
+			rOptString		>> ',' >>
+			rString			>> ',' >>
+			rOptString		>> ',' >>
+			rOptString		>> ',' >>
+			rOptString		>> ',' >>
+			rOptNom			>> ',' >>
+			rOptString		>> ',' >>
+			rOptNom			>> ',' >>
+			rOptString		>> ',' >>
+			rOptString		>> ',' >>
+			rOptNomPlus		>> ',' >>
+			rOptNomPlus		>> ',' >>
+			rOptString		>> ',' >>
+			rOptString		>> ',' >>
+			rOptString		>> ',' >>
+			rOptString		>> ',' >>
+			rEmbedded		>> ',' >>
+			rOptNom			>> ',' >>
+			rOptString		>> ',' >>
+			rOptString		>> ',' >>
+			rOptCcy			>> ',' >>
+			rOptNom			>> "," >>
+			rOptDate		>> ',' >>
+			rOptDate		>> ',' >>
+			rOptString		>> ',' >>
+			rOptNom			>> ',' >>
+			rOptString		>> ',' >>
 			rOptNom
 			;
 	}
