@@ -222,25 +222,25 @@ template <typename T>
 struct currencyPolicy : boost::spirit::qi::real_policies<T>
 {
 	//  No exponent
-	template <typename Iterator>
+	template <typename iterator>
 	static bool
-		parse_exp(Iterator&, Iterator const&)
+		parse_exp(iterator&, iterator const&)
 	{
 		return false;
 	}
 
 	//  No exponent
-	template <typename Iterator, typename Attribute>
+	template <typename iterator, typename Attribute>
 	static bool
-		parse_exp_n(Iterator&, Iterator const&, Attribute&)
+		parse_exp_n(iterator&, iterator const&, Attribute&)
 	{
 		return false;
 	}
 
 	//  Thousands separated numbers
-	template <typename Iterator, typename Attribute>
+	template <typename iterator, typename Attribute>
 	static bool
-		parse_n(Iterator& first, Iterator const& last, Attribute& attr)
+		parse_n(iterator& first, iterator const& last, Attribute& attr)
 	{
 		using boost::spirit::qi::uint_parser;
 		namespace qi = boost::spirit::qi;
@@ -251,7 +251,7 @@ struct currencyPolicy : boost::spirit::qi::real_policies<T>
 		T result = 0;
 		if (parse(first, last, uint3, result))
 		{
-			T n; Iterator save = first;
+			T n; iterator save = first;
 			while (qi::parse(first, last, ",") && qi::parse(first, last, uint3_3, n))
 			{
 				result = result * 1000 + n;
@@ -268,10 +268,10 @@ struct currencyPolicy : boost::spirit::qi::real_policies<T>
 
 using namespace boost::spirit;
 
-template <typename Iterator>
-struct tradeRecordGrammar : qi::grammar<Iterator, dtcc::database::tradeRecord(), ascii::space_type>
+template <typename iterator, typename skipper>
+struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tradeRecord>(), skipper>
 {
-	tradeRecordGrammar() : tradeRecordGrammar::base_type(start)
+	tradeRecordGrammar() : tradeRecordGrammar::base_type(records)
 	{
 		rInt		
 			%= qi::lexeme['"' >> int_ >> '"'];
@@ -341,17 +341,17 @@ struct tradeRecordGrammar : qi::grammar<Iterator, dtcc::database::tradeRecord(),
 		//BOOST_SPIRIT_DEBUG_NODE(rOptCcyPlus);
 		//debug(rOptCcyPlus);
 
-		start %=
+		record %=
 			rInt			>> ',' >>
 			rOptInt			>> ',' >>
 			rString			>> ',' >>
 			rTime			>> ',' >>
 			rCleared		>> ',' >>
 			rIndOfCollat	>> ',' >>
-			rOptBool		>> "," >>
-			rBool			>> "," >>
-			rBool			>> "," >>
-			rOptVenue		>> "," >>
+			rOptBool		>> ',' >>
+			rBool			>> ',' >>
+			rBool			>> ',' >>
+			rOptVenue		>> ',' >>
 			rOptDate		>> ',' >>
 			rOptDate		>> ',' >>
 			rOptString		>> ',' >>
@@ -385,29 +385,40 @@ struct tradeRecordGrammar : qi::grammar<Iterator, dtcc::database::tradeRecord(),
 			rOptString		>> ',' >>
 			rOptNom			>> ',' >>
 			rOptString		>> ',' >>
-			rOptNom
-			;
+			rOptNom;
+
+		records = +(record >> qi::eol);
 	}
 
-	qi::rule<Iterator, int()						, ascii::space_type> rInt;
-	qi::rule<Iterator, int()						, ascii::space_type> rOptInt;
-	qi::rule<Iterator, timeAdaptator()				, ascii::space_type> rTime;
-	qi::rule<Iterator, optDateAdaptator()			, ascii::space_type> rOptDate;
-	qi::rule<Iterator, std::string()				, ascii::space_type> rString;
-	qi::rule<Iterator, std::string()				, ascii::space_type> rOptString;
-	qi::rule<Iterator, char()						, ascii::space_type> rCleared;
-	qi::rule<Iterator, std::string()				, ascii::space_type> rIndOfCollat;
-	qi::rule<Iterator, boost::optional<bool>()		, ascii::space_type> rOptBool;
-	qi::rule<Iterator, bool()						, ascii::space_type> rBool;
-	qi::rule<Iterator, boost::optional<bool>()		, ascii::space_type> rOptVenue;
-	qi::rule<Iterator, dtcc::database::tOptCcy()	, ascii::space_type> rOptCcy;
-	qi::rule<Iterator, std::string()				, ascii::space_type> rAssetClass;
-	qi::rule<Iterator, boost::optional<double>()	, ascii::space_type> rOptNom;
-	qi::rule<Iterator, dtcc::database::tOptNomPlus(), ascii::space_type> rOptNomPlus;
-	qi::rule<Iterator, bool()						, ascii::space_type> rEmbedded;
-	qi::rule<Iterator, dtcc::database::tradeRecord(), ascii::space_type> start;
+	qi::rule<iterator, int()						, skipper> rInt;
+	qi::rule<iterator, int()						, skipper> rOptInt;
+	qi::rule<iterator, timeAdaptator()				, skipper> rTime;
+	qi::rule<iterator, optDateAdaptator()			, skipper> rOptDate;
+	qi::rule<iterator, std::string()				, skipper> rString;
+	qi::rule<iterator, std::string()				, skipper> rOptString;
+	qi::rule<iterator, char()						, skipper> rCleared;
+	qi::rule<iterator, std::string()				, skipper> rIndOfCollat;
+	qi::rule<iterator, boost::optional<bool>()		, skipper> rOptBool;
+	qi::rule<iterator, bool()						, skipper> rBool;
+	qi::rule<iterator, boost::optional<bool>()		, skipper> rOptVenue;
+	qi::rule<iterator, dtcc::database::tOptCcy()	, skipper> rOptCcy;
+	qi::rule<iterator, std::string()				, skipper> rAssetClass;
+	qi::rule<iterator, boost::optional<double>()	, skipper> rOptNom;
+	qi::rule<iterator, dtcc::database::tOptNomPlus(), skipper> rOptNomPlus;
+	qi::rule<iterator, bool()						, skipper> rEmbedded;
+
+	qi::rule<iterator, dtcc::database::tradeRecord(), skipper> record;
+	qi::rule<iterator, std::vector<dtcc::database::tradeRecord>(), skipper> records;
 
 	qi::real_parser<double, currencyPolicy<int> > pCurrency;
 };
+
+namespace dtcc
+{
+	namespace database
+	{
+		bool parse(std::string::const_iterator iter, std::string::const_iterator end, std::vector<dtcc::database::tradeRecord> & recs);
+	}
+}
 
 #endif

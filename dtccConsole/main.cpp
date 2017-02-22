@@ -21,202 +21,194 @@
 
 boost::chrono::high_resolution_clock::time_point start;
 
-const static std::string testString("\"58919739\",\"\",\"NEW\",\"2017-01-10T07:52:46\",\"U\",\"FC\",\"\",\"N\",\"N\",\"OFF\",\"2017-02-01\",\"2017-02-28\",\"\",\"\",\"CO\",\"Energy\",\"Commodity:Energy:Elec:Swap:Cash\",\"Trade\",\"ELECTRICITY-DAILY PHELIX BASE SPOT-EEX\",\"\",\"EUR:MWh\",\"40.9775\",\"\",\"\",\"MWH\",\"MWH\",\"3,400\",\"3,400\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"");
+const static std::string testMultiple(
+R"s("58919739","","NEW","2017-01-10T07:52:46","U","FC","","N","N","OFF","2017-02-01","2017-02-28","","","CO","Energy","Commodity:Energy:Elec:Swap:Cash","Trade","ELECTRICITY-DAILY PHELIX BASE SPOT-EEX","","EUR:MWh","40.9775","","","MWH","MWH","3,400","3,400","","","","","","","","","","","","","","","",""
+"58919740","","NEW","2017-01-10T07:52:46","U","FC","","N","N","ON","2017-02-01","2017-02-28","","","IR","Energy","Commodity:Energy:Elec:Swap:Cash","Trade","ELECTRICITY-DAILY PHELIX BASE SPOT-EEX","","EUR:MWh","40.9775","","","MWH","MWH","3,400","3,400","","","","","","","","","","","","","","","",""
+"58919741","","NEW","2017-01-10T07:52:46","U","FC","","N","N","","2017-02-01","","","","EQ","Energy","Commodity:Energy:Elec:Swap:Cash","Trade","ELECTRICITY-DAILY PHELIX BASE SPOT-EEX","","EUR:MWh","40.9775","","","MWH","MWH","3,400","3,400","","","","","","","","","","","","","","","",""
+)s");
 
 int main(int * argc, char ** argv)
 {
-	tradeRecordGrammar<std::string::const_iterator> g; // Our grammar
-
-	size_t t = 100000;
-	std::vector<dtcc::database::tradeRecord> recs; 
-	recs.reserve(t);
+	bool print = true;
+	std::vector<dtcc::database::tradeRecord> recs;
 
 	start = boost::chrono::high_resolution_clock::now();
 
-	int i = 0;  while (i++ < t)
-	{
-		dtcc::database::tradeRecord emp;
+	std::string::const_iterator iter = testMultiple.begin(), end = testMultiple.end();
 
-		std::string::const_iterator iter = testString.begin(), end = testString.end();
-		if (boost::spirit::qi::phrase_parse(iter, end, g, boost::spirit::ascii::space, emp) && iter == end)
+	if (dtcc::database::parse(iter, end, recs))
+	{
+		if (print)
 		{
-			recs.push_back(emp);
-		}
-		/*for (auto it = recs.begin(); it != recs.end(); it++)
-		{
-			dtcc::database::tradeRecord emp;
-			 
-			if (boost::spirit::qi::phrase_parse(iter, end, g, boost::spirit::ascii::space, emp) && iter == end)
+			for (auto it = recs.begin(); it != recs.end(); it++)
 			{
-				std::cout << "DISSEMINATION_ID: " << emp.DISSEMINATION_ID << std::endl;
-				std::cout << "ORIGINAL_DISSEMINATION_ID: " << emp.ORIGINAL_DISSEMINATION_ID << std::endl;
-				std::cout << "ACTION: " << emp.ACTION << std::endl;
-				std::cout << "EXECUTION_TIMESTAMP: " << emp.EXECUTION_TIMESTAMP << std::endl;
-				std::cout << "CLEARED: " << emp.CLEARED << std::endl;
-				std::cout << "INDICATION_OF_COLLATERALIZATION: " << emp.INDICATION_OF_COLLATERALIZATION << std::endl;
-				if (!emp.INDICATION_OF_END_USER_EXCEPTION)
+				std::cout << "DISSEMINATION_ID: " << it->DISSEMINATION_ID << std::endl;
+				std::cout << "ORIGINAL_DISSEMINATION_ID: " << it->ORIGINAL_DISSEMINATION_ID << std::endl;
+				std::cout << "ACTION: " << it->ACTION << std::endl;
+				std::cout << "EXECUTION_TIMESTAMP: " << it->EXECUTION_TIMESTAMP << std::endl;
+				std::cout << "CLEARED: " << it->CLEARED << std::endl;
+				std::cout << "INDICATION_OF_COLLATERALIZATION: " << it->INDICATION_OF_COLLATERALIZATION << std::endl;
+				if (!it->INDICATION_OF_END_USER_EXCEPTION)
 					std::cout << "INDICATION_OF_END_USER_EXCEPTION: (none)" << std::endl;
 				else
-					std::cout << "INDICATION_OF_END_USER_EXCEPTION: " << *emp.INDICATION_OF_END_USER_EXCEPTION << std::endl;
+					std::cout << "INDICATION_OF_END_USER_EXCEPTION: " << *it->INDICATION_OF_END_USER_EXCEPTION << std::endl;
 
-				std::cout << "INDICATION_OF_OTHER_PRICE_AFFECTING_TERM: " << emp.INDICATION_OF_OTHER_PRICE_AFFECTING_TERM << std::endl;
-				std::cout << "BLOCK_TRADES_AND_LARGE_NOTIONAL_OFFFACILITY_SWAPS: " << emp.BLOCK_TRADES_AND_LARGE_NOTIONAL_OFFFACILITY_SWAPS << std::endl;
-				
-				if (!emp.EXECUTION_VENUE)
+				std::cout << "INDICATION_OF_OTHER_PRICE_AFFECTING_TERM: " << it->INDICATION_OF_OTHER_PRICE_AFFECTING_TERM << std::endl;
+				std::cout << "BLOCK_TRADES_AND_LARGE_NOTIONAL_OFFFACILITY_SWAPS: " << it->BLOCK_TRADES_AND_LARGE_NOTIONAL_OFFFACILITY_SWAPS << std::endl;
+
+				if (!it->EXECUTION_VENUE)
 					std::cout << "EXECUTION_VENUE: (none)" << std::endl;
 				else
-					std::cout << "EXECUTION_VENUE: " << *emp.EXECUTION_VENUE << std::endl;
+					std::cout << "EXECUTION_VENUE: " << *it->EXECUTION_VENUE << std::endl;
 
-				if (!emp.EFFECTIVE_DATE)
+				if (!it->EFFECTIVE_DATE)
 					std::cout << "EFFECTIVE_DATE: (none)" << std::endl;
 				else
-					std::cout << "EFFECTIVE_DATE: " << *emp.EFFECTIVE_DATE << std::endl;
+					std::cout << "EFFECTIVE_DATE: " << *it->EFFECTIVE_DATE << std::endl;
 
-				if (!emp.END_DATE)
+				if (!it->END_DATE)
 					std::cout << "END_DATE: (none)" << std::endl;
 				else
-					std::cout << "END_DATE: " << *emp.END_DATE << std::endl;
+					std::cout << "END_DATE: " << *it->END_DATE << std::endl;
 
-				if (!emp.SETTLEMENT_CURRENCY)
+				if (!it->SETTLEMENT_CURRENCY)
 					std::cout << "SETTLEMENT_CURRENCY: (none)" << std::endl;
 				else
-					std::cout << "SETTLEMENT_CURRENCY: " << *emp.SETTLEMENT_CURRENCY << std::endl;
+					std::cout << "SETTLEMENT_CURRENCY: " << *it->SETTLEMENT_CURRENCY << std::endl;
 
-				std::cout << "ASSET_TYPE: " << emp.ASSET_CLASS << std::endl;
+				std::cout << "ASSET_TYPE: " << it->ASSET_CLASS << std::endl;
 
-				if (emp.SUBASSET_CLASS_FOR_OTHER_COMMODITY == "")
+				if (it->SUBASSET_CLASS_FOR_OTHER_COMMODITY == "")
 					std::cout << "SUBASSET_CLASS_FOR_OTHER_COMMODITY: (none)" << std::endl;
 				else
-					std::cout << "SUBASSET_CLASS_FOR_OTHER_COMMODITY: " << emp.SUBASSET_CLASS_FOR_OTHER_COMMODITY << std::endl;
+					std::cout << "SUBASSET_CLASS_FOR_OTHER_COMMODITY: " << it->SUBASSET_CLASS_FOR_OTHER_COMMODITY << std::endl;
 
-				if (emp.TAXONOMY == "")
+				if (it->TAXONOMY == "")
 					std::cout << "TAXONOMY: (none)" << std::endl;
 				else
-					std::cout << "TAXONOMY: " << emp.TAXONOMY << std::endl;
+					std::cout << "TAXONOMY: " << it->TAXONOMY << std::endl;
 
-				std::cout << "PRICE_FORMING_CONTINUATION_DATA: " << emp.PRICE_FORMING_CONTINUATION_DATA << std::endl;
-				
-				if (emp.UNDERLYING_ASSET_1 == "")
+				std::cout << "PRICE_FORMING_CONTINUATION_DATA: " << it->PRICE_FORMING_CONTINUATION_DATA << std::endl;
+
+				if (it->UNDERLYING_ASSET_1 == "")
 					std::cout << "UNDERLYING_ASSET_1: (none)" << std::endl;
 				else
-					std::cout << "UNDERLYING_ASSET_1: " << emp.UNDERLYING_ASSET_1 << std::endl;
+					std::cout << "UNDERLYING_ASSET_1: " << it->UNDERLYING_ASSET_1 << std::endl;
 
-				if (emp.UNDERLYING_ASSET_2 == "")
+				if (it->UNDERLYING_ASSET_2 == "")
 					std::cout << "UNDERLYING_ASSET_2: (none)" << std::endl;
 				else
-					std::cout << "UNDERLYING_ASSET_2: " << emp.UNDERLYING_ASSET_2 << std::endl;
+					std::cout << "UNDERLYING_ASSET_2: " << it->UNDERLYING_ASSET_2 << std::endl;
 
-				if (emp.PRICE_NOTATION_TYPE == "")
+				if (it->PRICE_NOTATION_TYPE == "")
 					std::cout << "PRICE_NOTATION_TYPE: (none)" << std::endl;
 				else
-					std::cout << "PRICE_NOTATION_TYPE: " << emp.PRICE_NOTATION_TYPE << std::endl;
+					std::cout << "PRICE_NOTATION_TYPE: " << it->PRICE_NOTATION_TYPE << std::endl;
 
-				if (!emp.PRICE_NOTATION)
+				if (!it->PRICE_NOTATION)
 					std::cout << "PRICE_NOTATION: (none)" << std::endl;
 				else
-					std::cout << "PRICE_NOTATION: " << std::fixed << std::setprecision(6) << emp.PRICE_NOTATION << std::endl;
+					std::cout << "PRICE_NOTATION: " << std::fixed << std::setprecision(6) << it->PRICE_NOTATION << std::endl;
 
-				if (emp.ADDITIONAL_PRICE_NOTATION_TYPE == "")
+				if (it->ADDITIONAL_PRICE_NOTATION_TYPE == "")
 					std::cout << "ADDITIONAL_PRICE_NOTATION_TYPE: (none)" << std::endl;
 				else
-					std::cout << "ADDITIONAL_PRICE_NOTATION_TYPE: " << emp.ADDITIONAL_PRICE_NOTATION_TYPE << std::endl;
+					std::cout << "ADDITIONAL_PRICE_NOTATION_TYPE: " << it->ADDITIONAL_PRICE_NOTATION_TYPE << std::endl;
 
-				if (!emp.ADDITIONAL_PRICE_NOTATION)
+				if (!it->ADDITIONAL_PRICE_NOTATION)
 					std::cout << "ADDITIONAL_PRICE_NOTATION: (none)" << std::endl;
 				else
-					std::cout << "ADDITIONAL_PRICE_NOTATION: " << std::fixed << std::setprecision(6) << emp.ADDITIONAL_PRICE_NOTATION << std::endl;
-				
-				if (emp.NOTIONAL_CURRENCY_1 == "")
+					std::cout << "ADDITIONAL_PRICE_NOTATION: " << std::fixed << std::setprecision(6) << it->ADDITIONAL_PRICE_NOTATION << std::endl;
+
+				if (it->NOTIONAL_CURRENCY_1 == "")
 					std::cout << "NOTIONAL_CURRENCY_1: (none)" << std::endl;
 				else
-					std::cout << "NOTIONAL_CURRENCY_1: " << emp.NOTIONAL_CURRENCY_1 << std::endl;
-				
-				if (emp.NOTIONAL_CURRENCY_2 == "")
+					std::cout << "NOTIONAL_CURRENCY_1: " << it->NOTIONAL_CURRENCY_1 << std::endl;
+
+				if (it->NOTIONAL_CURRENCY_2 == "")
 					std::cout << "NOTIONAL_CURRENCY_2: (none)" << std::endl;
 				else
-					std::cout << "NOTIONAL_CURRENCY_2: " << emp.NOTIONAL_CURRENCY_2 << std::endl;
+					std::cout << "NOTIONAL_CURRENCY_2: " << it->NOTIONAL_CURRENCY_2 << std::endl;
 
-				if (!emp.ROUNDED_NOTIONAL_AMOUNT_1)
+				if (!it->ROUNDED_NOTIONAL_AMOUNT_1)
 					std::cout << "ROUNDED_NOTIONAL_AMOUNT_1: (none)" << std::endl;
 				else
 				{
 					std::cout << "ROUNDED_NOTIONAL_AMOUNT_1: "
-						<< boost::get<0>(*emp.ROUNDED_NOTIONAL_AMOUNT_1);
+						<< boost::get<0>(*it->ROUNDED_NOTIONAL_AMOUNT_1);
 
-					if (boost::get<1>(*emp.ROUNDED_NOTIONAL_AMOUNT_1) == true)
+					if (boost::get<1>(*it->ROUNDED_NOTIONAL_AMOUNT_1) == true)
 					{
 						std::cout << " (Plus)" << std::endl;
 					}
 					else std::cout << std::endl;
 				}
 
-				if (!emp.ROUNDED_NOTIONAL_AMOUNT_2)
+				if (!it->ROUNDED_NOTIONAL_AMOUNT_2)
 					std::cout << "ROUNDED_NOTIONAL_AMOUNT_2: (none)" << std::endl;
 				else
 				{
 					std::cout << "ROUNDED_NOTIONAL_AMOUNT_2: "
-						<< boost::get<0>(*emp.ROUNDED_NOTIONAL_AMOUNT_2);
+						<< boost::get<0>(*it->ROUNDED_NOTIONAL_AMOUNT_2);
 
-					if (boost::get<1>(*emp.ROUNDED_NOTIONAL_AMOUNT_2) == true)
+					if (boost::get<1>(*it->ROUNDED_NOTIONAL_AMOUNT_2) == true)
 					{
-						std::cout  << " (Plus)" << std::endl;
+						std::cout << " (Plus)" << std::endl;
 					}
 					else std::cout << std::endl;
-				}	
+				}
 
-				if (emp.PAYMENT_FREQUENCY_1 == "")
+				if (it->PAYMENT_FREQUENCY_1 == "")
 					std::cout << "PAYMENT_FREQUENCY_1: (none)" << std::endl;
 				else
-					std::cout << "PAYMENT_FREQUENCY_1: " << emp.PAYMENT_FREQUENCY_1 << std::endl;
+					std::cout << "PAYMENT_FREQUENCY_1: " << it->PAYMENT_FREQUENCY_1 << std::endl;
 
-				if (emp.PAYMENT_FREQUENCY_2 == "")
+				if (it->PAYMENT_FREQUENCY_2 == "")
 					std::cout << "PAYMENT_FREQUENCY_2: (none)" << std::endl;
 				else
-					std::cout << "PAYMENT_FREQUENCY_2: " << emp.PAYMENT_FREQUENCY_2 << std::endl;
+					std::cout << "PAYMENT_FREQUENCY_2: " << it->PAYMENT_FREQUENCY_2 << std::endl;
 
-				if (emp.RESET_FREQUENCY_1 == "")
+				if (it->RESET_FREQUENCY_1 == "")
 					std::cout << "RESET_FREQUENCY_1: (none)" << std::endl;
 				else
-					std::cout << "RESET_FREQUENCY_1: " << emp.RESET_FREQUENCY_1 << std::endl;
+					std::cout << "RESET_FREQUENCY_1: " << it->RESET_FREQUENCY_1 << std::endl;
 
-				if (emp.RESET_FREQUENCY_2 == "")
+				if (it->RESET_FREQUENCY_2 == "")
 					std::cout << "RESET_FREQUENCY_2: (none)" << std::endl;
 				else
-					std::cout << "RESET_FREQUENCY_2: " << emp.RESET_FREQUENCY_2 << std::endl;
+					std::cout << "RESET_FREQUENCY_2: " << it->RESET_FREQUENCY_2 << std::endl;
 
-				if (emp.EMBEDED_OPTION)
+				if (it->EMBEDED_OPTION)
 					std::cout << "EMBEDED_OPTION: true" << std::endl;
 				else
 					std::cout << "EMBEDED_OPTION: false" << std::endl;
 
-				if (!emp.OPTION_STRIKE_PRICE)
+				if (!it->OPTION_STRIKE_PRICE)
 					std::cout << "OPTION_STRIKE_PRICE: (none)" << std::endl;
 				else
-					std::cout << "OPTION_STRIKE_PRICE: " << emp.OPTION_STRIKE_PRICE << std::endl;
+					std::cout << "OPTION_STRIKE_PRICE: " << it->OPTION_STRIKE_PRICE << std::endl;
 
-				if (!emp.OPTION_TYPE)
+				if (!it->OPTION_TYPE)
 					std::cout << "OPTION_TYPE: (none)" << std::endl;
 				else
-					std::cout << "OPTION_TYPE: " << *emp.OPTION_TYPE << std::endl;
+					std::cout << "OPTION_TYPE: " << *it->OPTION_TYPE << std::endl;
 
-				if (!emp.OPTION_FAMILY)
+				if (!it->OPTION_FAMILY)
 					std::cout << "OPTION_FAMILY: (none)" << std::endl;
 				else
-					std::cout << "OPTION_FAMILY: " << *emp.OPTION_FAMILY << std::endl;
+					std::cout << "OPTION_FAMILY: " << *it->OPTION_FAMILY << std::endl;
 
 				std::cout << "-------------------------" << std::endl;
 			}
-			else
-			{
-				std::cout << "-------------------------\n";
-				std::cout << "Parsing failed\n";
-				std::cout << "-------------------------\n";
-			}
-		}*/
-	}
+		}
 
-	std::cout << recs.size() << " conversions done in " << boost::chrono::duration_cast<boost::chrono::milliseconds> (
-		boost::chrono::high_resolution_clock::now() - start) << std::endl;
+		std::cout << recs.size() << " conversions done in " << boost::chrono::duration_cast<boost::chrono::milliseconds> (
+			boost::chrono::high_resolution_clock::now() - start) << std::endl;
+	}
+	else
+	{
+		std::cout << "conversion failed" << std::endl;
+	}
 
 	system("pause");
 	return 0;

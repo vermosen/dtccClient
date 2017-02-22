@@ -61,5 +61,6 @@
     <ClCompile Include="src\database\records\tradeRecord.cpp" />
     <ClCompile Include="src\database\recordsets\tradeRecordset.cpp" />
     <ClCompile Include="src\application\logger.cpp" />
+    <ClCompile Include="src\database\records\tradeRecordGrammar.cpp" />
   </ItemGroup>
 </Project>
