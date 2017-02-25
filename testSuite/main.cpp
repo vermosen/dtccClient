@@ -12,6 +12,7 @@
 #include "converter.hpp"
 #include "logger.hpp"
 #include "pattern.hpp"
+#include "parsing.hpp"
 
 // WARN: do not include in a namespace
 boost::unit_test::test_suite* init_unit_test_suite(int, char*[])
@@ -34,6 +35,7 @@ boost::unit_test::test_suite* init_unit_test_suite(int, char*[])
 	test->add(testSuite::compression::suite());
 	test->add(testSuite::converter::suite());
 	test->add(testSuite::pattern::suite());
+	test->add(testSuite::parsing::suite());
 
 	return test;
 }

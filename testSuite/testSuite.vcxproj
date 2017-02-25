@@ -99,6 +99,7 @@
     <ClCompile Include="converter.cpp" />
     <ClCompile Include="logger.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="parsing.cpp" />
     <ClCompile Include="pattern.cpp" />
     <ClCompile Include="registrable\base.cpp" />
     <ClCompile Include="registrable\derived.cpp" />
@@ -107,6 +108,7 @@
     <ClInclude Include="compression.hpp" />
     <ClInclude Include="converter.hpp" />
     <ClInclude Include="logger.hpp" />
+    <ClInclude Include="parsing.hpp" />
     <ClInclude Include="pattern.hpp" />
     <ClInclude Include="registrable\base.hpp" />
     <ClInclude Include="registrable\derived.hpp" />

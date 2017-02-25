@@ -8,6 +8,8 @@
 #ifndef DATABASE_RECORDSETS_TRADE_HPP_
 #define DATABASE_RECORDSETS_TRADE_HPP_
 
+#define SOCI_USE_BOOST
+
 #include <soci/soci.h>
 
 #include "database/recordset.hpp"

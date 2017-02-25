@@ -24,12 +24,15 @@ namespace dtcc
 				{
 					int id = 0;
 
-					//connector_->session()->once
-					//	<< "INSERT INTO dbo.testTable (text)"
-					//	<< " VALUES 'toto'"
-					//	<< " RETURNING id",
-					//	soci::use(it->TAXONOMY, "toto"),
-					//	soci::into(id);
+					connector_->session()->once
+						<< "INSERT INTO dbo.testTable(DISSEMINATION_ID, ORIGINAL_DISSEMINATION_ID, ACTION, EXECUTION_TIMESTAMP)"
+						<< " OUTPUT INSERTED.DISSEMINATION_ID"
+						<< " VALUES (:v1, :v2, :v3, :v4)",
+						soci::use(it->DISSEMINATION_ID, "v1"),
+						soci::use(it->ORIGINAL_DISSEMINATION_ID, "v2"),
+						soci::use(static_cast<int>(it->ACTION), "v3"),
+						soci::use(it->EXECUTION_TIMESTAMP, "v4"),
+						soci::into(id);
 
 					ids.push_back(id);
 				}

@@ -3,8 +3,6 @@
 
 #include <string>
 
-#define FUSION_MAX_VECTOR_SIZE 45
-
 #include <boost/config/warning_disable.hpp>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix_core.hpp>
@@ -274,7 +272,7 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 	tradeRecordGrammar() : tradeRecordGrammar::base_type(records)
 	{
 		rInt		
-			%= qi::lexeme['"' >> int_ >> '"'];
+			%= qi::lexeme['"' >> qi::int_ >> '"'];
 
 		rOptInt
 			%= "\"\""
@@ -282,7 +280,9 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 			qi::lexeme['"' >> qi::int_ >> '"'];
 
 		rOptString
-			%= qi::lexeme['"' >> *(ascii::char_ - '"') >> '"'];
+			%= "\"\""
+				|
+			qi::lexeme['"' >> *(ascii::char_ - '"') >> '"'];
 
 		rString 
 			%= qi::lexeme['"' >> +(ascii::char_ - '"') >> '"'];
@@ -387,11 +387,11 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 			rOptString		>> ',' >>
 			rOptNom;
 
-		records = +(record >> qi::eol);
+		records = +(record >> qi::eol) >> qi::eoi;
 	}
 
 	qi::rule<iterator, int()						, skipper> rInt;
-	qi::rule<iterator, int()						, skipper> rOptInt;
+	qi::rule<iterator, boost::optional<int>()		, skipper> rOptInt;
 	qi::rule<iterator, timeAdaptator()				, skipper> rTime;
 	qi::rule<iterator, optDateAdaptator()			, skipper> rOptDate;
 	qi::rule<iterator, std::string()				, skipper> rString;
@@ -412,13 +412,5 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 
 	qi::real_parser<double, currencyPolicy<int> > pCurrency;
 };
-
-namespace dtcc
-{
-	namespace database
-	{
-		bool parse(std::string::const_iterator iter, std::string::const_iterator end, std::vector<dtcc::database::tradeRecord> & recs);
-	}
-}
 
 #endif

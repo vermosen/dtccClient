@@ -8,6 +8,7 @@
     <ClCompile Include="logger.cpp" />
     <ClCompile Include="registrable\base.cpp" />
     <ClCompile Include="registrable\derived.cpp" />
+    <ClCompile Include="parsing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="compression.hpp" />
@@ -17,6 +18,7 @@
     <ClInclude Include="registrable\base.hpp" />
     <ClInclude Include="registrable\derived.hpp" />
     <ClInclude Include="registrable\enum.hpp" />
+    <ClInclude Include="parsing.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
