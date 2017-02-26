@@ -31,7 +31,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 	(dtcc::database::action, ACTION)
 	(dtcc::database::tTime, EXECUTION_TIMESTAMP)
 	(dtcc::database::cleared, CLEARED)
-	(dtcc::database::collateralization, INDICATION_OF_COLLATERALIZATION)
+	(dtcc::database::tOptCollat, INDICATION_OF_COLLATERALIZATION)
 	(boost::optional<bool>, INDICATION_OF_END_USER_EXCEPTION)
 	(bool, INDICATION_OF_OTHER_PRICE_AFFECTING_TERM)
 	(bool, BLOCK_TRADES_AND_LARGE_NOTIONAL_OFFFACILITY_SWAPS)
@@ -66,10 +66,11 @@ BOOST_FUSION_ADAPT_STRUCT(
 	(boost::optional<double>, OPTION_PREMIUM)
 	(dtcc::database::tOptDate, OPTION_LOCK_PERIOD)
 	(dtcc::database::tOptDate, OPTION_EXPIRATION_DATE)
-	(std::string, PRICE_NOTATION_TYPE_2)
-	(boost::optional<double>, PRICE_NOTATION_2)
-	(std::string, PRICE_NOTATION_TYPE_3)
-	(boost::optional<double>, PRICE_NOTATION_3)
+	(std::string, PRICE_NOTATION2_TYPE)
+	(boost::optional<double>, PRICE_NOTATION2)
+	(std::string, PRICE_NOTATION3_TYPE)
+	(boost::optional<double>, PRICE_NOTATION3)
+	(boost::gregorian::date, FILE_DATE)
 )
 
 template<>
@@ -124,18 +125,21 @@ struct boost::spirit::traits::transform_attribute< dtcc::database::action, std::
 };
 
 template<>
-struct boost::spirit::traits::transform_attribute<dtcc::database::collateralization, std::string, boost::spirit::qi::domain>
+struct boost::spirit::traits::transform_attribute<dtcc::database::tOptCollat, std::string, boost::spirit::qi::domain>
 {
 	typedef std::string type;
 
-	static type pre(dtcc::database::collateralization a) { return type(); }
+	static type pre(dtcc::database::tOptCollat a) { return type(); }
 
-	static void post(dtcc::database::collateralization & d, type const& v)
+	static void post(dtcc::database::tOptCollat & d, type const& v)
 	{
-		d = dtcc::EnumManager<dtcc::database::collateralization>::toEnum(v);
+		if (v == "")
+			d = boost::none;
+		else
+			d = dtcc::EnumManager<dtcc::database::collateralization>::toEnum(v);
 	}
 
-	static void fail(dtcc::database::collateralization &) {}
+	static void fail(dtcc::database::tOptCollat &) {}
 };
 
 template<>
@@ -269,7 +273,8 @@ using namespace boost::spirit;
 template <typename iterator, typename skipper>
 struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tradeRecord>(), skipper>
 {
-	tradeRecordGrammar() : tradeRecordGrammar::base_type(records)
+	tradeRecordGrammar(const boost::gregorian::date & fileDate) 
+		: tradeRecordGrammar::base_type(records), fileDate_(fileDate)
 	{
 		rInt		
 			%= qi::lexeme['"' >> qi::int_ >> '"'];
@@ -337,6 +342,9 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 				|
 			qi::lexeme['"' >> qi::eps > (qi::lit("EMBED1")[_val = true] | qi::lit("")[_val = false]) >> '"'];
 
+		rFileDate
+			%= qi::lit("")[_val = fileDate_];
+
 		//rOptCcyPlus.name("rOptCcyPlus");
 		//BOOST_SPIRIT_DEBUG_NODE(rOptCcyPlus);
 		//debug(rOptCcyPlus);
@@ -385,7 +393,8 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 			rOptString		>> ',' >>
 			rOptNom			>> ',' >>
 			rOptString		>> ',' >>
-			rOptNom;
+			rOptNom			>> 
+			rFileDate;
 
 		records = +(record >> qi::eol) >> qi::eoi;
 	}
@@ -406,11 +415,14 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 	qi::rule<iterator, boost::optional<double>()	, skipper> rOptNom;
 	qi::rule<iterator, dtcc::database::tOptNomPlus(), skipper> rOptNomPlus;
 	qi::rule<iterator, bool()						, skipper> rEmbedded;
+	qi::rule<iterator, boost::gregorian::date()		, skipper> rFileDate;
 
 	qi::rule<iterator, dtcc::database::tradeRecord(), skipper> record;
 	qi::rule<iterator, std::vector<dtcc::database::tradeRecord>(), skipper> records;
 
 	qi::real_parser<double, currencyPolicy<int> > pCurrency;
+
+	boost::gregorian::date fileDate_;
 };
 
 #endif

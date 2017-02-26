@@ -1,6 +1,7 @@
 #include "parsing.hpp"
 
 #include <boost/chrono.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
 
 #include "database/recordsets/tradeRecordset.hpp"
 #include "database/records/tradeRecordGrammar.hpp"
@@ -25,7 +26,9 @@ namespace testSuite
 
 		std::string::const_iterator iter = testMultiple.begin(), end = testMultiple.end();
 
-		if (dtcc::database::parse(iter, end, recs))
+		boost::gregorian::date dt(2012, 01, 01);
+
+		if (dtcc::database::parse(iter, end, recs, dt))
 		{
 			if (print)
 			{

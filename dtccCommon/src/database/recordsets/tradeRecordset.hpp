@@ -14,6 +14,7 @@
 
 #include "database/recordset.hpp"
 #include "database/records/tradeRecord.hpp"
+#include "database/records/tradeConverter.hpp"
 
 namespace dtcc
 {

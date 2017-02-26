@@ -126,7 +126,7 @@ int main(int * argc, char ** argv)
 						// skip the header
 						while (*iter++ != '\n');
 
-						if (dtcc::database::parse(iter, end, recs))
+						if (dtcc::database::parse(iter, end, recs, dt))
 						{
 							LOG_INFO() << recs.size() << "conversion done in "
 								<< boost::chrono::duration_cast<boost::chrono::milliseconds> (
@@ -137,6 +137,10 @@ int main(int * argc, char ** argv)
 							{
 								rs.insert(recs);
 								recs.clear();
+
+								LOG_INFO() << recs.size() << "insertion done in "
+									<< boost::chrono::duration_cast<boost::chrono::milliseconds> (
+										boost::chrono::high_resolution_clock::now() - start);
 							}
 						}
 						else

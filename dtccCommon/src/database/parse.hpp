@@ -13,7 +13,10 @@ namespace dtcc
 {
 	namespace database
 	{
-		bool parse(std::string::const_iterator iter, std::string::const_iterator end, std::vector<dtcc::database::tradeRecord> & recs);
+		bool parse(	std::string::const_iterator iter, 
+					std::string::const_iterator end, 
+					std::vector<dtcc::database::tradeRecord> & recs, 
+					const boost::gregorian::date & dt);
 	}
 }
 

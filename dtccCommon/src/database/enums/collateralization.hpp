@@ -13,7 +13,6 @@ namespace dtcc
 			, oc = 2
 			, pc = 3
 			, uc = 4
-			, uninitialized = 0
 		};
 	}
 
@@ -25,7 +24,6 @@ namespace dtcc
 		,{ database::collateralization::oc, "OC" }
 		,{ database::collateralization::pc, "PC" }
 		,{ database::collateralization::uc, "UC" }
-		,{ database::collateralization::uninitialized, "" }
 	};
 }
 
