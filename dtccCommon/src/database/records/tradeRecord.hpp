@@ -17,8 +17,9 @@ namespace dtcc
 {
 	namespace database
 	{
-		typedef boost::optional<boost::gregorian::date> tOptDate;
 		typedef boost::posix_time::ptime tTime;
+		typedef boost::optional<boost::gregorian::date> tOptDate;
+		typedef boost::optional<tTime> tOptTime;
 		typedef boost::optional<std::string> tOptCcy;
 		typedef boost::optional<boost::tuple<double, bool> > tOptNomPlus;
 		typedef boost::optional<optionFamily> tOptFamily;

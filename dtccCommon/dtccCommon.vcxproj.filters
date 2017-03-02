@@ -51,6 +51,7 @@
     <ClInclude Include="src\database\enums\cleared.hpp" />
     <ClInclude Include="src\database\parse.hpp" />
     <ClInclude Include="src\database\records\tradeConverter.hpp" />
+    <ClInclude Include="src\application\settings.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\curl.cpp">

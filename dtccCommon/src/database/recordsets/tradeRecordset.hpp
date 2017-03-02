@@ -14,7 +14,6 @@
 
 #include "database/recordset.hpp"
 #include "database/records/tradeRecord.hpp"
-#include "database/records/tradeConverter.hpp"
 
 namespace dtcc
 {
@@ -27,7 +26,7 @@ namespace dtcc
 
 			virtual std::vector<keyType> insert(const std::vector<recordType> & records);
 			virtual void update(const recordType & record);
-			virtual void remove(const recordType & record);
+			virtual void remove(const std::string & filter = "");
 			virtual void select(std::vector<recordType> & ret, const std::string & filter);
 			virtual void select(const std::vector<keyType> & keys, std::vector<recordType> & ret);
 		};

@@ -32,7 +32,7 @@ namespace dtcc
 			// implement crud operations
 			virtual std::vector<keyType> insert(const std::vector<recordType> & record) = 0;
 			virtual void update(const recordType & record) = 0;
-			virtual void remove(const recordType & record) = 0;
+			virtual void remove(const std::string & filter) = 0;
 			virtual void select(std::vector<recordType> & ret, const std::string & filter) = 0;
 			virtual void select(const std::vector<keyType> & keys, std::vector<recordType> & ret) = 0;
 

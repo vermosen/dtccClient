@@ -17,33 +17,17 @@
 
 #include <boost/thread.hpp>
 #include <boost/chrono.hpp>
+#include <boost/lexical_cast.hpp>
 
-#include "application/curl/fileUrl.hpp"
-#include "application/logger.hpp"
-#include "application/service.hpp"
+#include "application/settings.hpp"
 #include "application/compression/archive.hpp"
 #include "application/compression/zip.hpp"
+#include "application/curl/fileUrl.hpp"
+#include "application/logger.hpp"
 
 #include "database/recordsets/tradeRecordset.hpp"
 #include "database/connectors/sqlServer.hpp"
 #include "database/parse.hpp"
-
-// temporary
-struct configuration
-{
-	struct asset
-	{
-		// TODO: use the assetType factory
-		dtcc::database::assetType type_;
-		std::string fileStr_;
-	};
-
-	boost::gregorian::date start_;
-	boost::gregorian::date end_;
-	std::vector<asset> assets_;
-	std::string baseUrl_;
-	int bufferSize_;
-};
 
 // chrono
 boost::chrono::high_resolution_clock::time_point start;
@@ -55,7 +39,6 @@ int main(int * argc, char ** argv)
 	try
 	{
 		// locale
-		const std::locale format(std::locale::classic(), new boost::gregorian::date_facet("%Y_%m_%d"));
 		dtcc::logger::initialize("dtccConsole_%Y%m%d.log", dtcc::severity::info);
 		LOG_INFO() << "Application is starting";
 
@@ -70,35 +53,55 @@ int main(int * argc, char ** argv)
 		 * use only a few predefined settings but 
 		 * we'll need to load a proper xml file 
 		 */
-		const configuration config =
+		/*const dtcc::settings config =
 		{
-			boost::gregorian::from_simple_string("2017-01-10"),
-			boost::gregorian::from_simple_string("2017-01-10"),
-			{ configuration::asset { dtcc::database::assetType::commodity, "COMMODITIES" } },
+			boost::gregorian::from_simple_string("2017-02-05"),
+			boost::gregorian::from_simple_string("2017-02-05"),
+			{
+				dtcc::settings::asset{ dtcc::database::assetType::interestRate, "RATES" },
+				dtcc::settings::asset{ dtcc::database::assetType::currency, "FOREX" },
+				dtcc::settings::asset{ dtcc::database::assetType::commodity, "COMMODITIES" },
+				dtcc::settings::asset{ dtcc::database::assetType::credit, "CREDITS" },
+				dtcc::settings::asset{ dtcc::database::assetType::equity, "EQUITIES" }
+			},
 			"https://kgc0418-tdw-data-0.s3.amazonaws.com/slices/",
-			1000
+			30 * 1024 * 1024
+		};*/
+		const dtcc::settings config =
+		{
+			boost::gregorian::from_simple_string("2017-02-05"),
+			boost::gregorian::from_simple_string("2017-02-05"),
+			{
+				dtcc::settings::asset{ dtcc::database::assetType::interestRate, "RATES" }
+			},
+			"https://kgc0418-tdw-data-0.s3.amazonaws.com/slices/",
+			30 * 1024 * 1024
 		};
 
 		auto dt = config.start_;
 
+		// formatter
+		auto * formatter = new boost::gregorian::date_facet("%Y_%m_%d");
+		const std::locale format(std::locale::classic(), formatter);
+
 		// build the curl object	
 		dtcc::curl * cnx = new dtcc::fileUrl();
 		std::vector<dtcc::database::tradeRecord> recs;			// data buffer
-		recs.reserve(config.bufferSize_);
+		recs.reserve(config.memory_ / sizeof(dtcc::database::tradeRecord));
 
 		// main loop
 		while (dt <= config.end_)
 		{
 			LOG_INFO() << "Start activity for " << boost::gregorian::to_simple_string(dt);
 
-			for (auto It = config.assets_.cbegin(); It != config.assets_.cend(); It++)
+			for (auto it = config.assets_.cbegin(); it != config.assets_.cend(); it++)
 			{
 				std::stringstream fileName;
 				fileName.imbue(format);
-				fileName << "CUMULATIVE_" << It->fileStr_ << "_" << dt << ".zip";
+				fileName << "CUMULATIVE_" << it->fileStr_ << "_" << dt << ".zip";
 
 				LOG_INFO()	<< "Loading " 
-							<< It->fileStr_
+							<< it->fileStr_
 							<< " data from URL: " 
 							<< config.baseUrl_ + fileName.str();
 
@@ -109,39 +112,51 @@ int main(int * argc, char ** argv)
 				{
 					auto fs = ar.fileSystem();
 
-					for (auto it = fs.begin(); it != fs.end(); it++)
+					for (auto jt = fs.begin(); jt != fs.end(); jt++)
 					{
-						std::string file = ar.get(*it).str();
+						std::string file = ar.get(*jt).str();
 
 						LOG_INFO() << "Zip extraction successfull...";
 
 						start = boost::chrono::high_resolution_clock::now();
-						
-						LOG_INFO() << "Starting record conversion...";
 
-						std::vector<dtcc::database::tradeRecord> recs; recs.reserve(50000);
+						LOG_INFO() << "Starting record conversion...";
 
 						std::string::const_iterator iter = file.begin(), end = file.end();
 
-						// skip the header
-						while (*iter++ != '\n');
-
 						if (dtcc::database::parse(iter, end, recs, dt))
 						{
-							LOG_INFO() << recs.size() << "conversion done in "
+							LOG_INFO() << recs.size() << " conversions done in "
 								<< boost::chrono::duration_cast<boost::chrono::milliseconds> (
 									boost::chrono::high_resolution_clock::now() - start);
 
-							// if the buffer reached the max size, writing in the buffer in the database
-							if (recs.size() > config.bufferSize_)
-							{
-								rs.insert(recs);
-								recs.clear();
+							start = boost::chrono::high_resolution_clock::now();
 
-								LOG_INFO() << recs.size() << "insertion done in "
-									<< boost::chrono::duration_cast<boost::chrono::milliseconds> (
-										boost::chrono::high_resolution_clock::now() - start);
-							}
+							// date facet
+							std::ostringstream os;
+							auto * temp(new boost::gregorian::date_facet("%Y-%m-%d"));
+							os.imbue(std::locale(os.getloc(), temp));
+							os << dt;
+
+							std::string id = boost::lexical_cast<std::string>(static_cast<int>(it->type_));
+							std::string filter = "FILE_DATE = '" + os.str() + "' AND ASSET_CLASS = " + id;
+
+							rs.remove(filter); 
+							
+							start = boost::chrono::high_resolution_clock::now();
+
+							LOG_INFO() << "Trades cleanup done in "
+								<< boost::chrono::duration_cast<boost::chrono::milliseconds> (
+									boost::chrono::high_resolution_clock::now() - start);
+
+							start = boost::chrono::high_resolution_clock::now();
+
+							auto ids = rs.insert(recs); 
+							recs.clear();
+
+							LOG_INFO() << ids.size() << " insertions done in "
+								<< boost::chrono::duration_cast<boost::chrono::milliseconds> (
+									boost::chrono::high_resolution_clock::now() - start);
 						}
 						else
 						{

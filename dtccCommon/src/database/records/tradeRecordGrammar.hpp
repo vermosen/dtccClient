@@ -1,6 +1,8 @@
 #ifndef TRADE_RECORD_GRAMMAR_HPP_
 #define TRADE_RECORD_GRAMMAR_HPP_
 
+//#define BOOST_SPIRIT_DEBUG
+
 #include <string>
 
 #include <boost/config/warning_disable.hpp>
@@ -19,9 +21,12 @@
 #include <boost/none.hpp>
 #include <boost/optional/optional_io.hpp>
 
+#include "application/logger.hpp"
+
 #include "database/records/tradeRecord.hpp"
 
 typedef boost::tuple<int, int, int, int, int, int> timeAdaptator;
+typedef boost::optional<timeAdaptator> optTimeAdaptator;
 typedef boost::optional<boost::tuple<int, int, int> > optDateAdaptator;
 
 BOOST_FUSION_ADAPT_STRUCT(
@@ -194,11 +199,11 @@ struct boost::spirit::traits::transform_attribute< dtcc::database::tTime, timeAd
 
 	static type pre(dtcc::database::tTime a) { return type(); }
 
-	static void post(dtcc::database::tTime& d, type const& v)
+	static void post(dtcc::database::tTime & d, type const& v)
 	{
-		d = dtcc::database::tTime(
-				boost::gregorian::date(boost::get<0>(v), boost::get<1>(v), boost::get<2>(v)),
-				boost::posix_time::time_duration(boost::get<3>(v), boost::get<4>(v), boost::get<5>(v)));
+		d = boost::posix_time::ptime(
+			boost::gregorian::date(boost::get<0>(v), boost::get<1>(v), boost::get<2>(v)),
+			boost::posix_time::time_duration(boost::get<3>(v), boost::get<4>(v), boost::get<5>(v)));
 	}
 
 	static void fail(dtcc::database::tTime&) {}
@@ -270,6 +275,18 @@ struct currencyPolicy : boost::spirit::qi::real_policies<T>
 
 using namespace boost::spirit;
 
+template <typename = void> struct errorHandler 
+{
+	errorHandler() = default; 
+	errorHandler(errorHandler const&) = delete;
+
+	template<typename...> struct result { typedef void type; };
+	template<typename...T> void operator()(T&&...) const 
+	{
+		LOG_INFO() >> "An error occurred !";
+	}
+};
+
 template <typename iterator, typename skipper>
 struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tradeRecord>(), skipper>
 {
@@ -292,9 +309,15 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 		rString 
 			%= qi::lexeme['"' >> +(ascii::char_ - '"') >> '"'];
 
-		rTime 
-			%= qi::lexeme['"' >> qi::int_ >> "-" >> qi::int_ >> "-" >> qi::int_ >> 'T' >>
-								qi::int_ >> ":" >> qi::int_ >> ":" >> qi::int_ >> '"'];
+		rTime
+			%= qi::lexeme['"'	>> qi::int_ >> "-" >> qi::int_ >> "-" >> qi::int_ >> 'T'
+								>> qi::int_ >> ":" >> qi::int_ >> ":" >> qi::int_ >> '"'];
+
+		rOptTime 
+			%= "\"\""
+				|
+			qi::lexeme['"'	>> qi::int_ >> "-" >> qi::int_ >> "-" >> qi::int_ >> 'T'
+							>> qi::int_ >> ":" >> qi::int_ >> ":" >> qi::int_ >> '"'];
 
 		rOptDate 
 			%= "\"\"" 
@@ -349,7 +372,7 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 		//BOOST_SPIRIT_DEBUG_NODE(rOptCcyPlus);
 		//debug(rOptCcyPlus);
 
-		record %=
+		record %= qi::eps >
 			rInt			>> ',' >>
 			rOptInt			>> ',' >>
 			rString			>> ',' >>
@@ -397,11 +420,17 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 			rFileDate;
 
 		records = +(record >> qi::eol) >> qi::eoi;
+
+		qi::on_error<qi::fail>
+		(
+			record, boost::phoenix::bind(boost::phoenix::ref(errorHandler_), boost::phoenix::val("fail"), _4, _3)
+		);
 	}
 
 	qi::rule<iterator, int()						, skipper> rInt;
 	qi::rule<iterator, boost::optional<int>()		, skipper> rOptInt;
 	qi::rule<iterator, timeAdaptator()				, skipper> rTime;
+	qi::rule<iterator, optTimeAdaptator()			, skipper> rOptTime;
 	qi::rule<iterator, optDateAdaptator()			, skipper> rOptDate;
 	qi::rule<iterator, std::string()				, skipper> rString;
 	qi::rule<iterator, std::string()				, skipper> rOptString;
@@ -423,6 +452,8 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 	qi::real_parser<double, currencyPolicy<int> > pCurrency;
 
 	boost::gregorian::date fileDate_;
+
+	errorHandler<> errorHandler_;
 };
 
 #endif
