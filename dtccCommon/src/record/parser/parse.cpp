@@ -4,9 +4,12 @@
 
 namespace dtcc
 {
-	namespace database
+	namespace parser
 	{
-		bool parse(std::string::const_iterator iter, std::string::const_iterator end, std::vector<dtcc::database::tradeRecord> & recs, const boost::gregorian::date & dt)
+		bool parse(	std::string::const_iterator iter, 
+					std::string::const_iterator end, 
+					std::vector<database::tradeRecord> & recs, 
+					const boost::gregorian::date & dt)
 		{
 			// skip the header
 			while (*iter++ != '\n');

@@ -1,4 +1,4 @@
-/*
+ /*
 * aletheiaDatabase.hpp
 *
 *  Created on: Jul 3, 2016
@@ -13,7 +13,7 @@
 #include <soci/soci.h>
 
 #include "database/recordset.hpp"
-#include "database/records/tradeRecord.hpp"
+#include "record/tradeRecord.hpp"
 
 namespace dtcc
 {

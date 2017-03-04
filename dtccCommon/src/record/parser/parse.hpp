@@ -1,21 +1,21 @@
-#ifndef PARSE_HPP_
-#define PARSE_HPP_
+#ifndef RECORD_PARSE_HPP_
+#define RECORD_PARSE_HPP_
 
 #include <string>
 #include <vector>
 
 #define FUSION_MAX_VECTOR_SIZE 45
 
-#include "records\tradeRecordGrammar.hpp"
-#include "records\tradeRecord.hpp"
+#include "tradeRecordGrammar.hpp"
+#include "record\tradeRecord.hpp"
 
 namespace dtcc
 {
-	namespace database
+	namespace parser
 	{
 		bool parse(	std::string::const_iterator iter, 
 					std::string::const_iterator end, 
-					std::vector<dtcc::database::tradeRecord> & recs, 
+					std::vector<database::tradeRecord> & recs, 
 					const boost::gregorian::date & dt);
 	}
 }

@@ -1,6 +1,6 @@
 #include "application/logger.hpp"
 #include "database/recordsets/tradeRecordset.hpp"
-#include "database/records/tradeConverter.hpp"
+#include "database/tradeConverter.hpp"
 namespace dtcc
 {
 	namespace database
@@ -164,7 +164,7 @@ namespace dtcc
 
 				if (!st.get_affected_rows())
 				{
-					LOG_WARNING() << "None of the rows were affected";
+					LOG_INFO() << "None of the rows were affected";
 				}
 				else
 				{

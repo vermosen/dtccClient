@@ -7,10 +7,7 @@
 
 #include <soci/soci.h>
 
-#include "database/records/tradeRecord.hpp"
-#include "database/enums/optionType.hpp"
-#include "database/enums/optionFamily.hpp"
-#include "database/enums/collateralization.hpp"
+#include "record/tradeRecord.hpp"
 
 namespace soci
 {

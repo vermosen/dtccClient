@@ -102,6 +102,9 @@
   <ItemGroup>
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="settings.xml" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

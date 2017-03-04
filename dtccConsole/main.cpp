@@ -27,7 +27,7 @@
 
 #include "database/recordsets/tradeRecordset.hpp"
 #include "database/connectors/sqlServer.hpp"
-#include "database/parse.hpp"
+#include "record/parser/parse.hpp"
 
 // chrono
 boost::chrono::high_resolution_clock::time_point start;
@@ -53,26 +53,16 @@ int main(int * argc, char ** argv)
 		 * use only a few predefined settings but 
 		 * we'll need to load a proper xml file 
 		 */
-		/*const dtcc::settings config =
+		const dtcc::settings config =
 		{
-			boost::gregorian::from_simple_string("2017-02-05"),
-			boost::gregorian::from_simple_string("2017-02-05"),
+			boost::gregorian::from_simple_string("2017-01-16"),
+			boost::gregorian::from_simple_string("2017-03-04"),
 			{
 				dtcc::settings::asset{ dtcc::database::assetType::interestRate, "RATES" },
 				dtcc::settings::asset{ dtcc::database::assetType::currency, "FOREX" },
 				dtcc::settings::asset{ dtcc::database::assetType::commodity, "COMMODITIES" },
 				dtcc::settings::asset{ dtcc::database::assetType::credit, "CREDITS" },
 				dtcc::settings::asset{ dtcc::database::assetType::equity, "EQUITIES" }
-			},
-			"https://kgc0418-tdw-data-0.s3.amazonaws.com/slices/",
-			30 * 1024 * 1024
-		};*/
-		const dtcc::settings config =
-		{
-			boost::gregorian::from_simple_string("2017-02-05"),
-			boost::gregorian::from_simple_string("2017-02-05"),
-			{
-				dtcc::settings::asset{ dtcc::database::assetType::interestRate, "RATES" }
 			},
 			"https://kgc0418-tdw-data-0.s3.amazonaws.com/slices/",
 			30 * 1024 * 1024
@@ -124,7 +114,7 @@ int main(int * argc, char ** argv)
 
 						std::string::const_iterator iter = file.begin(), end = file.end();
 
-						if (dtcc::database::parse(iter, end, recs, dt))
+						if (dtcc::parser::parse(iter, end, recs, dt))
 						{
 							LOG_INFO() << recs.size() << " conversions done in "
 								<< boost::chrono::duration_cast<boost::chrono::milliseconds> (

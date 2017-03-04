@@ -124,24 +124,28 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="src\application\settings.hpp" />
+    <ClInclude Include="src\application\settings\parser\parse.hpp" />
+    <ClInclude Include="src\application\settings\parser\settingsAdapter.hpp" />
+    <ClInclude Include="src\application\settings\parser\settingsGrammar.hpp" />
     <ClInclude Include="src\database\connector.hpp" />
     <ClInclude Include="src\database\connectors\sqlServer.hpp" />
-    <ClInclude Include="src\database\enum.hpp" />
-    <ClInclude Include="src\database\enums\cleared.hpp" />
-    <ClInclude Include="src\database\enums\collateralization.hpp" />
-    <ClInclude Include="src\database\enums\optionFamily.hpp" />
-    <ClInclude Include="src\database\enums\optionType.hpp" />
-    <ClInclude Include="src\database\enums\priceFormingContinuationData.hpp" />
+    <ClInclude Include="src\record\parser\tradeAdapter.hpp" />
+    <ClInclude Include="src\record\enum.hpp" />
+    <ClInclude Include="src\record\enums\cleared.hpp" />
+    <ClInclude Include="src\record\enums\collateralization.hpp" />
+    <ClInclude Include="src\record\enums\optionFamily.hpp" />
+    <ClInclude Include="src\record\enums\optionType.hpp" />
+    <ClInclude Include="src\record\enums\priceFormingContinuationData.hpp" />
     <ClInclude Include="src\application\logger.hpp" />
     <ClInclude Include="src\application\service.hpp" />
     <ClInclude Include="src\application\compression\zip.hpp" />
-    <ClInclude Include="src\database\parse.hpp" />
+    <ClInclude Include="src\record\parser\parse.hpp" />
     <ClInclude Include="src\database\recordsets\tradeRecordset.hpp" />
-    <ClInclude Include="src\database\records\tradeConverter.hpp" />
-    <ClInclude Include="src\database\records\tradeRecordGrammar.hpp" />
-    <ClInclude Include="src\database\records\tradeRecord.hpp" />
-    <ClInclude Include="src\database\enums\action.hpp" />
-    <ClInclude Include="src\database\enums\assetType.hpp" />
+    <ClInclude Include="src\database\tradeConverter.hpp" />
+    <ClInclude Include="src\record\parser\tradeRecordGrammar.hpp" />
+    <ClInclude Include="src\record\tradeRecord.hpp" />
+    <ClInclude Include="src\record\enums\action.hpp" />
+    <ClInclude Include="src\record\enums\assetType.hpp" />
     <ClInclude Include="src\database\recordset.hpp" />
     <ClInclude Include="src\pattern\abstractFactory.hpp" />
     <ClInclude Include="src\pattern\enumManager.hpp" />
@@ -157,8 +161,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="src\application\logger.cpp" />
+    <ClCompile Include="src\application\settings\parser\parse.cpp" />
     <ClCompile Include="src\database\connectors\sqlServer.cpp" />
-    <ClCompile Include="src\database\parse.cpp" />
+    <ClCompile Include="src\record\parser\parse.cpp" />
     <ClCompile Include="src\database\recordsets\tradeRecordset.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -11,7 +11,7 @@
 
 #include "pattern/abstractFactory.hpp"
 
-#include "database/enum.hpp"
+#include "enum.hpp"
 
 namespace dtcc
 {
@@ -38,7 +38,7 @@ namespace dtcc
 			tOptCollat						INDICATION_OF_COLLATERALIZATION;
 			boost::optional<bool>			INDICATION_OF_END_USER_EXCEPTION;
 			bool							INDICATION_OF_OTHER_PRICE_AFFECTING_TERM;
-			bool							BLOCK_TRADES_AND_LARGE_NOTIONAL_OFFFACILITY_SWAPS;
+			bool							BLOCK_TRADES_AND_LARGE_NOTIONAL_OFFFACILITY_SWAPS;	// 1 null found in https://kgc0418-tdw-data-0.s3.amazonaws.com/slices/CUMULATIVE_FOREX_2017_02_20.zip
 			boost::optional<bool>			EXECUTION_VENUE;
 			tOptDate						EFFECTIVE_DATE;
 			tOptDate						END_DATE;
@@ -107,7 +107,6 @@ namespace dtcc
 				else
 					return ROUNDED_NOTIONAL_AMOUNT_2->get<1>();
 			}
-
 		};
 	}
 }

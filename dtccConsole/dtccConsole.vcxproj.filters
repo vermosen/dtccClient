@@ -7,4 +7,7 @@
   <ItemGroup>
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="settings.xml" />
+  </ItemGroup>
 </Project>
