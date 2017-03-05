@@ -30,6 +30,7 @@
 #include "database/recordsets/tradeRecordset.hpp"
 #include "database/connectors/sqlServer.hpp"
 #include "record/parser/parseRecords.hpp"
+#include "application/startup.hpp"
 //#include "application/settings/parser/parseSettings.hpp"
 #include "application/settings.hpp"
 
@@ -61,11 +62,11 @@ int main(int argc, char ** argv)
 
 	try
 	{
-		/*auto args = readArgs(argc, argv);
-
+		auto args = dtcc::parseStartup(argc, argv);
+		
 		if (args.find("settings") == args.cend())
 		{
-			LOG_FATAL() << "failed to open setting file";
+			LOG_FATAL() << "setting file path cannot be found";
 			return 1;
 		}
 
@@ -76,13 +77,13 @@ int main(int argc, char ** argv)
 		{
 			buffer << file.rdbuf();
 			raw = buffer.str();
-
+			/*
 			if (!dtcc::parser::parseSettings(raw.cbegin(), raw.cend(), settings))
 			{
 				LOG_FATAL() << "failed to decode settings";
 				return 1;
-			}
-		}*/
+			}*/
+		}
 
 		// locale
 		dtcc::logger::initialize("dtccConsole_%Y%m%d.log", dtcc::severity::info);

@@ -56,6 +56,7 @@
     <ClInclude Include="src\application\settings\parser\settingsAdapter.hpp" />
     <ClInclude Include="src\application\settings\parser\parseSettings.hpp" />
     <ClInclude Include="src\record\parser\parseRecords.hpp" />
+    <ClInclude Include="src\application\startup.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\curl.cpp">
@@ -69,5 +70,6 @@
     <ClCompile Include="src\application\logger.cpp" />
     <ClCompile Include="src\application\settings\parser\parseSettings.cpp" />
     <ClCompile Include="src\record\parser\parseRecords.cpp" />
+    <ClCompile Include="src\application\startup.cpp" />
   </ItemGroup>
 </Project>
