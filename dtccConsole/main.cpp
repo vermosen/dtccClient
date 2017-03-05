@@ -30,7 +30,7 @@
 #include "database/recordsets/tradeRecordset.hpp"
 #include "database/connectors/sqlServer.hpp"
 #include "record/parser/parseRecords.hpp"
-#include "application/settings/parser/parseSettings.hpp"
+//#include "application/settings/parser/parseSettings.hpp"
 #include "application/settings.hpp"
 
 // chrono
@@ -61,7 +61,7 @@ int main(int argc, char ** argv)
 
 	try
 	{
-		auto args = readArgs(argc, argv);
+		/*auto args = readArgs(argc, argv);
 
 		if (args.find("settings") == args.cend())
 		{
@@ -82,7 +82,7 @@ int main(int argc, char ** argv)
 				LOG_FATAL() << "failed to decode settings";
 				return 1;
 			}
-		}
+		}*/
 
 		// locale
 		dtcc::logger::initialize("dtccConsole_%Y%m%d.log", dtcc::severity::info);
@@ -101,8 +101,8 @@ int main(int argc, char ** argv)
 		 */
 		const dtcc::settings config =
 		{
-			boost::gregorian::from_simple_string("2016-12-01"),
-			boost::gregorian::from_simple_string("201-12-31"),
+			boost::gregorian::from_simple_string("2016-01-09"),
+			boost::gregorian::from_simple_string("2016-11-30"),
 			{
 				dtcc::settings::asset{ dtcc::database::assetType::interestRate, "RATES" },
 				dtcc::settings::asset{ dtcc::database::assetType::currency, "FOREX" },
@@ -144,7 +144,11 @@ int main(int argc, char ** argv)
 				// we create an archive
 				dtcc::archive<dtcc::zip::zip> ar(cnx->fetch(config.baseUrl_ + fileName.str(), 1024 * 1024));
 				
-				if (ar.open())
+				if (!ar.open())
+				{
+					LOG_ERROR() << "failed to open the archive";
+				}
+				else
 				{
 					auto fs = ar.fileSystem();
 

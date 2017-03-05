@@ -20,9 +20,11 @@ namespace dtcc
 			else
 			{
 				// create the grammar
-				settingsGrammar<std::string::const_iterator, ascii::space_type> g;
+				//settingsGrammar<std::string::const_iterator, ascii::space_type> g;
 
-				return (boost::spirit::qi::phrase_parse(iter, end, g, ascii::space, settings) && iter == end);
+				//return (boost::spirit::qi::phrase_parse(iter, end, g, ascii::space, settings) && iter == end);
+
+				return true;
 			}
 		}
 	}

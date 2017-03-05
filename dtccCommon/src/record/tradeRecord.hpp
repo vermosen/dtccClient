@@ -38,7 +38,7 @@ namespace dtcc
 			tOptCollat						INDICATION_OF_COLLATERALIZATION;
 			boost::optional<bool>			INDICATION_OF_END_USER_EXCEPTION;
 			bool							INDICATION_OF_OTHER_PRICE_AFFECTING_TERM;
-			bool							BLOCK_TRADES_AND_LARGE_NOTIONAL_OFFFACILITY_SWAPS;	// 1 null found in https://kgc0418-tdw-data-0.s3.amazonaws.com/slices/CUMULATIVE_FOREX_2017_02_20.zip
+			boost::optional<bool>			BLOCK_TRADES_AND_LARGE_NOTIONAL_OFFFACILITY_SWAPS;	// 1 null found in https://kgc0418-tdw-data-0.s3.amazonaws.com/slices/CUMULATIVE_FOREX_2017_02_20.zip
 			boost::optional<bool>			EXECUTION_VENUE;
 			tOptDate						EFFECTIVE_DATE;
 			tOptDate						END_DATE;
@@ -48,8 +48,8 @@ namespace dtcc
 			std::string						SUBASSET_CLASS_FOR_OTHER_COMMODITY;
 			std::string						TAXONOMY;
 			priceFormingContinuationData	PRICE_FORMING_CONTINUATION_DATA;
-			std::string						UNDERLYING_ASSET_1;
-			std::string						UNDERLYING_ASSET_2;
+			std::string						UNDERLYING_ASSET_1; // can contain non ascii char
+			std::string						UNDERLYING_ASSET_2;	// can contain non ascii char
 			std::string						PRICE_NOTATION_TYPE;
 			boost::optional<double>			PRICE_NOTATION;
 			std::string						ADDITIONAL_PRICE_NOTATION_TYPE;

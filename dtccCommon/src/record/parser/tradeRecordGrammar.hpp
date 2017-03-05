@@ -201,7 +201,7 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 				rIndOfCollat	> ',' >
 				rOptBool		> ',' >
 				rBool			> ',' >
-				rBool			> ',' >
+				rOptBool		> ',' >
 				rOptVenue		> ',' >
 				rOptDate		> ',' >
 				rOptDate		> ',' >
@@ -253,7 +253,6 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 		);
 	}
 
-	//qi::rule<iterator, char()						, skipper> rChar;
 	qi::rule<iterator, int()						, skipper> rInt;
 	qi::rule<iterator, boost::optional<int>()		, skipper> rOptInt;
 	qi::rule<iterator, timeAdaptator()				, skipper> rTime;
