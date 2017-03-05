@@ -50,12 +50,12 @@
     <ClInclude Include="src\record\enums\optionFamily.hpp" />
     <ClInclude Include="src\record\enums\optionType.hpp" />
     <ClInclude Include="src\record\enums\priceFormingContinuationData.hpp" />
-    <ClInclude Include="src\record\parser\parse.hpp" />
     <ClInclude Include="src\record\parser\tradeAdapter.hpp" />
     <ClInclude Include="src\record\parser\tradeRecordGrammar.hpp" />
     <ClInclude Include="src\application\settings\parser\settingsGrammar.hpp" />
     <ClInclude Include="src\application\settings\parser\settingsAdapter.hpp" />
-    <ClInclude Include="src\application\settings\parser\parse.hpp" />
+    <ClInclude Include="src\application\settings\parser\parseSettings.hpp" />
+    <ClInclude Include="src\record\parser\parseRecords.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\curl.cpp">
@@ -67,7 +67,7 @@
     <ClCompile Include="src\database\connectors\sqlServer.cpp" />
     <ClCompile Include="src\database\recordsets\tradeRecordset.cpp" />
     <ClCompile Include="src\application\logger.cpp" />
-    <ClCompile Include="src\record\parser\parse.cpp" />
-    <ClCompile Include="src\application\settings\parser\parse.cpp" />
+    <ClCompile Include="src\application\settings\parser\parseSettings.cpp" />
+    <ClCompile Include="src\record\parser\parseRecords.cpp" />
   </ItemGroup>
 </Project>

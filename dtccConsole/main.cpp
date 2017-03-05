@@ -11,6 +11,7 @@
 #define FUSION_MAX_VECTOR_SIZE 45
 
 #include <fstream>
+#include <streambuf>
 #include <exception>
 #include <array>
 #include <vector>
@@ -18,8 +19,9 @@
 #include <boost/thread.hpp>
 #include <boost/chrono.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/iostreams/device/file.hpp>
+#include <boost/iostreams/stream.hpp>
 
-#include "application/settings.hpp"
 #include "application/compression/archive.hpp"
 #include "application/compression/zip.hpp"
 #include "application/curl/fileUrl.hpp"
@@ -27,17 +29,61 @@
 
 #include "database/recordsets/tradeRecordset.hpp"
 #include "database/connectors/sqlServer.hpp"
-#include "record/parser/parse.hpp"
+#include "record/parser/parseRecords.hpp"
+#include "application/settings/parser/parseSettings.hpp"
+#include "application/settings.hpp"
 
 // chrono
 boost::chrono::high_resolution_clock::time_point start;
 
-int main(int * argc, char ** argv)
+std::map<std::string, std::string> readArgs(int argc, char ** argv)
+{
+	std::map<std::string, std::string> ret;
+
+	for (int i = 1; i < argc; i++)
+	{
+		std::string s = std::string(argv[i]);
+
+		auto pos = s.find('=');
+
+		if (pos != std::string::npos && s.substr(pos + 1).find('=') == std::string::npos)
+		{
+			ret.insert(std::make_pair(s.substr(1, pos - 1), s.substr(pos + 1)));
+		}
+	}
+
+	return ret;
+}
+
+int main(int argc, char ** argv)
 {
 	int ret = 1;
 
 	try
 	{
+		auto args = readArgs(argc, argv);
+
+		if (args.find("settings") == args.cend())
+		{
+			LOG_FATAL() << "failed to open setting file";
+			return 1;
+		}
+
+		std::ifstream file(args["settings"], std::ios::in | std::ios::binary);
+		std::stringstream buffer; std::string raw; dtcc::settings2 settings;
+
+		if (file.is_open())
+		{
+			buffer << file.rdbuf();
+			raw = buffer.str();
+
+			if (!dtcc::parser::parseSettings(raw.cbegin(), raw.cend(), settings))
+			{
+				LOG_FATAL() << "failed to decode settings";
+				return 1;
+			}
+		}
+
 		// locale
 		dtcc::logger::initialize("dtccConsole_%Y%m%d.log", dtcc::severity::info);
 		LOG_INFO() << "Application is starting";
@@ -55,8 +101,8 @@ int main(int * argc, char ** argv)
 		 */
 		const dtcc::settings config =
 		{
-			boost::gregorian::from_simple_string("2017-01-16"),
-			boost::gregorian::from_simple_string("2017-03-04"),
+			boost::gregorian::from_simple_string("2016-12-01"),
+			boost::gregorian::from_simple_string("201-12-31"),
 			{
 				dtcc::settings::asset{ dtcc::database::assetType::interestRate, "RATES" },
 				dtcc::settings::asset{ dtcc::database::assetType::currency, "FOREX" },
@@ -114,7 +160,7 @@ int main(int * argc, char ** argv)
 
 						std::string::const_iterator iter = file.begin(), end = file.end();
 
-						if (dtcc::parser::parse(iter, end, recs, dt))
+						if (dtcc::parser::parseRecords(iter, end, recs, dt))
 						{
 							LOG_INFO() << recs.size() << " conversions done in "
 								<< boost::chrono::duration_cast<boost::chrono::milliseconds> (

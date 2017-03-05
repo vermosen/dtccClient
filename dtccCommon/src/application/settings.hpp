@@ -5,10 +5,15 @@
 
 #include <boost/date_time/gregorian/greg_date.hpp>
 
-#include "database/enums/assetType.hpp"
+#include "record/enum.hpp"
 
 namespace dtcc
 {
+	struct settings2
+	{
+		int i;
+	};
+
 	struct settings
 	{
 		struct asset
