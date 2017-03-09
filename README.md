@@ -3,7 +3,7 @@ a service/console bundle written in C++ to download and store intraday trading d
 
 The console program can be used to retrieve the historical data from the dtcc. The service is used for intraday polling.
 
-The solution use Boost, cUrl, ZLIB, SOCI. The console project can be easily ported to any plateform providing a C++11 compatible compiler (I've successfully compiled the project with MSVC 15 and intel compiler). 
+The solution use Boost, cUrl, ZLIB, SOCI. The console project can be easily ported to any plateform providing a C++11 compatible compiler (I've successfully compiled the project with MSVC 15 and intel compiler v17). 
 
 The parsing engine is based on Boost::spirit.
 
