@@ -7,4 +7,4 @@ The solution use Boost, cUrl, ZLIB, SOCI. The console project can be easily port
 
 The parsing engine is based on Boost::spirit.
 
-I aim at adapting the boost::asio engine from the aleitha project, so a multi-threaded engine can be used for the intraday retrieval service.
+I aim at adapting the boost::asio engine from the aleitha project, so a multi-threaded engine can be used for the intraday retrieval service (although curl may be sufficient for our need).
