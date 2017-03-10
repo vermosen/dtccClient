@@ -38,7 +38,7 @@ namespace dtcc
 			tOptCollat						INDICATION_OF_COLLATERALIZATION;
 			boost::optional<bool>			INDICATION_OF_END_USER_EXCEPTION;
 			bool							INDICATION_OF_OTHER_PRICE_AFFECTING_TERM;
-			boost::optional<bool>			BLOCK_TRADES_AND_LARGE_NOTIONAL_OFFFACILITY_SWAPS;	// 1 null found in https://kgc0418-tdw-data-0.s3.amazonaws.com/slices/CUMULATIVE_FOREX_2017_02_20.zip
+			boost::optional<bool>			BLOCK_TRADES_AND_LARGE_NOTIONAL_OFFFACILITY_SWAPS;
 			boost::optional<bool>			EXECUTION_VENUE;
 			tOptDate						EFFECTIVE_DATE;
 			tOptDate						END_DATE;

@@ -85,7 +85,7 @@ int main(int argc, char ** argv)
 			}*/
 		}
 
-		// locale
+		// create the logger
 		dtcc::logger::initialize("dtccConsole_%Y%m%d.log", dtcc::severity::info);
 		LOG_INFO() << "Application is starting";
 
@@ -102,14 +102,14 @@ int main(int argc, char ** argv)
 		 */
 		const dtcc::settings config =
 		{
-			boost::gregorian::from_simple_string("2016-01-09"),
-			boost::gregorian::from_simple_string("2016-11-30"),
+			boost::gregorian::from_simple_string("2016-11-01"), // start 2016-08-11
+			boost::gregorian::from_simple_string("2017-01-31"),
 			{
-				dtcc::settings::asset{ dtcc::database::assetType::interestRate, "RATES" },
-				dtcc::settings::asset{ dtcc::database::assetType::currency, "FOREX" },
-				dtcc::settings::asset{ dtcc::database::assetType::commodity, "COMMODITIES" },
-				dtcc::settings::asset{ dtcc::database::assetType::credit, "CREDITS" },
-				dtcc::settings::asset{ dtcc::database::assetType::equity, "EQUITIES" }
+				dtcc::settings::asset{ dtcc::database::assetType::interestRate	, "RATES"		},
+				dtcc::settings::asset{ dtcc::database::assetType::currency		, "FOREX"		},
+				dtcc::settings::asset{ dtcc::database::assetType::commodity		, "COMMODITIES" },
+				dtcc::settings::asset{ dtcc::database::assetType::credit		, "CREDITS"		},
+				dtcc::settings::asset{ dtcc::database::assetType::equity		, "EQUITIES"	}
 			},
 			"https://kgc0418-tdw-data-0.s3.amazonaws.com/slices/",
 			30 * 1024 * 1024

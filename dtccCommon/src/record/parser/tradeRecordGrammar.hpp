@@ -1,7 +1,7 @@
 #ifndef TRADE_RECORD_GRAMMAR_HPP_
 #define TRADE_RECORD_GRAMMAR_HPP_
 
-#define BOOST_SPIRIT_DEBUG
+//#define BOOST_SPIRIT_DEBUG
 
 #include <string>
 
@@ -22,58 +22,29 @@
 #include "application/logger.hpp"
 #include "record/tradeRecord.hpp"
 #include "tradeAdapter.hpp"
-
-// currency amount policy
-template <typename T>
-struct currencyPolicy : boost::spirit::qi::real_policies<T>
-{
-	//  No exponent
-	template <typename iterator>
-	static bool
-		parse_exp(iterator&, iterator const&)
-	{
-		return false;
-	}
-
-	//  No exponent
-	template <typename iterator, typename Attribute>
-	static bool
-		parse_exp_n(iterator&, iterator const&, Attribute&)
-	{
-		return false;
-	}
-
-	//  Thousands separated numbers
-	template <typename iterator, typename Attribute>
-	static bool
-		parse_n(iterator& first, iterator const& last, Attribute& attr)
-	{
-		using boost::spirit::qi::uint_parser;
-		namespace qi = boost::spirit::qi;
-
-		uint_parser<unsigned, 10, 1, 3> uint3;
-		uint_parser<unsigned, 10, 3, 3> uint3_3;
-
-		T result = 0;
-		if (parse(first, last, uint3, result))
-		{
-			T n; iterator save = first;
-			while (qi::parse(first, last, ",") && qi::parse(first, last, uint3_3, n))
-			{
-				result = result * 1000 + n;
-				save = first;
-			}
-
-			first = save;
-			attr = result;
-			return true;
-		}
-		return false;
-	}
-};
+#include "tradeRecordPolicies.hpp"
 
 using namespace boost::spirit;
 
+// erase non ascii character found
+struct stringErrorHandler
+{
+	stringErrorHandler() = default;
+	stringErrorHandler(stringErrorHandler const&) = delete;
+
+	template<typename...> struct result { typedef void type; };
+	template<typename Iter> void operator()(
+		Iter & first_iter, Iter last_iter,
+		Iter error_iter, const qi::info& what) const
+	{
+		// TODO: overwrite the non ascii chars
+		auto temp = first_iter;
+
+		LOG_WARNING() << std::string("Incoherent record found: ") << std::string(temp, first_iter);
+	}
+};
+
+// skip the whole record
 struct errorHandler 
 {
 	errorHandler() = default; 
@@ -85,7 +56,7 @@ struct errorHandler
 		Iter error_iter, const qi::info& what) const
 	{
 		// store the beginning of the record
-		auto temp = first_iter;
+ 		auto temp = first_iter;
 
 		if (first_iter != last_iter)
 		{
@@ -114,10 +85,10 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 		rOptString
 			%= "\"\""
 				|
-			qi::lexeme['"' >> *(ascii::char_ - '"') >> '"'];
+			qi::lexeme['"' >> *(ascii::char_ - "\",\"") >> '"']; // possible because the last field is not a string
 
 		rString 
-			%= qi::lexeme['"' >> +(ascii::char_ - '"') >> '"'];
+			%= qi::lexeme['"' >> +(ascii::char_ - "\",\"") >> '"'];
 
 		rTime
 			%= '"' >>	qi::int_[_pass = (_1 >= 1400	&& _1 < 10000	)] >> "-" >>
@@ -130,19 +101,19 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 		rOptTime 
 			%= "\"\""
 				|
-				'"'	>>	qi::int_[_pass = (_1 >= 1400	&& _1 < 10000	)] >> "-" >>
-						qi::int_[_pass = (_1 > 0		&& _1 <= 12		)] >> "-" >>
-						qi::int_[_pass = (_1 > 0		&& _1 <= 31		)] >> 'T' >>
-						qi::int_[_pass = (_1 >= 0		&& _1 <= 24		)] >> ":" >>
-						qi::int_[_pass = (_1 >= 0		&& _1 <  60		)] >> ":" >>
-						qi::int_[_pass = (_1 >= 0		&& _1 <  60		)] >> '"';
+			'"'	>>	qi::int_[_pass = (_1 >= 1400	&& _1 < 10000	)] >> "-" >>
+					qi::int_[_pass = (_1 > 0		&& _1 <= 12		)] >> "-" >>
+					qi::int_[_pass = (_1 > 0		&& _1 <= 31		)] >> 'T' >>
+					qi::int_[_pass = (_1 >= 0		&& _1 <= 24		)] >> ":" >>
+					qi::int_[_pass = (_1 >= 0		&& _1 <  60		)] >> ":" >>
+					qi::int_[_pass = (_1 >= 0		&& _1 <  60		)] >> '"';
 
 		rOptDate
 			%= "\"\""
 				|
-				'"' >> qi::int_[_pass = (_1 >= 1400 && _1 < 10000	)] >> "-"
-					>> qi::int_[_pass = (_1 > 0		&& _1 <= 12		)] >> "-"
-					>> qi::int_[_pass = (_1 > 0		&& _1 <= 31		)] >> '"';
+			'"' >> qi::int_[_pass = (_1 >= 1400 && _1 < 10000	)] >> "-"
+				>> qi::int_[_pass = (_1 > 0		&& _1 <= 12		)] >> "-"
+				>> qi::int_[_pass = (_1 > 0		&& _1 <= 31		)] >> '"';
 		
 		rCleared 
 			%= qi::lexeme['"' >> (ascii::char_("CU")) >> '"'];
@@ -150,18 +121,20 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 		rIndOfCollat 
 			%= qi::lexeme['"' >> *(ascii::char_("FOPUC")) >> '"'];
 		
-		rOptBool 
-			%= qi::lexeme['"' >> qi::eps > (qi::lit("Y")[_val = true		] |
-											qi::lit("N")[_val = false		] |
-											qi::lit("" )[_val = boost::none	]) >> '"'];
 		rBool 
-			%= qi::lexeme['"' >> qi::eps > (qi::lit("Y")[_val = true] |
-											qi::lit("N")[_val = false]) >> '"'];
+			%= qi::lexeme['"' >> pBool >> '"'];
+
+		rOptBool
+			%= "\"" >> *(qi::lit(' ')) >> "\""
+				|
+			qi::lexeme['"' >> pBool >> '"'];
 
 		rOptVenue 
-			%= qi::lexeme['"' >> qi::eps > (qi::lit("ON")	[_val = true		] |
-											qi::lit("OFF")	[_val = false		] |
-											qi::lit("")		[_val = boost::none	]) >> '"'];
+			%= "\"\""
+				| 
+			qi::lexeme['"' >> qi::eps > (	qi::lit("ON")	[_val = true	] |
+											qi::lit("OFF")	[_val = false	] |
+											qi::lit("")[_val = boost::none]) >> '"'];
 		rOptCcy
 			%= "\"\""
 				|
@@ -195,13 +168,13 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 		record 
 			%=  rInt			> ',' >
 				rOptInt			> ',' >
-				rString			> ',' >
+				rString			> ',' > // ACTION
 				rTime			> ',' >
 				rCleared		> ',' >
 				rIndOfCollat	> ',' >
 				rOptBool		> ',' >
 				rBool			> ',' >
-				rOptBool		> ',' >
+				rOptBool		> ',' > // BLOCK_TRADES_AND_LARGE_NOTIONAL_OFFFACILITY_SWAPS
 				rOptVenue		> ',' >
 				rOptDate		> ',' >
 				rOptDate		> ',' >
@@ -210,7 +183,7 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 				rAssetClass		> ',' >
 				rOptString		> ',' >
 				rOptString		> ',' >
-				rString			> ',' >
+				rString			> ',' >	
 				rOptString		> ',' >
 				rOptString		> ',' >
 				rOptString		> ',' >
@@ -251,6 +224,17 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 				qi::_4  // error what 
 			)
 		);
+
+		qi::on_error<qi::retry>
+		(
+			rOptString, boost::phoenix::bind
+			(boost::phoenix::ref(stringErrorHandler_),
+				qi::_1, // it start
+				qi::_2, // it end
+				qi::_3, // it error
+				qi::_4  // error what  
+			)
+		);
 	}
 
 	qi::rule<iterator, int()						, skipper> rInt;
@@ -276,9 +260,11 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 	qi::rule<iterator, std::vector<dtcc::database::tradeRecord>(), skipper> records;
 
 	qi::real_parser<double, currencyPolicy<int> > pCurrency;
+	qi::bool_parser<bool, boolPolicy> pBool;
 
 	boost::gregorian::date fileDate_;
 
+	stringErrorHandler stringErrorHandler_;
 	errorHandler errorHandler_;
 };
 

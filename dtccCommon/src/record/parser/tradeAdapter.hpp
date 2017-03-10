@@ -92,7 +92,7 @@ struct boost::spirit::traits::transform_attribute< dtcc::database::tOptFamily, s
 };
 
 template<>
-struct boost::spirit::traits::transform_attribute< dtcc::database::tOptType, std::string, boost::spirit::qi::domain>
+struct boost::spirit::traits::transform_attribute<dtcc::database::tOptType, std::string, boost::spirit::qi::domain>
 {
 	typedef std::string type;
 
@@ -196,16 +196,9 @@ struct boost::spirit::traits::transform_attribute< dtcc::database::tTime, timeAd
 
 	static void post(dtcc::database::tTime & d, type const& v)
 	{
-		try
-		{
-			d = boost::posix_time::ptime(
-				boost::gregorian::date(boost::get<0>(v), boost::get<1>(v), boost::get<2>(v)),
-				boost::posix_time::time_duration(boost::get<3>(v), boost::get<4>(v), boost::get<5>(v)));
-		}
-		catch (...)
-		{
-			int i = 0;
-		}
+		d = boost::posix_time::ptime(
+			boost::gregorian::date(boost::get<0>(v), boost::get<1>(v), boost::get<2>(v)),
+			boost::posix_time::time_duration(boost::get<3>(v), boost::get<4>(v), boost::get<5>(v)));
 	}
 
 	static void fail(dtcc::database::tTime&) {}
@@ -222,22 +215,12 @@ struct boost::spirit::traits::transform_attribute<dtcc::database::tOptDate, optD
 	{
 		if (v)
 		{
-			try
-			{
-				d = boost::gregorian::date(boost::get<0>(*v), boost::get<1>(*v), boost::get<2>(*v));
-			}
-			catch (...)
-			{
-				int i = 0;
-			}
+			d = boost::gregorian::date(boost::get<0>(*v), boost::get<1>(*v), boost::get<2>(*v));
 		}
 		else d = boost::none;
 	}
 
-	static void fail(dtcc::database::tOptDate&)
-	{
-		int i = 0;
-	}
+	static void fail(dtcc::database::tOptDate&) {}
 };
 
 #endif
