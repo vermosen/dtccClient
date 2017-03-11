@@ -12,17 +12,14 @@
 #include <boost/fusion/include/io.hpp>
 #include <boost/fusion/include/boost_tuple.hpp>
 #include <boost/fusion/include/as_vector.hpp>
-#include <boost/optional.hpp>
+
 #include <boost/phoenix/bind.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/none.hpp>
+
 #include <boost/optional/optional_io.hpp>
 
 #include "record/tradeRecord.hpp"
-
-typedef boost::tuple<int, int, int, int, int, int> timeAdaptator;
-typedef boost::optional<timeAdaptator> optTimeAdaptator;
-typedef boost::optional<boost::tuple<int, int, int> > optDateAdaptator;
+#include "utils/adaptator.hpp"
 
 BOOST_FUSION_ADAPT_STRUCT(
 	dtcc::database::tradeRecord,

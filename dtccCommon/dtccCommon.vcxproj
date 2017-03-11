@@ -201,6 +201,7 @@
     <ClInclude Include="src\pattern\abstractFactory.hpp" />
     <ClInclude Include="src\pattern\enumManager.hpp" />
     <ClInclude Include="src\pattern\singleton.hpp" />
+    <ClInclude Include="src\utils\adaptator.hpp" />
     <ClInclude Include="src\utils\converter.hpp" />
   </ItemGroup>
   <ItemGroup>

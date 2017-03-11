@@ -12,17 +12,36 @@
 #include <boost/fusion/include/io.hpp>
 #include <boost/fusion/include/boost_tuple.hpp>
 #include <boost/fusion/include/as_vector.hpp>
-#include <boost/optional.hpp>
 #include <boost/phoenix/bind.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/none.hpp>
 #include <boost/optional/optional_io.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/tuple/tuple.hpp>
 
 #include "application/settings.hpp"
+#include "utils/adaptator.hpp"
 
 BOOST_FUSION_ADAPT_STRUCT(
 	dtcc::settings2,
-	(int, i)
+	(boost::gregorian::date, startDate_)
+	(boost::gregorian::date, endDate_)
+	(std::string, baseUrl_)
+	(int64_t, memory_)
+	(std::vector<std::string>, assets_)
 )
+
+template<>
+struct boost::spirit::traits::transform_attribute<boost::gregorian::date, dateAdaptator, boost::spirit::qi::domain>
+{
+	typedef dateAdaptator type;
+
+	static type pre(boost::gregorian::date a) { return type(); }
+
+	static void post(boost::gregorian::date& d, type const& v)
+	{
+		d = boost::gregorian::date(boost::get<0>(v), boost::get<1>(v), boost::get<2>(v));
+	}
+
+	static void fail(boost::gregorian::date&) {}
+};
 
 #endif

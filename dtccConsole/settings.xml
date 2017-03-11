@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <settings>
-  <test1>1</test1>
+  <startDate>2017-11-01</startDate>
+  <endDate>2017-01-11</endDate>
+  <baseUrl>https://kgc0418-tdw-data-0.s3.amazonaws.com/slices/</baseUrl>
+  <cacheSize>31457280</cacheSize>
+  <assets>
+    <asset>RATES</asset>
+    <asset>COMMODITIES</asset>
+  </assets>
 </settings>

@@ -58,6 +58,7 @@
     <ClInclude Include="src\record\parser\parseRecords.hpp" />
     <ClInclude Include="src\application\startup.hpp" />
     <ClInclude Include="src\record\parser\tradeRecordPolicies.hpp" />
+    <ClInclude Include="src\utils\adaptator.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\curl.cpp">

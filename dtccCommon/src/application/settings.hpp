@@ -11,7 +11,11 @@ namespace dtcc
 {
 	struct settings2
 	{
-		int i;
+		boost::gregorian::date startDate_;
+		boost::gregorian::date endDate_;
+		std::string baseUrl_;
+		int64_t memory_;
+		std::vector<std::string> assets_;
 	};
 
 	struct settings

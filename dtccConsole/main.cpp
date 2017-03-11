@@ -31,7 +31,7 @@
 #include "database/connectors/sqlServer.hpp"
 #include "record/parser/parseRecords.hpp"
 #include "application/startup.hpp"
-//#include "application/settings/parser/parseSettings.hpp"
+#include "application/settings/parser/parseSettings.hpp"
 #include "application/settings.hpp"
 
 // chrono
@@ -77,12 +77,12 @@ int main(int argc, char ** argv)
 		{
 			buffer << file.rdbuf();
 			raw = buffer.str();
-			/*
+			
 			if (!dtcc::parser::parseSettings(raw.cbegin(), raw.cend(), settings))
 			{
 				LOG_FATAL() << "failed to decode settings";
 				return 1;
-			}*/
+			}
 		}
 
 		// create the logger
@@ -102,17 +102,17 @@ int main(int argc, char ** argv)
 		 */
 		const dtcc::settings config =
 		{
-			boost::gregorian::from_simple_string("2016-11-01"), // start 2016-08-11
-			boost::gregorian::from_simple_string("2017-01-31"),
+			settings.startDate_, // start 2016-05-01
+			settings.endDate_,
 			{
-				dtcc::settings::asset{ dtcc::database::assetType::interestRate	, "RATES"		},
+				/*dtcc::settings::asset{ dtcc::database::assetType::interestRate	, "RATES"		},
 				dtcc::settings::asset{ dtcc::database::assetType::currency		, "FOREX"		},
-				dtcc::settings::asset{ dtcc::database::assetType::commodity		, "COMMODITIES" },
+				*/dtcc::settings::asset{ dtcc::database::assetType::commodity		, "COMMODITIES" }/*,
 				dtcc::settings::asset{ dtcc::database::assetType::credit		, "CREDITS"		},
-				dtcc::settings::asset{ dtcc::database::assetType::equity		, "EQUITIES"	}
+				dtcc::settings::asset{ dtcc::database::assetType::equity		, "EQUITIES"	}*/
 			},
-			"https://kgc0418-tdw-data-0.s3.amazonaws.com/slices/",
-			30 * 1024 * 1024
+			settings.baseUrl_,
+			settings.memory_
 		};
 
 		auto dt = config.start_;
