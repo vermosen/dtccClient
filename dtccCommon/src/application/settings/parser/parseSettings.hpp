@@ -13,7 +13,7 @@ namespace dtcc
 	{
 		bool parseSettings(	std::string::const_iterator iter,
 							std::string::const_iterator end,
-							dtcc::settings2 & settings);
+							dtcc::settings & settings);
 	}
 }
 

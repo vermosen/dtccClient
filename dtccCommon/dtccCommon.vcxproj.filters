@@ -40,25 +40,25 @@
     <ClInclude Include="src\database\connectors\sqlServer.hpp" />
     <ClInclude Include="src\database\recordsets\tradeRecordset.hpp" />
     <ClInclude Include="src\application\settings.hpp" />
-    <ClInclude Include="src\record\tradeRecord.hpp" />
-    <ClInclude Include="src\record\enum.hpp" />
     <ClInclude Include="src\database\tradeConverter.hpp" />
-    <ClInclude Include="src\record\enums\action.hpp" />
-    <ClInclude Include="src\record\enums\assetType.hpp" />
-    <ClInclude Include="src\record\enums\cleared.hpp" />
-    <ClInclude Include="src\record\enums\collateralization.hpp" />
-    <ClInclude Include="src\record\enums\optionFamily.hpp" />
-    <ClInclude Include="src\record\enums\optionType.hpp" />
-    <ClInclude Include="src\record\enums\priceFormingContinuationData.hpp" />
-    <ClInclude Include="src\record\parser\tradeAdapter.hpp" />
-    <ClInclude Include="src\record\parser\tradeRecordGrammar.hpp" />
     <ClInclude Include="src\application\settings\parser\settingsGrammar.hpp" />
     <ClInclude Include="src\application\settings\parser\settingsAdapter.hpp" />
     <ClInclude Include="src\application\settings\parser\parseSettings.hpp" />
-    <ClInclude Include="src\record\parser\parseRecords.hpp" />
     <ClInclude Include="src\application\startup.hpp" />
-    <ClInclude Include="src\record\parser\tradeRecordPolicies.hpp" />
     <ClInclude Include="src\utils\adaptator.hpp" />
+    <ClInclude Include="src\database\record\enums\action.hpp" />
+    <ClInclude Include="src\database\record\enums\assetType.hpp" />
+    <ClInclude Include="src\database\record\enums\cleared.hpp" />
+    <ClInclude Include="src\database\record\enums\collateralization.hpp" />
+    <ClInclude Include="src\database\record\enums\optionFamily.hpp" />
+    <ClInclude Include="src\database\record\enums\optionType.hpp" />
+    <ClInclude Include="src\database\record\enums\priceFormingContinuationData.hpp" />
+    <ClInclude Include="src\database\record\parser\parseRecords.hpp" />
+    <ClInclude Include="src\database\record\parser\tradeAdapter.hpp" />
+    <ClInclude Include="src\database\record\parser\tradeRecordGrammar.hpp" />
+    <ClInclude Include="src\database\record\parser\tradeRecordPolicies.hpp" />
+    <ClInclude Include="src\database\record\enum.hpp" />
+    <ClInclude Include="src\database\record\tradeRecord.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\curl.cpp">
@@ -71,7 +71,7 @@
     <ClCompile Include="src\database\recordsets\tradeRecordset.cpp" />
     <ClCompile Include="src\application\logger.cpp" />
     <ClCompile Include="src\application\settings\parser\parseSettings.cpp" />
-    <ClCompile Include="src\record\parser\parseRecords.cpp" />
     <ClCompile Include="src\application\startup.cpp" />
+    <ClCompile Include="src\database\record\parser\parseRecords.cpp" />
   </ItemGroup>
 </Project>

@@ -20,7 +20,7 @@
 #include <boost/optional/optional_io.hpp>
 
 #include "application/logger.hpp"
-#include "record/tradeRecord.hpp"
+#include "database/record/tradeRecord.hpp"
 #include "tradeAdapter.hpp"
 #include "tradeRecordPolicies.hpp"
 

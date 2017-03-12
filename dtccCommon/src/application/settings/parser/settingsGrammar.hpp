@@ -25,7 +25,7 @@ namespace ascii = boost::spirit::ascii;
 namespace phx = boost::phoenix;
 
 template <typename iterator, typename skipper>
-struct settingsGrammar : qi::grammar<iterator, dtcc::settings2(), skipper>
+struct settingsGrammar : qi::grammar<iterator, dtcc::settings(), skipper>
 {
 	settingsGrammar() : settingsGrammar::base_type(start)
 	{
@@ -54,6 +54,14 @@ struct settingsGrammar : qi::grammar<iterator, dtcc::settings2(), skipper>
 			> qi::int_[_pass = (qi::_1 > 0 && qi::_1 <= 12)][at_c<1>(_val) = _1]
 			> '-'
 			> qi::int_[_pass = (qi::_1 > 0 && qi::_1 <= 31)][at_c<2>(_val) = _1]
+			;
+
+		rAssetTypeBase %=
+			*(qi::char_ - "</")
+			;
+
+		rSeverityBase %=
+			*(qi::char_ - "</")
 			;
 
 		rHeader %=
@@ -94,10 +102,30 @@ struct settingsGrammar : qi::grammar<iterator, dtcc::settings2(), skipper>
 			> rEndTag(_a)
 			;
 
+		rAssetType =
+			rStartTag(_r1)[_a = _1]
+			> rAssetTypeBase[_val = _1]
+			> rEndTag(_a)
+			;
+
+		rSeverity =
+			rStartTag(_r1)[_a = _1]
+			> rSeverityBase[_val = _1]
+			> rEndTag(_a)
+			;
+
+		rLogger =
+			qi::omit[rStartTag(_r1)[_a = _1]]
+			>> rText(std::string("fileStr"))
+			>> rSeverity(std::string("severity"))
+			>> qi::omit[rEndTag(_a)]
+			;
+
 		rAsset =
 			qi::omit[rStartTag(_r1)[_a = _1]]
-			> rTextBase
-			> qi::omit[rEndTag(_a)]
+			>> rAssetType(std::string("type"))
+			>> rText(std::string("fileStr"))
+			>> qi::omit[rEndTag(_a)]
 			;
 
 		rAssets =
@@ -108,6 +136,8 @@ struct settingsGrammar : qi::grammar<iterator, dtcc::settings2(), skipper>
 
 		rSettings =
 			qi::omit[rStartTag(_r1)[_a = _1]]
+			>> rLogger(std::string("logger"))
+			>> rText(std::string("database"))
 			>> rDate(std::string("startDate"))
 			>> rDate(std::string("endDate"))
 			>> rText(std::string("baseUrl"))
@@ -120,22 +150,24 @@ struct settingsGrammar : qi::grammar<iterator, dtcc::settings2(), skipper>
 			qi::omit[rHeader] >>
 			rSettings(std::string("settings"))[_val = _1]
 			;
-
-		start.name("start");
-		BOOST_SPIRIT_DEBUG_NODE(start);
-
 	}
 
-	qi::rule<iterator, dtcc::settings2(), ascii::space_type> start;
+	qi::rule<iterator, dtcc::settings(), ascii::space_type> start;
 
-	qi::rule<iterator, dtcc::settings2(std::string), qi::locals<std::string>, ascii::space_type> rSettings;
-	qi::rule<iterator, std::vector<std::string>(std::string), qi::locals<std::string>, ascii::space_type> rAssets;
-	qi::rule<iterator, std::string(std::string), qi::locals<std::string>, ascii::space_type> rAsset;
+	qi::rule<iterator, dtcc::settings(std::string), qi::locals<std::string>, ascii::space_type> rSettings;
+
+	qi::rule<iterator, std::vector<dtcc::settings::asset>(std::string), qi::locals<std::string>, ascii::space_type> rAssets;
+	qi::rule<iterator, dtcc::settings::asset(std::string), qi::locals<std::string>, ascii::space_type> rAsset;
+	qi::rule<iterator, assetTypeAdaptator(std::string), qi::locals<std::string>, ascii::space_type> rAssetType;
+	qi::rule<iterator, severityAdaptator(std::string), qi::locals<std::string>, ascii::space_type> rSeverity;
 	qi::rule<iterator, dateAdaptator(std::string), qi::locals<std::string>, ascii::space_type> rDate;
 	qi::rule<iterator, std::string(std::string), qi::locals<std::string>, ascii::space_type> rText;
 	qi::rule<iterator, int(std::string), qi::locals<std::string>, ascii::space_type> rInt;
+	qi::rule<iterator, dtcc::settings::logger(std::string), qi::locals<std::string>, ascii::space_type> rLogger;
 
 	qi::rule<iterator, dateAdaptator(), ascii::space_type> rDateBase;
+	qi::rule<iterator, assetTypeAdaptator(), ascii::space_type> rAssetTypeBase;
+	qi::rule<iterator, severityAdaptator(), ascii::space_type> rSeverityBase;
 	qi::rule<iterator, std::string(), ascii::space_type> rTextBase;
 	qi::rule<iterator, int(), ascii::space_type> rIntBase;
 

@@ -18,7 +18,7 @@
 
 #include <boost/optional/optional_io.hpp>
 
-#include "record/tradeRecord.hpp"
+#include "database/record/tradeRecord.hpp"
 #include "utils/adaptator.hpp"
 
 BOOST_FUSION_ADAPT_STRUCT(
@@ -152,21 +152,6 @@ struct boost::spirit::traits::transform_attribute< dtcc::database::cleared, char
 	}
 
 	static void fail(dtcc::database::cleared&) {}
-};
-
-template<>
-struct boost::spirit::traits::transform_attribute< dtcc::database::assetType, std::string, boost::spirit::qi::domain>
-{
-	typedef std::string type;
-
-	static type pre(dtcc::database::assetType a) { return type(); }
-
-	static void post(dtcc::database::assetType& d, type const& v)
-	{
-		d = dtcc::EnumManager<dtcc::database::assetType>::toEnum(v);
-	}
-
-	static void fail(dtcc::database::assetType&) {}
 };
 
 template<>

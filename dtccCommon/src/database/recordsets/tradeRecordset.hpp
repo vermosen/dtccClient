@@ -13,7 +13,7 @@
 #include <soci/soci.h>
 
 #include "database/recordset.hpp"
-#include "record/tradeRecord.hpp"
+#include "database/record/tradeRecord.hpp"
 
 namespace dtcc
 {

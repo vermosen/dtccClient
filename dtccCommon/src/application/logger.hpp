@@ -18,6 +18,8 @@
 #include <boost/log/sinks/text_file_backend.hpp>
 #include <boost/log/utility/value_ref.hpp>
 
+#include "pattern/enumManager.hpp"
+
 namespace dtcc
 {
 	enum severity : short
@@ -26,7 +28,18 @@ namespace dtcc
 		info	= 1,
 		warning = 2,
 		error	= 3,
-		fatal   = 4
+		fatal	= 4
+	};
+
+	template <>
+	const std::vector<std::pair<severity, std::string> >
+		enumConversions<severity>::enumToStringVector =
+	{
+		{ severity::debug	, "debug" }
+		,{ severity::info	, "information" }
+		,{ severity::warning, "warning" }
+		,{ severity::error	, "error" }
+		,{ severity::fatal	, "fatal" }
 	};
 }
 

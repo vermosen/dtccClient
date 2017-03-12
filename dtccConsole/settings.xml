@@ -1,11 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <settings>
-  <startDate>2017-11-01</startDate>
+  <logger>
+    <fileStr>dtccConsole_%Y%m%d.log</fileStr>
+    <severity>warning</severity>
+  </logger>
+  <database>dsn=sqlServer</database>
+  <startDate>2017-01-01</startDate>
   <endDate>2017-01-11</endDate>
   <baseUrl>https://kgc0418-tdw-data-0.s3.amazonaws.com/slices/</baseUrl>
   <cacheSize>31457280</cacheSize>
   <assets>
-    <asset>RATES</asset>
-    <asset>COMMODITIES</asset>
+    <asset>
+      <type>CO</type>
+      <fileStr>COMMODITIES</fileStr>
+    </asset>
+    <asset>
+      <type>IR</type>
+      <fileStr>RATES</fileStr>
+    </asset>
+    <asset>
+      <type>CR</type>
+      <fileStr>CREDITS</fileStr>
+    </asset>
+    <asset>
+      <type>EQ</type>
+      <fileStr>EQUITIES</fileStr>
+    </asset>
+    <asset>
+      <type>FX</type>
+      <fileStr>FOREX</fileStr>
+    </asset>
   </assets>
 </settings>

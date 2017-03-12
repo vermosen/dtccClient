@@ -29,7 +29,7 @@
 
 #include "database/recordsets/tradeRecordset.hpp"
 #include "database/connectors/sqlServer.hpp"
-#include "record/parser/parseRecords.hpp"
+#include "database/record/parser/parseRecords.hpp"
 #include "application/startup.hpp"
 #include "application/settings/parser/parseSettings.hpp"
 #include "application/settings.hpp"
@@ -66,12 +66,12 @@ int main(int argc, char ** argv)
 		
 		if (args.find("settings") == args.cend())
 		{
-			LOG_FATAL() << "setting file path cannot be found";
+			std::cerr << "setting file path cannot be found";
 			return 1;
 		}
 
 		std::ifstream file(args["settings"], std::ios::in | std::ios::binary);
-		std::stringstream buffer; std::string raw; dtcc::settings2 settings;
+		std::stringstream buffer; std::string raw; dtcc::settings settings;
 
 		if (file.is_open())
 		{
@@ -80,19 +80,19 @@ int main(int argc, char ** argv)
 			
 			if (!dtcc::parser::parseSettings(raw.cbegin(), raw.cend(), settings))
 			{
-				LOG_FATAL() << "failed to decode settings";
+				std::cerr << "failed to decode settings";
 				return 1;
 			}
 		}
 
 		// create the logger
-		dtcc::logger::initialize("dtccConsole_%Y%m%d.log", dtcc::severity::info);
+		dtcc::logger::initialize(settings.logger_.fileStr_, settings.logger_.severity_);
 		LOG_INFO() << "Application is starting";
 
 		// create the db object
 		LOG_INFO() << "Trying to connect to sql server";
-		boost::shared_ptr<dtcc::database::connector> db(new dtcc::database::sqlServer());
-		db->connect("dsn=sqlServer");
+		boost::shared_ptr<dtcc::database::connector> db(new dtcc::database::sqlServer());	// TODO: get the db type from the settings
+		db->connect(settings.database_);
 		dtcc::database::tradeRecordset rs(db);
 
 		/*
@@ -100,22 +100,8 @@ int main(int argc, char ** argv)
 		 * use only a few predefined settings but 
 		 * we'll need to load a proper xml file 
 		 */
-		const dtcc::settings config =
-		{
-			settings.startDate_, // start 2016-05-01
-			settings.endDate_,
-			{
-				/*dtcc::settings::asset{ dtcc::database::assetType::interestRate	, "RATES"		},
-				dtcc::settings::asset{ dtcc::database::assetType::currency		, "FOREX"		},
-				*/dtcc::settings::asset{ dtcc::database::assetType::commodity		, "COMMODITIES" }/*,
-				dtcc::settings::asset{ dtcc::database::assetType::credit		, "CREDITS"		},
-				dtcc::settings::asset{ dtcc::database::assetType::equity		, "EQUITIES"	}*/
-			},
-			settings.baseUrl_,
-			settings.memory_
-		};
 
-		auto dt = config.start_;
+		auto dt = settings.startDate_;
 
 		// formatter
 		auto * formatter = new boost::gregorian::date_facet("%Y_%m_%d");
@@ -124,14 +110,14 @@ int main(int argc, char ** argv)
 		// build the curl object	
 		dtcc::curl * cnx = new dtcc::fileUrl();
 		std::vector<dtcc::database::tradeRecord> recs;			// data buffer
-		recs.reserve(config.memory_ / sizeof(dtcc::database::tradeRecord));
+		recs.reserve(settings.memory_ / sizeof(dtcc::database::tradeRecord));
 
 		// main loop
-		while (dt <= config.end_)
+		while (dt <= settings.endDate_)
 		{
 			LOG_INFO() << "Start activity for " << boost::gregorian::to_simple_string(dt);
 
-			for (auto it = config.assets_.cbegin(); it != config.assets_.cend(); it++)
+			for (auto it = settings.assets_.cbegin(); it != settings.assets_.cend(); it++)
 			{
 				std::stringstream fileName;
 				fileName.imbue(format);
@@ -140,10 +126,10 @@ int main(int argc, char ** argv)
 				LOG_INFO()	<< "Loading " 
 							<< it->fileStr_
 							<< " data from URL: " 
-							<< config.baseUrl_ + fileName.str();
+							<< settings.baseUrl_ + fileName.str();
 
 				// we create an archive
-				dtcc::archive<dtcc::zip::zip> ar(cnx->fetch(config.baseUrl_ + fileName.str(), 1024 * 1024));
+				dtcc::archive<dtcc::zip::zip> ar(cnx->fetch(settings.baseUrl_ + fileName.str(), 1024 * 1024));
 				
 				if (!ar.open())
 				{

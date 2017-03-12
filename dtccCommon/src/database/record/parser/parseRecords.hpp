@@ -7,7 +7,7 @@
 #define FUSION_MAX_VECTOR_SIZE 45
 
 #include "tradeRecordGrammar.hpp"
-#include "record\tradeRecord.hpp"
+#include "database/record/tradeRecord.hpp"
 
 namespace dtcc
 {

@@ -7,7 +7,7 @@ namespace dtcc
 {
 	namespace database
 	{
-		enum class assetType : char
+		enum assetType : char
 		{ 
 			  commodity		= 1
 			, credit		= 2

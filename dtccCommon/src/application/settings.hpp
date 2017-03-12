@@ -5,21 +5,20 @@
 
 #include <boost/date_time/gregorian/greg_date.hpp>
 
-#include "record/enum.hpp"
+#include "database/record/enum.hpp"
+#include "application/logger.hpp"
 
 namespace dtcc
 {
-	struct settings2
-	{
-		boost::gregorian::date startDate_;
-		boost::gregorian::date endDate_;
-		std::string baseUrl_;
-		int64_t memory_;
-		std::vector<std::string> assets_;
-	};
-
 	struct settings
 	{
+		struct logger
+		{
+			// TODO: use the assetType factory
+			std::string fileStr_;
+			dtcc::severity severity_;
+		};
+
 		struct asset
 		{
 			// TODO: use the assetType factory
@@ -27,11 +26,13 @@ namespace dtcc
 			std::string fileStr_;
 		};
 
-		boost::gregorian::date start_;
-		boost::gregorian::date end_;
-		std::vector<asset> assets_;
+		logger logger_;
+		std::string database_;
+		boost::gregorian::date startDate_;
+		boost::gregorian::date endDate_;
 		std::string baseUrl_;
 		int64_t memory_;
+		std::vector<asset> assets_;
 	};
 }
 
