@@ -73,5 +73,6 @@
     <ClCompile Include="src\application\settings\parser\parseSettings.cpp" />
     <ClCompile Include="src\application\startup.cpp" />
     <ClCompile Include="src\database\record\parser\parseRecords.cpp" />
+    <ClCompile Include="src\application\compression\zip\localFileHeader.cpp" />
   </ItemGroup>
 </Project>

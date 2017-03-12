@@ -22,7 +22,7 @@ namespace dtcc
 		class tradeRecordset : public recordset<int64_t, tradeRecord>
 		{
 		public:
-			tradeRecordset(boost::shared_ptr<connector> conn);
+			explicit tradeRecordset(boost::shared_ptr<connector> conn);
 
 			virtual std::vector<keyType> insert(const std::vector<recordType> & records);
 			virtual void update(const recordType & record);

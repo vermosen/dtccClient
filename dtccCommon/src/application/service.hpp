@@ -222,7 +222,7 @@ namespace dtcc
 			// Tell SCM that the service is started.
 			setServiceStatus(SERVICE_RUNNING);
 		}
-		catch (DWORD dwError)
+		catch (DWORD & dwError)
 		{
 			// Log the error.
 			writeErrorLogEntry("Service Start", dwError);

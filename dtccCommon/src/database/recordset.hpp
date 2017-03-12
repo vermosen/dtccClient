@@ -26,7 +26,7 @@ namespace dtcc
 			typedef K keyType;
 			typedef T recordType;
 		public:
-			recordset(boost::shared_ptr<connector> conn) : connector_(conn) {}
+			explicit recordset(boost::shared_ptr<connector> conn) : connector_(conn) {}
 			virtual ~recordset() {};
 
 			// implement crud operations

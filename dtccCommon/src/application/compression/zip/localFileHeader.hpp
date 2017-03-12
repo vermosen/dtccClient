@@ -3,11 +3,9 @@
 
 #include <string>
 #include <bitset>
-#include <boost/date_time.hpp>
+#include <array>
 
-#include "application/compression/zip.hpp"
 #include "application/compression/zip/method.hpp"
-#include "utils/converter.hpp"
 
 namespace dtcc
 {
@@ -19,31 +17,8 @@ namespace dtcc
 			// from https://users.cs.jmu.edu/buchhofp/forensics/formats/pkzip.html
 			static constexpr std::array<char, 4> signature = { 0x50, 0x4b, 0x03, 0x04 };
 
-			localFileHeader(std::string::const_iterator it)
-			{
-				uint16_t fileNameLen, extraFieldLen;
-				std::advance(it, 4); memcpy(&version_, &*it, sizeof(char) * 2);
-				std::advance(it, 2); memcpy(&flag_, &*it, sizeof(char) * 2);
-				std::advance(it, 2); memcpy(&compression_, &*it, sizeof(char) * 2);
-				std::advance(it, 2); memcpy(&modTime_, &*it, sizeof(char) * 2);
-				std::advance(it, 2); memcpy(&modDate_, &*it, sizeof(char) * 2);
-				std::advance(it, 2); memcpy(&crc32_, &*it, sizeof(char) * 4);
-				std::advance(it, 4); memcpy(&compressSize_, &*it, sizeof(char) * 4);
-				std::advance(it, 4); memcpy(&uncompressSize_, &*it, sizeof(char) * 4);
-				std::advance(it, 4); memcpy(&fileNameLen, &*it, sizeof(char) * 2);
-				std::advance(it, 2); memcpy(&extraFieldLen, &*it, sizeof(char) * 2);
-				std::advance(it, 2);
+			explicit localFileHeader(std::string::const_iterator it);
 
-				// copy the variable size fields
-				name_.resize(fileNameLen);
-				std::copy(it, it + fileNameLen, name_.begin());
-				std::advance(it, fileNameLen);
-
-				extraField_.resize(extraFieldLen);
-				std::copy(it, it + extraFieldLen, extraField_.begin());
-				std::advance(it, extraFieldLen);
-				dataStart_ = it;
-			}
 			std::string::const_iterator begin() const { return dataStart_; }
 			//std::string::const_iterator end() const { return dataStart_ + compressSize_; }
 

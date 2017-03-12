@@ -207,6 +207,7 @@
   <ItemGroup>
     <ClCompile Include="src\application\compression\zip.cpp" />
     <ClCompile Include="src\application\compression\zip\centralDirectoryFileHeader.cpp" />
+    <ClCompile Include="src\application\compression\zip\localFileHeader.cpp" />
     <ClCompile Include="src\application\curl.cpp" />
     <ClCompile Include="src\application\curl\fileUrl.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>

@@ -5,8 +5,8 @@
     <severity>warning</severity>
   </logger>
   <database>dsn=sqlServer</database>
-  <startDate>2017-01-01</startDate>
-  <endDate>2017-01-11</endDate>
+  <startDate>2016-02-12</startDate>
+  <endDate>2017-05-02</endDate>
   <baseUrl>https://kgc0418-tdw-data-0.s3.amazonaws.com/slices/</baseUrl>
   <cacheSize>31457280</cacheSize>
   <assets>

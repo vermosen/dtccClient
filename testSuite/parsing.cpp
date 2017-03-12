@@ -19,7 +19,6 @@ namespace testSuite
 {
 	void parsing::multipleRecords()
 	{
-		bool print = false;
 		std::vector<dtcc::database::tradeRecord> recs;
 
 		start = boost::chrono::high_resolution_clock::now();
@@ -30,6 +29,8 @@ namespace testSuite
 
 		if (dtcc::database::parse(iter, end, recs, dt))
 		{
+			bool print = false;
+
 			if (print)
 			{
 				for (auto it = recs.begin(); it != recs.end(); it++)
