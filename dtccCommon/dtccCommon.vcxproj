@@ -166,8 +166,8 @@
     <ClInclude Include="src\application\compression\zip\file.hpp" />
     <ClInclude Include="src\application\compression\zip\localFileHeader.hpp" />
     <ClInclude Include="src\application\compression\zip\method.hpp" />
-    <ClInclude Include="src\application\curl.hpp" />
-    <ClInclude Include="src\application\curl\fileUrl.hpp">
+    <ClInclude Include="src\application\connection\curl.hpp" />
+    <ClInclude Include="src\application\connection\curl\fileUrl.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug (intel)|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -208,8 +208,8 @@
     <ClCompile Include="src\application\compression\zip.cpp" />
     <ClCompile Include="src\application\compression\zip\centralDirectoryFileHeader.cpp" />
     <ClCompile Include="src\application\compression\zip\localFileHeader.cpp" />
-    <ClCompile Include="src\application\curl.cpp" />
-    <ClCompile Include="src\application\curl\fileUrl.cpp">
+    <ClCompile Include="src\application\connection\curl.cpp" />
+    <ClCompile Include="src\application\connection\curl\fileUrl.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug (intel)|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>

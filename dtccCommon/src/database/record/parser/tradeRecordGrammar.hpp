@@ -4,6 +4,7 @@
 //#define BOOST_SPIRIT_DEBUG
 
 #include <string>
+#include <cctype>
 
 #include <boost/config/warning_disable.hpp>
 #include <boost/spirit/include/qi.hpp>
@@ -37,10 +38,29 @@ struct stringErrorHandler
 		Iter & first_iter, Iter last_iter,
 		Iter error_iter, const qi::info& what) const
 	{
-		// TODO: overwrite the non ascii chars
-		auto temp = first_iter;
+		Iter start = error_iter, end = start;
 
-		LOG_WARNING() << std::string("Incoherent record found: ") << std::string(temp, first_iter);
+		// select the record
+		while (!(*end == '"' && *(end + 1) == ',' && *(end + 2) == '"'))
+		{
+			end++;
+		};
+
+		if (!isascii(*start))
+		{
+			LOG_WARNING() << std::string("found non-ascii sequence in record: ") << std::string(start, end);
+
+			for (auto it = start; it != (end + 1); ++it)
+			{
+				if (!isascii(*it)) *it = (char)0x20;
+			}
+		}
+		else
+		{
+			LOG_FATAL() << std::string("unknown error found in sequence: ") << std::string(start, end);
+
+			throw std::exception();
+		}
 	}
 };
 
@@ -85,7 +105,7 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 		rOptString
 			%= "\"\""
 				|
-			qi::lexeme['"' >> *(ascii::char_ - "\",\"") >> '"']; // possible because the last field is not a string
+			qi::lexeme['"' > *(ascii::char_ - "\",\"") > '"']; // possible because the last field is not a string
 
 		rString 
 			%= qi::lexeme['"' >> +(ascii::char_ - "\",\"") >> '"'];
@@ -184,8 +204,8 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 				rOptString		> ',' >
 				rOptString		> ',' >
 				rString			> ',' >	
-				rOptString		> ',' >
-				rOptString		> ',' >
+				rOptString		> ',' > // UNDERLYING_ASSET_1
+				rOptString		> ',' > // UNDERLYING_ASSET_2
 				rOptString		> ',' >
 				rOptNom			> ',' >
 				rOptString		> ',' >

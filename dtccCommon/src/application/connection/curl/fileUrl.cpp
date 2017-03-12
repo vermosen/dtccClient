@@ -24,8 +24,15 @@ namespace dtcc
 
 		buffer_->reserve(size);
 
-		std::function<void(char *, size_t)> writeBody(std::bind(&fileUrl::appendBody, this, std::placeholders::_1, std::placeholders::_2));
-		std::function<void(char *, size_t)> writeHeader(std::bind(&fileUrl::appendHeader, this, std::placeholders::_1, std::placeholders::_2));
+		std::function<void(char *, size_t)> writeBody(
+			std::bind(&fileUrl::appendBody, 
+				this, std::placeholders::_1, 
+				std::placeholders::_2));
+
+		std::function<void(char *, size_t)> writeHeader(
+			std::bind(&fileUrl::appendHeader, 
+				this, std::placeholders::_1, 
+				std::placeholders::_2));
 
 		curl_easy_setopt(curl_, CURLOPT_WRITEFUNCTION, fileUrl::writeMemoryCallback);
 		curl_easy_setopt(curl_, CURLOPT_WRITEDATA, &writeBody);

@@ -142,7 +142,8 @@
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="settings.xml">
+    <Xml Include="settings\dev.xml" />
+    <Xml Include="settings\prod.xml">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug (intel)|x64'">true</DeploymentContent>
       <DeploymentContent>false</DeploymentContent>

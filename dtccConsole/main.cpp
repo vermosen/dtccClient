@@ -24,7 +24,7 @@
 
 #include "application/compression/archive.hpp"
 #include "application/compression/zip.hpp"
-#include "application/curl/fileUrl.hpp"
+#include "application/connection/curl/fileUrl.hpp"
 #include "application/logger.hpp"
 
 #include "database/recordsets/tradeRecordset.hpp"
@@ -133,7 +133,7 @@ int main(int argc, char ** argv)
 				
 				if (!ar.open())
 				{
-					LOG_ERROR() << "failed to open the archive";
+					LOG_ERROR() << "failed to open the archive " << fileName.str();
 				}
 				else
 				{
@@ -149,9 +149,7 @@ int main(int argc, char ** argv)
 
 						LOG_INFO() << "Starting record conversion...";
 
-						std::string::const_iterator iter = file.begin(), end = file.end();
-
-						if (dtcc::parser::parseRecords(iter, end, recs, dt))
+						if (dtcc::parser::parseRecords(file.begin(), file.end(), recs, dt))
 						{
 							LOG_INFO() << recs.size() << " conversions done in "
 								<< boost::chrono::duration_cast<boost::chrono::milliseconds> (

@@ -6,9 +6,9 @@ namespace dtcc
 {
 	namespace parser
 	{
-		bool parseRecords(	std::string::const_iterator iter			,
-							std::string::const_iterator end				, 
-							std::vector<database::tradeRecord> & recs	, 
+		bool parseRecords(	std::string::iterator iter					,
+							std::string::iterator end					, 
+							std::vector<database::tradeRecord> & recs	,
 							const boost::gregorian::date & dt			)
 		{
 			// skip the header
@@ -22,7 +22,7 @@ namespace dtcc
 			else
 			{
 				// create the grammar
-				tradeRecordGrammar<std::string::const_iterator, ascii::blank_type> g(dt);
+				tradeRecordGrammar<std::string::iterator, ascii::blank_type> g(dt);
 
 				return (boost::spirit::qi::phrase_parse(iter, end, g, boost::spirit::ascii::blank, recs) && iter == end);
 			}

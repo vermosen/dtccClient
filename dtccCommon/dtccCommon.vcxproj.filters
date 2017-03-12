@@ -21,10 +21,6 @@
     <ClInclude Include="src\pattern\singleton.hpp">
       <Filter>src\pattern</Filter>
     </ClInclude>
-    <ClInclude Include="src\application\curl.hpp">
-      <Filter>src\application</Filter>
-    </ClInclude>
-    <ClInclude Include="src\application\curl\fileUrl.hpp" />
     <ClInclude Include="src\application\compression\zip.hpp" />
     <ClInclude Include="src\application\compression\archive.hpp" />
     <ClInclude Include="src\utils\converter.hpp" />
@@ -59,12 +55,12 @@
     <ClInclude Include="src\database\record\parser\tradeRecordPolicies.hpp" />
     <ClInclude Include="src\database\record\enum.hpp" />
     <ClInclude Include="src\database\record\tradeRecord.hpp" />
+    <ClInclude Include="src\application\connection\curl\fileUrl.hpp" />
+    <ClInclude Include="src\application\connection\curl.hpp">
+      <Filter>src\application</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\application\curl.cpp">
-      <Filter>src\application</Filter>
-    </ClCompile>
-    <ClCompile Include="src\application\curl\fileUrl.cpp" />
     <ClCompile Include="src\application\compression\zip.cpp" />
     <ClCompile Include="src\application\compression\zip\centralDirectoryFileHeader.cpp" />
     <ClCompile Include="src\database\connectors\sqlServer.cpp" />
@@ -74,5 +70,9 @@
     <ClCompile Include="src\application\startup.cpp" />
     <ClCompile Include="src\database\record\parser\parseRecords.cpp" />
     <ClCompile Include="src\application\compression\zip\localFileHeader.cpp" />
+    <ClCompile Include="src\application\connection\curl\fileUrl.cpp" />
+    <ClCompile Include="src\application\connection\curl.cpp">
+      <Filter>src\application</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

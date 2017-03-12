@@ -12,7 +12,7 @@
 #include <curl/curl.h>
 
 #include "application/logger.hpp"
-#include "application/curl.hpp"
+#include "application/connection/curl.hpp"
 
 namespace dtcc
 {

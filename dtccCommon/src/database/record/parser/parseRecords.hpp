@@ -13,8 +13,8 @@ namespace dtcc
 {
 	namespace parser
 	{
-		bool parseRecords(	std::string::const_iterator				iter, 
-							std::string::const_iterator				end	, 
+		bool parseRecords(	std::string::iterator					iter, 
+							std::string::iterator					end	, 
 							std::vector<database::tradeRecord> &	recs, 
 							const boost::gregorian::date &			dt	);
 	}
