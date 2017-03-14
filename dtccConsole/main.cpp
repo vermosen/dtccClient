@@ -24,7 +24,7 @@
 
 #include "application/compression/archive.hpp"
 #include "application/compression/zip.hpp"
-#include "application/connection/curl/fileUrl.hpp"
+#include "application/connection/curl/curl.hpp"
 #include "application/logger.hpp"
 
 #include "database/recordsets/tradeRecordset.hpp"
@@ -108,7 +108,7 @@ int main(int argc, char ** argv)
 		const std::locale format(std::locale::classic(), formatter);
 
 		// build the curl object	
-		dtcc::curl * cnx = new dtcc::fileUrl();
+		dtcc::connection * cnx = new dtcc::curl();
 		std::vector<dtcc::database::tradeRecord> recs;			// data buffer
 		recs.reserve(settings.memory_ / sizeof(dtcc::database::tradeRecord));
 
@@ -129,7 +129,7 @@ int main(int argc, char ** argv)
 							<< settings.baseUrl_ + fileName.str();
 
 				// we create an archive
-				dtcc::archive<dtcc::zip::zip> ar(cnx->fetch(settings.baseUrl_ + fileName.str(), 1024 * 1024));
+				dtcc::archive<dtcc::zip::zip> ar(cnx->get(settings.baseUrl_ + fileName.str(), 1024 * 1024));
 				
 				if (!ar.open())
 				{

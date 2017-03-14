@@ -3,37 +3,38 @@
 
 #include <string>
 #include <functional>
-#include <iostream>
-#include <fstream>
+#include <sstream>
 
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/iostreams/stream_buffer.hpp>
+#include <boost/iostreams/device/array.hpp>
 #include <boost/iostreams/stream.hpp>
-#include <boost/iostreams/device/back_inserter.hpp>
 
 #include <curl/curl.h>
+
 #include "application/logger.hpp"
+#include "application/connection.hpp"
 
 namespace dtcc
 {
-	class curl
+	class curl : public connection
 	{
 	public:
 		curl();
-		virtual ~curl();
+		~curl();
 
-		// the reverse key define if the string is loaded 
-		// in the reverse order
-		virtual boost::shared_ptr<std::string> fetch(const std::string & url, long size) = 0;
+		// TODO: make thread safe !
+		virtual boost::shared_ptr<std::string> get(const std::string & url, long size = 1024);
+		//virtual boost::shared_ptr<std::string> post(const std::string & url, long size = 1024);
 
-	protected:
-		virtual void appendBody(char *, size_t) = 0;
-		virtual void appendHeader(char *, size_t) = 0;
+	private:
 
+		void appendBody(char *, size_t);
+		void appendHeader(char *, size_t);
+		
 		// callbacks
 		static size_t writeMemoryCallback(char * contents, size_t size, size_t nmemb, std::function<void(char *, size_t)> * writer);
 		static size_t writeHeaderCallback(char * contents, size_t size, size_t nmemb, std::function<void(char *, size_t)> * writer);
 
+		boost::shared_ptr<std::string> buffer_;
 		CURL * curl_;
 	};
 }

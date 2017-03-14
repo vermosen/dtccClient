@@ -56,7 +56,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>.\src;$(INCLUDE);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>.\src;C:\build\openssl\openssl-1.1.0e-vs2015\include64\;$(INCLUDE);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <OutDir>$(SolutionDir)lib\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(Plateform)_$(PlatformToolset)_s</TargetName>
@@ -65,13 +65,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetName>$(ProjectName)_$(Plateform)_$(PlatformToolset)_sd</TargetName>
     <OutDir>$(SolutionDir)lib\</OutDir>
-    <IncludePath>.\src;$(INCLUDE);$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>.\src;C:\build\openssl\openssl-1.1.0e-vs2015\include64\;$(INCLUDE);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (intel)|x64'">
     <TargetName>$(ProjectName)_$(Plateform)_$(PlatformToolset)_sd</TargetName>
     <OutDir>$(SolutionDir)lib\</OutDir>
-    <IncludePath>.\src;$(INCLUDE);$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>.\src;C:\build\openssl\openssl-1.1.0e-vs2015\include64\;$(INCLUDE);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -79,7 +79,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>ZLIB_WINAPI;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WIN32_WINNT=0x0A01;ZLIB_WINAPI;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeaderFile />
@@ -137,7 +137,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;ZLIB_WINAPI;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WIN32_WINNT=0x0A01;WIN32;ZLIB_WINAPI;_CRT_SECURE_NO_WARNINGS;CURL_STATICLIB;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeaderFile />
@@ -166,8 +166,9 @@
     <ClInclude Include="src\application\compression\zip\file.hpp" />
     <ClInclude Include="src\application\compression\zip\localFileHeader.hpp" />
     <ClInclude Include="src\application\compression\zip\method.hpp" />
-    <ClInclude Include="src\application\connection\curl.hpp" />
-    <ClInclude Include="src\application\connection\curl\fileUrl.hpp">
+    <ClInclude Include="src\application\connection.hpp" />
+    <ClInclude Include="src\application\connection\asio\asio.hpp" />
+    <ClInclude Include="src\application\connection\curl\curl.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug (intel)|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -208,8 +209,8 @@
     <ClCompile Include="src\application\compression\zip.cpp" />
     <ClCompile Include="src\application\compression\zip\centralDirectoryFileHeader.cpp" />
     <ClCompile Include="src\application\compression\zip\localFileHeader.cpp" />
-    <ClCompile Include="src\application\connection\curl.cpp" />
-    <ClCompile Include="src\application\connection\curl\fileUrl.cpp">
+    <ClCompile Include="src\application\connection\asio\asio.cpp" />
+    <ClCompile Include="src\application\connection\curl\curl.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug (intel)|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>

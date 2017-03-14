@@ -57,18 +57,18 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\dtccCommon\src;$(Git)\zlib\contrib\minizip;$(INCLUDE);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>..\lib;$(SOCI)\$(Platform)\$(Configuration);$(GIT)\zlib\contrib\vstudio\vc14\$(Platform)\ZlibStat$(Configuration);C:\Git\curl\builds\libcurl-vc14-$(Platform)-$(configuration)-static-sspi-winssl\lib;$(LIB);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <IncludePath>..\dtccCommon\src;$(INCLUDE);C:\build\openssl\openssl-1.1.0e-vs2015\include64\;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>..\lib;C:\build\openssl\openssl-1.1.0e-vs2015\lib64;$(SOCI)\$(Platform)\$(Configuration);$(GIT)\zlib\contrib\vstudio\vc14\$(Platform)\ZlibStat$(Configuration);C:\Git\curl\builds\libcurl-vc14-$(Platform)-$(configuration)-static-sspi-winssl\lib;$(LIB);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (intel)|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\dtccCommon\src;$(Git)\zlib\contrib\minizip;$(INCLUDE);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>..\lib;$(SOCI)\$(Platform)\$(Configuration);$(GIT)\zlib\contrib\vstudio\vc14\$(Platform)\ZlibStat$(Configuration);C:\Git\curl\builds\libcurl-vc14-$(Platform)-$(configuration)-static-sspi-winssl\lib;$(LIB);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <IncludePath>..\dtccCommon\src;$(INCLUDE);C:\build\openssl\openssl-1.1.0e-vs2015\include64\;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>..\lib;C:\build\openssl\openssl-1.1.0e-vs2015\lib64;$(SOCI)\$(Platform)\$(Configuration);$(GIT)\zlib\contrib\vstudio\vc14\$(Platform)\ZlibStat$(Configuration);C:\Git\curl\builds\libcurl-vc14-$(Platform)-$(configuration)-static-sspi-winssl\lib;$(LIB);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\dtccCommon\src;$(Git)\zlib\contrib\minizip;$(INCLUDE);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>..\lib;$(SOCI)\$(Platform)\$(Configuration);$(GIT)\zlib\contrib\vstudio\vc14\x64\ZlibStat$(Configuration);C:\Git\zlib\contrib\vstudio\vc14\x64\ZlibStatDebug\;C:\Git\curl\builds\libcurl-vc14-x64-$(configuration)-static-ipv6-sspi-winssl\lib;$(LIB);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <IncludePath>..\dtccCommon\src;$(INCLUDE);C:\build\openssl\openssl-1.1.0e-vs2015\include64\;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>..\lib;C:\build\openssl\openssl-1.1.0e-vs2015\lib64;$(SOCI)\$(Platform)\$(Configuration);$(GIT)\zlib\contrib\vstudio\vc14\x64\ZlibStat$(Configuration);C:\Git\zlib\contrib\vstudio\vc14\x64\ZlibStatDebug\;C:\Git\curl\builds\libcurl-vc14-x64-$(configuration)-static-ipv6-sspi-winssl\lib;$(LIB);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -82,7 +82,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>dtccCommon_x64_v140_sd.lib;zlibstat.lib;libcurl_a_debug.lib;libsoci_core_4_0.lib;libsoci_odbc_4_0.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dtccCommon_x64_v140_sd.lib;zlibstat.lib;libcurl_a_debug.lib;libsoci_core_4_0.lib;libsoci_odbc_4_0.lib;libsslMTd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
@@ -131,7 +131,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>zlibstat.lib;dtccCommon_x64_v140_s.lib;libcurl_a.lib;libsoci_core_4_0.lib;libsoci_odbc_4_0.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>zlibstat.lib;dtccCommon_x64_v140_s.lib;libcurl_a.lib;libsoci_core_4_0.lib;libsoci_odbc_4_0.lib;libsslMT.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
