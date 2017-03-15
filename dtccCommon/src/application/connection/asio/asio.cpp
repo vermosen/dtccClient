@@ -1,7 +1,5 @@
 #include "asio.hpp"
 
-#include "application/connection.hpp"
-
 namespace dtcc
 {
 	asio::asio(bool verifyHost)
@@ -17,38 +15,96 @@ namespace dtcc
 		if (verifyHost)
 		{
 			// set verify mode
-			socket_.set_verify_mode(boost::asio::ssl::verify_peer);
+			context_.set_verify_mode(boost::asio::ssl::verify_peer);
 
 			// set the callbacks
-			socket_.set_verify_callback(
+			context_.set_verify_callback(
 				boost::bind(&asio::handle_checkCertificate, this, _1, _2));
 		}
 		else
 		{
-			socket_.set_verify_mode(boost::asio::ssl::verify_none);
+			context_.set_verify_mode(boost::asio::ssl::verify_none);
 		}
 	}
 
 	asio::~asio() {}
 
-	size_t asio::writeMemoryCallback(char * contents, size_t size, size_t nmemb, std::function<void(char *, size_t)> * writer)
-	{
-		size_t realsize = size * nmemb;
-		(*writer)(contents, realsize);
-		return realsize;
-	}
-
-	size_t asio::writeHeaderCallback(char * contents, size_t size, size_t nmemb, std::function<void(char *, size_t)> * writer)
-	{
-		size_t realsize = size * nmemb;
-		(*writer)(contents, realsize);
-		return realsize;
-	}
-
-	boost::shared_ptr<std::string> asio::get(const std::string & url, long size)
+	boost::shared_ptr<std::string> asio::fetch(query & q)
 	{
 		query_ = boost::shared_ptr<boost::asio::ip::tcp::resolver::query>(
-			new boost::asio::ip::tcp::resolver::query(host_, port_));
+			new boost::asio::ip::tcp::resolver::query(q.host(), "https"));
+
+		if (!answered_ && ready_)
+
+		{
+			boost::chrono::high_resolution_clock timer;
+			boost::chrono::time_point<boost::chrono::high_resolution_clock> start = timer.now();
+			boost::mutex::scoped_lock lock(ioMutex_);
+			this->connect();
+
+			// should be useless...
+			while (!answered_ && boost::chrono::duration_cast<boost::chrono::milliseconds>(
+				timer.now() - start).count() < TIMEOUT)
+			{
+				condition_.wait(lock);
+			}
+
+			if (success_)
+			{
+				LOG_INFO() 
+					<< "query retrieved in " 
+					<< boost::lexical_cast<std::string>(
+					boost::chrono::duration_cast<boost::chrono::milliseconds>(
+						timer.now() - start).count()) 
+					<< " ms";
+			}
+			else
+			{
+				LOG_ERROR() << "query failed";
+			}
+		}
+
+		return content_;
+	}
+
+	void asio::connect()
+	{
+		resolver_.async_resolve(*query_,
+			boost::bind(&asio::handle_resolve, this,
+				boost::asio::placeholders::error,
+				boost::asio::placeholders::iterator));
+
+		service_.run();
+	}
+
+	void asio::unckunck(boost::asio::streambuf & buf)
+	{
+		bool start = true;
+
+		std::istream istr(&buf);
+		istr >> std::noskipws;
+
+		while (istr)
+		{
+			std::string h;
+			if (!start)
+			{
+				std::getline(istr, h);
+			}
+			else
+			{
+				start = false;
+			}
+
+			std::getline(istr, h);
+			std::stringstream ss;
+			ss << std::hex << h.substr(0, h.size() - 1);
+			ss >> chunckSize_;
+
+			std::istream_iterator<char> beg(istr);
+
+			//std::copy_n(beg, chunckSize_, std::back_inserter(*content_));
+		}
 	}
 
 	// callbacks
@@ -235,7 +291,7 @@ namespace dtcc
 			}
 			else
 			{
-				content_ << &response_;
+				//std::copy_n(&response_, chunckSize_, std::back_inserter(*content_));
 			}
 
 			success_ = true;

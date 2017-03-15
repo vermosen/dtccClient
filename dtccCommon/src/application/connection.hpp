@@ -16,15 +16,28 @@
 
 namespace dtcc
 {
+	class query
+	{
+	public:
+		explicit query(const std::string & host, int port) : host_(host), port_(port) {}
+		virtual ~query() {}
+		virtual const std::string & url() = 0;
+
+		int port() const { return port_; }
+		const std::string & host() const { return host_; }
+	
+	protected:
+		int port_;
+		std::string host_;
+	};
+
 	class connection
 	{
 	public:
 		connection() {};
 		virtual ~connection() {};
 
-		// the reverse key define if the string is loaded 
-		// in the reverse order
-		virtual boost::shared_ptr<std::string> get(const std::string & url, long size) = 0;
+		virtual boost::shared_ptr<std::string> fetch(query & q) = 0;
 
 	protected:
 		boost::shared_ptr<std::string> header_; 

@@ -2,9 +2,10 @@
 
 namespace dtcc
 {
-	curl::curl() : connection(), curl_(curl_easy_init())
+	curl::curl(size_t bufferSize) : connection(), curl_(curl_easy_init())
 	{
 		buffer_ = boost::shared_ptr<std::string>(new std::string);
+		buffer_->reserve(bufferSize);
 	}
 
 	curl::~curl()
@@ -36,12 +37,10 @@ namespace dtcc
 		return realsize;
 	}
 
-	boost::shared_ptr<std::string> curl::get(const std::string & url, long size)
+	boost::shared_ptr<std::string> curl::fetch(query & q)
 	{
 		if (!curl_)
 			throw std::exception("uninitialized connection");
-
-		buffer_->reserve(size);
 
 		std::function<void(char *, size_t)> writeBody(
 			std::bind(&curl::appendBody, 
@@ -59,12 +58,13 @@ namespace dtcc
 		curl_easy_setopt(curl_, CURLOPT_HEADERFUNCTION, curl::writeHeaderCallback);
 		curl_easy_setopt(curl_, CURLOPT_HEADERDATA, &writeHeader);
 
-		curl_easy_setopt(curl_, CURLOPT_URL, url.c_str());
+		curl_easy_setopt(curl_, CURLOPT_URL, q.host() + q.url());
 
 		CURLcode res = curl_easy_perform(curl_);
 
-		// once the buffer is filled, we clean the buffer
 		boost::shared_ptr<std::string> retPtr = buffer_;
+
+		// once the buffer is filled, we create a new object
 		buffer_ = boost::shared_ptr<std::string>(new std::string);
 		return retPtr;
 	}

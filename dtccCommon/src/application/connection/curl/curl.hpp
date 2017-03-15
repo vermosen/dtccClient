@@ -18,12 +18,11 @@ namespace dtcc
 	class curl : public connection
 	{
 	public:
-		curl();
+		explicit curl(size_t bufferSize = 1024);
 		~curl();
 
 		// TODO: make thread safe !
-		virtual boost::shared_ptr<std::string> get(const std::string & url, long size = 1024);
-		//virtual boost::shared_ptr<std::string> post(const std::string & url, long size = 1024);
+		virtual boost::shared_ptr<std::string> fetch(query & q);
 
 	private:
 

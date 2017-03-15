@@ -33,6 +33,7 @@
 #include "application/startup.hpp"
 #include "application/settings/parser/parseSettings.hpp"
 #include "application/settings.hpp"
+#include "query/eod.hpp"
 
 // chrono
 boost::chrono::high_resolution_clock::time_point start;
@@ -95,20 +96,10 @@ int main(int argc, char ** argv)
 		db->connect(settings.database_);
 		dtcc::database::tradeRecordset rs(db);
 
-		/*
-		 * we load the settings here. For now we'll
-		 * use only a few predefined settings but 
-		 * we'll need to load a proper xml file 
-		 */
-
 		auto dt = settings.startDate_;
 
-		// formatter
-		auto * formatter = new boost::gregorian::date_facet("%Y_%m_%d");
-		const std::locale format(std::locale::classic(), formatter);
-
 		// build the curl object	
-		dtcc::connection * cnx = new dtcc::curl();
+		dtcc::connection * cnx = new dtcc::curl(1024 * 1024);
 		std::vector<dtcc::database::tradeRecord> recs;			// data buffer
 		recs.reserve(settings.memory_ / sizeof(dtcc::database::tradeRecord));
 
@@ -119,21 +110,14 @@ int main(int argc, char ** argv)
 
 			for (auto it = settings.assets_.cbegin(); it != settings.assets_.cend(); it++)
 			{
-				std::stringstream fileName;
-				fileName.imbue(format);
-				fileName << "CUMULATIVE_" << it->fileStr_ << "_" << dt << ".zip";
-
-				LOG_INFO()	<< "Loading " 
-							<< it->fileStr_
-							<< " data from URL: " 
-							<< settings.baseUrl_ + fileName.str();
+				dtcc::eod q(std::string("https://kgc0418-tdw-data-0.s3.amazonaws.com/"), 8080, dt, *it);
 
 				// we create an archive
-				dtcc::archive<dtcc::zip::zip> ar(cnx->get(settings.baseUrl_ + fileName.str(), 1024 * 1024));
+				dtcc::archive<dtcc::zip::zip> ar(cnx->fetch(q));
 				
 				if (!ar.open())
 				{
-					LOG_ERROR() << "failed to open the archive " << fileName.str();
+					LOG_ERROR() << "failed to open the archive ";
 				}
 				else
 				{

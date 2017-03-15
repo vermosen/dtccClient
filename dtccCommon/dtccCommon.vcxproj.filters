@@ -58,6 +58,8 @@
     <ClInclude Include="src\application\connection.hpp" />
     <ClInclude Include="src\application\connection\curl\curl.hpp" />
     <ClInclude Include="src\application\connection\asio\asio.hpp" />
+    <ClInclude Include="src\query\eod.hpp" />
+    <ClInclude Include="src\query\intraday.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\compression\zip.cpp" />
@@ -71,5 +73,7 @@
     <ClCompile Include="src\application\compression\zip\localFileHeader.cpp" />
     <ClCompile Include="src\application\connection\curl\curl.cpp" />
     <ClCompile Include="src\application\connection\asio\asio.cpp" />
+    <ClCompile Include="src\query\eod.cpp" />
+    <ClCompile Include="src\query\intraday.cpp" />
   </ItemGroup>
 </Project>

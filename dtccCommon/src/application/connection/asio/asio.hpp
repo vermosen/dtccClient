@@ -15,8 +15,12 @@
 #include <boost/iostreams/stream.hpp>
 #include <boost/lexical_cast.hpp>
 
+#include <openssl/ssl.h>
+
 #include "application/logger.hpp"
 #include "application/connection.hpp"
+
+#define TIMEOUT 5000
 
 namespace dtcc
 {
@@ -29,11 +33,13 @@ namespace dtcc
 		explicit asio(bool verifyHost = false);
 		~asio();
 
-		// TODO: make thread safe !
-		virtual boost::shared_ptr<std::string> get(const std::string & url, long size = 1024);
-		//virtual boost::shared_ptr<std::string> post(const std::string & url, long size = 1024);
+		virtual boost::shared_ptr<std::string> fetch(query & q);
 
 	private:		
+
+		void connect();
+		void unckunck(boost::asio::streambuf & buf);
+
 		// callbacks
 		bool handle_checkCertificate(bool, boost::asio::ssl::verify_context&	);
 		void handle_resolve			(const boost::system::error_code&, boost::asio::ip::tcp::resolver::iterator);
@@ -46,11 +52,11 @@ namespace dtcc
 		void handle_read_content	(const boost::system::error_code&, size_t	);
 
 	private:
-		boost::asio::io_service service_			;
-		boost::asio::ssl::context context_			;
-		boost::asio::ip::tcp::resolver resolver_	;
-		boost::asio::ip::tcp::socket socket_		;
-		boost::shared_ptr<boost::asio::ip::tcp::resolver::query> query_;
+		boost::asio::io_service										service_	;
+		boost::asio::ssl::context									context_	;
+		boost::asio::ip::tcp::resolver								resolver_	;
+		boost::asio::ssl::stream<boost::asio::ip::tcp::socket>		socket_		;
+		boost::shared_ptr<boost::asio::ip::tcp::resolver::query>	query_		;
 
 		boost::asio::streambuf request_	;
 		boost::asio::streambuf response_;
