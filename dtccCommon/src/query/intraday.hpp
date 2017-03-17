@@ -24,12 +24,12 @@ namespace dtcc
 			, dt_(dt)
 			, counter_(counter) {}
 
-		virtual const std::string & url()
+		virtual std::string path() const
 		{
-			std::stringstream url;
-			url.imbue(format_);
-			url << host_ << "SLICE_" << asset_.fileStr_ << "_" << dt_ << "_" << counter_ << ".zip";
-			return url.str();
+			std::stringstream path;
+			path.imbue(format_);
+			path << "/slices/" << "SLICE_" << asset_.fileStr_ << "_" << dt_ << "_" << counter_ << ".zip";
+			return path.str();
 		}
 
 	private:

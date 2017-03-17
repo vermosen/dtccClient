@@ -105,10 +105,10 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 		rOptString
 			%= "\"\""
 				|
-			qi::lexeme['"' > *(ascii::char_ - "\",\"") > '"']; // possible because the last field is not a string
+			qi::lexeme['"' > *(ascii::char_ - '"') > '"']; // possible because the last field is not a string
 
 		rString 
-			%= qi::lexeme['"' >> +(ascii::char_ - "\",\"") >> '"'];
+			%= qi::lexeme['"' >> +(ascii::char_ - '"') >> '"'];
 
 		rTime
 			%= '"' >>	qi::int_[_pass = (_1 >= 1400	&& _1 < 10000	)] >> "-" >>

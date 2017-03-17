@@ -7,7 +7,7 @@
   <database>dsn=sqlServer</database>
   <startDate>2016-01-18</startDate>
   <endDate>2016-01-18</endDate>
-  <baseUrl>https://kgc0418-tdw-data-0.s3.amazonaws.com/slices/</baseUrl>
+  <baseUrl>https://kgc0418-tdw-data-0.s3.amazonaws.com</baseUrl>
   <cacheSize>31457280</cacheSize>
   <assets>
     <asset>

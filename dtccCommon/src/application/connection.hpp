@@ -13,24 +13,10 @@
 
 #include <curl/curl.h>
 #include "application/logger.hpp"
+#include "application/query.hpp"
 
 namespace dtcc
 {
-	class query
-	{
-	public:
-		explicit query(const std::string & host, int port) : host_(host), port_(port) {}
-		virtual ~query() {}
-		virtual const std::string & url() = 0;
-
-		int port() const { return port_; }
-		const std::string & host() const { return host_; }
-	
-	protected:
-		int port_;
-		std::string host_;
-	};
-
 	class connection
 	{
 	public:

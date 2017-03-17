@@ -173,6 +173,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug (intel)|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="src\application\query.hpp" />
     <ClInclude Include="src\application\settings.hpp" />
     <ClInclude Include="src\application\settings\parser\parseSettings.hpp" />
     <ClInclude Include="src\application\settings\parser\settingsAdapter.hpp" />

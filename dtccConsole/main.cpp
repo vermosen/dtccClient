@@ -38,25 +38,6 @@
 // chrono
 boost::chrono::high_resolution_clock::time_point start;
 
-std::map<std::string, std::string> readArgs(int argc, char ** argv)
-{
-	std::map<std::string, std::string> ret;
-
-	for (int i = 1; i < argc; i++)
-	{
-		std::string s = std::string(argv[i]);
-
-		auto pos = s.find('=');
-
-		if (pos != std::string::npos && s.substr(pos + 1).find('=') == std::string::npos)
-		{
-			ret.insert(std::make_pair(s.substr(1, pos - 1), s.substr(pos + 1)));
-		}
-	}
-
-	return ret;
-}
-
 int main(int argc, char ** argv)
 {
 	int ret = 1;
@@ -88,7 +69,7 @@ int main(int argc, char ** argv)
 
 		// create the logger
 		dtcc::logger::initialize(settings.logger_.fileStr_, settings.logger_.severity_);
-		LOG_INFO() << "Application is starting";
+		LOG_INFO() << "Application is starting...";
 
 		// create the db object
 		LOG_INFO() << "Trying to connect to sql server";
@@ -96,21 +77,19 @@ int main(int argc, char ** argv)
 		db->connect(settings.database_);
 		dtcc::database::tradeRecordset rs(db);
 
-		auto dt = settings.startDate_;
-
 		// build the curl object	
 		dtcc::connection * cnx = new dtcc::curl(1024 * 1024);
 		std::vector<dtcc::database::tradeRecord> recs;			// data buffer
 		recs.reserve(settings.memory_ / sizeof(dtcc::database::tradeRecord));
 
 		// main loop
-		while (dt <= settings.endDate_)
+		for (auto dt = settings.startDate_; dt <= settings.endDate_; dt += boost::gregorian::date_duration(1))
 		{
-			LOG_INFO() << "Start activity for " << boost::gregorian::to_simple_string(dt);
+			LOG_INFO() << "Start activity on " << boost::gregorian::to_simple_string(dt);
 
 			for (auto it = settings.assets_.cbegin(); it != settings.assets_.cend(); it++)
 			{
-				dtcc::eod q(std::string("https://kgc0418-tdw-data-0.s3.amazonaws.com/"), 8080, dt, *it);
+				dtcc::eod q(settings.baseUrl_, 8080, dt, *it);
 
 				// we create an archive
 				dtcc::archive<dtcc::zip::zip> ar(cnx->fetch(q));

@@ -54,11 +54,9 @@ namespace dtcc
 
 		curl_easy_setopt(curl_, CURLOPT_WRITEFUNCTION, curl::writeMemoryCallback);
 		curl_easy_setopt(curl_, CURLOPT_WRITEDATA, &writeBody);
-
 		curl_easy_setopt(curl_, CURLOPT_HEADERFUNCTION, curl::writeHeaderCallback);
 		curl_easy_setopt(curl_, CURLOPT_HEADERDATA, &writeHeader);
-
-		curl_easy_setopt(curl_, CURLOPT_URL, q.host() + q.url());
+		curl_easy_setopt(curl_, CURLOPT_URL, q.url().c_str());
 
 		CURLcode res = curl_easy_perform(curl_);
 

@@ -22,19 +22,16 @@ namespace dtcc
 			, asset_(asset)
 			, dt_(dt) {}
 
-		virtual const std::string & url()
+		virtual std::string path() const
 		{
-			std::stringstream url;
-			url.imbue(format_);
-			url << host_ << "CUMULATIVE_" << asset_.fileStr_ << "_" << dt_ << ".zip";
+			std::stringstream path;
+			path.imbue(format_);
+			path << "/slices/" << "CUMULATIVE_" << asset_.fileStr_ << "_" << dt_ << ".zip";
 
-			return url.str();
+			return path.str();
 		}
 
 	private:
-		int port_;
-		std::string host_;
-		std::string base_;
 		settings::asset asset_;
 		boost::gregorian::date dt_;
 

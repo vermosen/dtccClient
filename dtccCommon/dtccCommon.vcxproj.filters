@@ -60,6 +60,7 @@
     <ClInclude Include="src\application\connection\asio\asio.hpp" />
     <ClInclude Include="src\query\eod.hpp" />
     <ClInclude Include="src\query\intraday.hpp" />
+    <ClInclude Include="src\application\query.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\compression\zip.cpp" />
