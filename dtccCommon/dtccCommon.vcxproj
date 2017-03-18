@@ -168,7 +168,6 @@
     <ClInclude Include="src\application\compression\zip\method.hpp" />
     <ClInclude Include="src\application\webConnector.hpp" />
     <ClInclude Include="src\application\webConnectors\all.hpp" />
-    <ClInclude Include="src\application\webConnectors\asio\asio.hpp" />
     <ClInclude Include="src\application\webConnectors\curl\curl.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug (intel)|x64'">false</ExcludedFromBuild>
@@ -207,8 +206,8 @@
     <ClInclude Include="src\pattern\abstractFactory.hpp" />
     <ClInclude Include="src\pattern\enumManager.hpp" />
     <ClInclude Include="src\pattern\singleton.hpp" />
-    <ClInclude Include="src\query\eod.hpp" />
-    <ClInclude Include="src\query\intraday.hpp" />
+    <ClInclude Include="src\application\queries\eod.hpp" />
+    <ClInclude Include="src\application\queries\intraday.hpp" />
     <ClInclude Include="src\utils\adaptator.hpp" />
     <ClInclude Include="src\utils\converter.hpp" />
   </ItemGroup>
@@ -216,7 +215,6 @@
     <ClCompile Include="src\application\compression\zip.cpp" />
     <ClCompile Include="src\application\compression\zip\centralDirectoryFileHeader.cpp" />
     <ClCompile Include="src\application\compression\zip\localFileHeader.cpp" />
-    <ClCompile Include="src\application\webConnectors\asio\asio.cpp" />
     <ClCompile Include="src\application\webConnectors\curl\curl.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug (intel)|x64'">false</ExcludedFromBuild>
@@ -228,8 +226,8 @@
     <ClCompile Include="src\database\connectors\sqlServer.cpp" />
     <ClCompile Include="src\database\record\parser\parseRecords.cpp" />
     <ClCompile Include="src\database\recordsets\tradeRecordset.cpp" />
-    <ClCompile Include="src\query\eod.cpp" />
-    <ClCompile Include="src\query\intraday.cpp" />
+    <ClCompile Include="src\application\queries\eod.cpp" />
+    <ClCompile Include="src\application\queries\intraday.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

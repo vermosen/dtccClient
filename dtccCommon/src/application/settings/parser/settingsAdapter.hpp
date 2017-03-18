@@ -33,13 +33,21 @@ BOOST_FUSION_ADAPT_STRUCT(
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
+	dtcc::settings::connector,
+	(std::string, type_)
+	(std::string, protocol_)
+	(std::string, host_)
+	(int, port_)
+	(size_t, bufferSize_)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
 	dtcc::settings,
 	(dtcc::settings::logger, logger_)
+	(dtcc::settings::connector, connector_)
 	(std::string, database_)
-	(std::string, webConnector_)
 	(boost::gregorian::date, startDate_)
 	(boost::gregorian::date, endDate_)
-	(std::string, baseUrl_)
 	(int64_t, memory_)
 	(std::vector<dtcc::settings::asset>, assets_)
 )

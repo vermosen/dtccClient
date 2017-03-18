@@ -4,11 +4,17 @@
     <fileStr>dtccConsole_%Y%m%d.log</fileStr>
     <severity>information</severity>
   </logger>
+  <connector>
+    <type>curl</type>
+    <protocol>https</protocol>
+    <host>kgc0418-tdw-data-0.s3.amazonaws.com</host>
+    <port>8080</port>
+    <bufferSize>1024</bufferSize>
+  </connector>
   <database>dsn=sqlServer</database>
   <webConnector>curl</webConnector>
   <startDate>2016-01-01</startDate>
   <endDate>2016-01-03</endDate>
-  <baseUrl>https://kgc0418-tdw-data-0.s3.amazonaws.com/</baseUrl>
   <cacheSize>31457280</cacheSize>
   <assets>
     <asset>

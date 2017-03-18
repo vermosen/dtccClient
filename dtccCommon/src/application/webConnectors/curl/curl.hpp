@@ -19,7 +19,7 @@ namespace dtcc
 	class curl : public webConnector
 	{
 	public:
-		explicit curl(size_t bufferSize = 1024);
+		explicit curl(const webConnector::args & args);
 		~curl();
 
 		// TODO: make thread safe !
@@ -38,7 +38,7 @@ namespace dtcc
 		CURL * curl_;
 
 		// for factory registration
-		static registerType<webConnector, std::string, curl> register_;
+		static registerType<webConnector, std::string, curl, webConnector::args> register_;
 	};
 }
 

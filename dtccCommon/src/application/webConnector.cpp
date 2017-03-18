@@ -6,7 +6,7 @@
 
 #pragma init_seg(compiler)
 template<>
-dtcc::abstractFactory<dtcc::webConnector, std::string>::map_type *
-	dtcc::abstractFactory<dtcc::webConnector, std::string>::map_ = new abstractFactory::map_type();
+dtcc::abstractFactory<dtcc::webConnector, std::string, dtcc::webConnector::args>::map_type *
+	dtcc::abstractFactory<dtcc::webConnector, std::string, dtcc::webConnector::args>::map_ = new abstractFactory::map_type();
 
 #endif

@@ -19,16 +19,13 @@ namespace dtcc
 	class query
 	{
 	public:
-		explicit query(const std::string & host, int port) : host_(host), port_(port) {}
+		explicit query() {}
 		virtual ~query() {}
 		virtual std::string path() const = 0;
-		std::string url() const { return std::string(host() + path()); }
-		int port() const { return port_; }
-		const std::string & host() const { return host_; }
-
-	protected:
-		int port_;
-		std::string host_;
+		std::string url(const std::string & protocol, const std::string & host) const
+		{
+			return protocol + "://" + host + "/" + this->path();
+		}
 	};
 }
 

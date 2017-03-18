@@ -2,13 +2,14 @@
 
 namespace dtcc
 {
-	registerType<webConnector, std::string, curl>
+	registerType<webConnector, std::string, curl, webConnector::args>
 		curl::register_(std::string("curl"));
 
-	curl::curl(size_t bufferSize) : webConnector(), curl_(curl_easy_init())
+	curl::curl(const webConnector::args & args)
+		: webConnector(args), curl_(curl_easy_init())
 	{
 		buffer_ = boost::shared_ptr<std::string>(new std::string);
-		buffer_->reserve(bufferSize);
+		buffer_->reserve(boost::get<3>(args));
 	}
 
 	curl::~curl()
@@ -59,7 +60,9 @@ namespace dtcc
 		curl_easy_setopt(curl_, CURLOPT_WRITEDATA, &writeBody);
 		curl_easy_setopt(curl_, CURLOPT_HEADERFUNCTION, curl::writeHeaderCallback);
 		curl_easy_setopt(curl_, CURLOPT_HEADERDATA, &writeHeader);
-		curl_easy_setopt(curl_, CURLOPT_URL, q.url().c_str());
+
+		std::string s = q.url(protocol_, host_);
+		curl_easy_setopt(curl_, CURLOPT_URL, q.url(protocol_, host_).c_str());
 
 		CURLcode res = curl_easy_perform(curl_);
 

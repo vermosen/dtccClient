@@ -18,15 +18,19 @@
 #include "application/compression/archive.hpp"
 #include "application/compression/zip.hpp"
 #include "application/webConnectors/all.hpp"
-#include "application/logger.hpp"
+
+// temp
+#include "asio/asio.hpp"
+//
 
 #include "database/recordsets/tradeRecordset.hpp"
 #include "database/connectors/sqlServer.hpp"
 #include "database/record/parser/parseRecords.hpp"
+#include "application/logger.hpp"
 #include "application/startup.hpp"
 #include "application/settings/parser/parseSettings.hpp"
 #include "application/settings.hpp"
-#include "query/eod.hpp"
+#include "application/queries/eod.hpp"
 
 #ifdef _WIN32
 #include "StdAfx.h"
@@ -78,7 +82,13 @@ int main(int argc, char ** argv)
 		dtcc::database::tradeRecordset rs(db);
 
 		// build the webConnector object	
-		auto cnx = dtcc::abstractFactory<dtcc::webConnector, std::string>::createInstance(settings.webConnector_);
+		auto cnx = dtcc::abstractFactory<dtcc::webConnector, std::string, dtcc::webConnector::args>::createInstance(
+			settings.connector_.type_, 
+			dtcc::webConnector::args(
+				settings.connector_.protocol_, 
+				settings.connector_.host_, 
+				settings.connector_.port_));
+
 		std::vector<dtcc::database::tradeRecord> recs;			// data buffer
 		recs.reserve(settings.memory_ / sizeof(dtcc::database::tradeRecord));
 
@@ -89,7 +99,7 @@ int main(int argc, char ** argv)
 
 			for (auto it = settings.assets_.cbegin(); it != settings.assets_.cend(); it++)
 			{
-				dtcc::eod q(settings.baseUrl_, 8080, dt, *it);
+				dtcc::eod q(dt, *it);
 
 				// we create an archive
 				dtcc::archive<dtcc::zip::zip> ar(cnx->fetch(q));

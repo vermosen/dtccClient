@@ -55,14 +55,13 @@
     <ClInclude Include="src\database\record\parser\tradeRecordPolicies.hpp" />
     <ClInclude Include="src\database\record\enum.hpp" />
     <ClInclude Include="src\database\record\tradeRecord.hpp" />
-    <ClInclude Include="src\query\eod.hpp" />
-    <ClInclude Include="src\query\intraday.hpp" />
     <ClInclude Include="src\application\query.hpp" />
-    <ClInclude Include="src\application\webConnectors\asio\asio.hpp" />
     <ClInclude Include="src\application\webConnectors\curl\curl.hpp" />
     <ClInclude Include="src\application\webConnector.hpp" />
     <ClInclude Include="src\application\webConnector.cpp" />
     <ClInclude Include="src\application\webConnectors\all.hpp" />
+    <ClInclude Include="src\application\queries\eod.hpp" />
+    <ClInclude Include="src\application\queries\intraday.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\compression\zip.cpp" />
@@ -74,9 +73,8 @@
     <ClCompile Include="src\application\startup.cpp" />
     <ClCompile Include="src\database\record\parser\parseRecords.cpp" />
     <ClCompile Include="src\application\compression\zip\localFileHeader.cpp" />
-    <ClCompile Include="src\query\eod.cpp" />
-    <ClCompile Include="src\query\intraday.cpp" />
-    <ClCompile Include="src\application\webConnectors\asio\asio.cpp" />
     <ClCompile Include="src\application\webConnectors\curl\curl.cpp" />
+    <ClCompile Include="src\application\queries\eod.cpp" />
+    <ClCompile Include="src\application\queries\intraday.cpp" />
   </ItemGroup>
 </Project>

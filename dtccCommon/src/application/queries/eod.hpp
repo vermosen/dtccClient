@@ -14,27 +14,17 @@ namespace dtcc
 	class eod : public query
 	{
 	public:
-		eod(const std::string & host,
-			int port,
-			const boost::gregorian::date & dt,
+		eod(const boost::gregorian::date & dt,
 			const settings::asset & asset)
-			: query(host, port)
+			: query()
 			, asset_(asset)
 			, dt_(dt) {}
 
-		virtual std::string path() const
-		{
-			std::stringstream path;
-			path.imbue(format_);
-			path << "/slices/" << "CUMULATIVE_" << asset_.fileStr_ << "_" << dt_ << ".zip";
-
-			return path.str();
-		}
+		virtual std::string path() const;
 
 	private:
 		settings::asset asset_;
 		boost::gregorian::date dt_;
-
 		static std::locale format_;
 	};
 }

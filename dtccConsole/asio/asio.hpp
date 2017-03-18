@@ -31,7 +31,7 @@ namespace dtcc
 
 		enum { max_length = 1024 };
 
-		explicit asio(bool verifyHost = false);
+		explicit asio(const webConnector::args & args);
 		~asio();
 
 		virtual boost::shared_ptr<std::string> fetch(query & q);
@@ -71,10 +71,11 @@ namespace dtcc
 		// for async controls
 		boost::mutex 				ioMutex_	;
 		boost::condition_variable 	condition_	;
+		boost::atomic<bool> 		connected_	;
 		boost::atomic<bool> 		answered_	;
 
 		// for factory registration
-		static registerType < webConnector, std::string, asio> register_;
+		static registerType <webConnector, std::string, asio, webConnector::args> register_;
 	};
 } /* namespace dtcc */
 

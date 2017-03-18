@@ -14,24 +14,30 @@ namespace dtcc
 	{
 		struct logger
 		{
-			// TODO: use the assetType factory
 			std::string fileStr_;
 			dtcc::severity severity_;
 		};
 
 		struct asset
 		{
-			// TODO: use the assetType factory
 			database::assetType type_;
 			std::string fileStr_;
 		};
 
+		struct connector
+		{
+			std::string type_;
+			std::string protocol_;
+			std::string host_;
+			int port_;
+			size_t bufferSize_;
+		};
+
 		logger logger_;
+		connector connector_;
 		std::string database_;
-		std::string webConnector_;
 		boost::gregorian::date startDate_;
 		boost::gregorian::date endDate_;
-		std::string baseUrl_;
 		int64_t memory_;
 		std::vector<asset> assets_;
 	};

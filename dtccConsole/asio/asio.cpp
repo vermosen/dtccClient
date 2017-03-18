@@ -1,12 +1,12 @@
-#include "application/webConnectors/asio/asio.hpp"
+#include "asio.hpp"
 
 namespace dtcc
 {
-	registerType<webConnector, std::string, asio>
+	registerType<webConnector, std::string, asio, webConnector::args>
 		asio::register_(std::string("asio"));
 
-	asio::asio(bool verifyHost)
-		:	webConnector(),
+	asio::asio(const webConnector::args & args)
+		:	webConnector(args),
 			context_(boost::asio::ssl::context::sslv23),
 			resolver_(service_),
 			socket_(service_, context_),
@@ -14,8 +14,8 @@ namespace dtcc
 	{
 		// load the certificate from default
 		context_.set_default_verify_paths();
-
-		if (verifyHost)
+		
+		bool verifyHost = false; if (verifyHost)
 		{
 			// set verify mode
 			context_.set_verify_mode(boost::asio::ssl::verify_peer);
@@ -28,22 +28,52 @@ namespace dtcc
 		{
 			context_.set_verify_mode(boost::asio::ssl::verify_none);
 		}
+
+		query_ = boost::shared_ptr<boost::asio::ip::tcp::resolver::query>(
+			new boost::asio::ip::tcp::resolver::query(host_, protocol_));
+
+		this->connect();
 	}
 
 	asio::~asio() {}
 
-	boost::shared_ptr<std::string> asio::fetch(query & q)
+	void asio::connect()
 	{
-		query_ = boost::shared_ptr<boost::asio::ip::tcp::resolver::query>(
-			new boost::asio::ip::tcp::resolver::query(q.host(), "https"));
+		resolver_.async_resolve(*query_,
+			boost::bind(&asio::handle_resolve, this,
+				boost::asio::placeholders::error,
+				boost::asio::placeholders::iterator));
 
-		if (!answered_)
+		service_.run();
+	}
 
+	boost::shared_ptr<std::string> asio::fetch(query & q)
+	{		 
+		if (connected_)
 		{
+			std::ostream request_stream(&request_);
+			request_stream << "GET /";
+			request_stream << q.path();
+			request_stream << " HTTP/1.1\r\n";
+			request_stream << "Host: " << host_ << "\r\n";
+			request_stream << "Accept: */*\r\n";
+			request_stream << "Connection: close\r\n\r\n";
+
+			LOG_INFO()
+				<< "new query set for the distant host: "
+				<< std::string(buffers_begin(request_.data()),
+					buffers_begin(request_.data()) + request_.size());
+
 			boost::chrono::high_resolution_clock timer;
 			boost::chrono::time_point<boost::chrono::high_resolution_clock> start = timer.now();
 			boost::mutex::scoped_lock lock(ioMutex_);
-			this->connect();
+
+			boost::asio::async_write(socket_, request_,
+				boost::bind(&asio::handle_write_request, this,
+					boost::asio::placeholders::error,
+					boost::asio::placeholders::bytes_transferred));
+
+			 service_.run();
 
 			// should be useless...
 			while (!answered_ && boost::chrono::duration_cast<boost::chrono::milliseconds>(
@@ -69,16 +99,6 @@ namespace dtcc
 		}
 
 		return content_;
-	}
-
-	void asio::connect()
-	{
-		resolver_.async_resolve(*query_,
-			boost::bind(&asio::handle_resolve, this,
-				boost::asio::placeholders::error,
-				boost::asio::placeholders::iterator));
-
-		service_.run();
 	}
 
 	void asio::unckunck(boost::asio::streambuf & buf)
@@ -135,8 +155,8 @@ namespace dtcc
 		}
 		else
 		{
-			LOG_ERROR() << "Error resolving host address:\r\n" << err.message();
-			condition_.notify_one(); answered_ = true; success_ = false;
+			LOG_ERROR() << "Error resolving host address: " << err.message();
+			connected_ = false;
 		}
 	}
 	void asio::handle_connect(const boost::system::error_code& err)
@@ -153,17 +173,17 @@ namespace dtcc
 				<< "Error connecting host: " 
 				<< err.message();
 
-			condition_.notify_one(); answered_ = true; success_ = false;
+			connected_ = false;
 		}
 	}
 	void asio::handle_handshake(const boost::system::error_code& err)
 	{
 		if (!err)
 		{
-			boost::asio::async_write(socket_, request_,
-				boost::bind(&asio::handle_write_request, this,
-					boost::asio::placeholders::error,
-					boost::asio::placeholders::bytes_transferred));
+			LOG_INFO()
+				<< "connection to host " << host_ << " successfull !";
+
+			connected_ = true;
 		}
 		else
 		{
@@ -171,7 +191,7 @@ namespace dtcc
 				<< "Error performing handshake: " 
 				<< err.message();
 
-			condition_.notify_one(); answered_ = true; success_ = false;
+			connected_ = false;
 		}
 	}
 	void asio::handle_write_request(const boost::system::error_code& err, size_t bytes_transferred)

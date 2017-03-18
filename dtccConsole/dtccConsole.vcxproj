@@ -57,7 +57,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\dtccCommon\src;$(INCLUDE);C:\build\openssl\openssl-1.1.0e-vs2015\include64\;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>.;..\dtccCommon\src;$(INCLUDE);C:\build\openssl\openssl-1.1.0e-vs2015\include64\;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>..\lib;C:\build\openssl\openssl-1.1.0e-vs2015\lib64;$(SOCI)\$(Platform)\$(Configuration);$(GIT)\zlib\contrib\vstudio\vc14\$(Platform)\ZlibStat$(Configuration);C:\Git\curl\builds\libcurl-vc14-$(Platform)-$(configuration)-static-sspi-winssl\lib;$(LIB);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (intel)|x64'">
@@ -136,10 +136,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="asio\asio.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="StdAfx.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="asio\asio.hpp" />
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>
   <ItemGroup>

@@ -3,9 +3,11 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="StdAfx.cpp" />
+    <ClCompile Include="asio\asio.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="asio\asio.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="settings\prod.xml" />
