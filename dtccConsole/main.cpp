@@ -1,13 +1,6 @@
 #ifndef MAIN_CPP_
 #define MAIN_CPP_
 
-#ifdef _WIN32
-#include "StdAfx.h"
-#include <Windows.h>
-#else
-#include <unistd.h>
-#endif
-
 #define FUSION_MAX_VECTOR_SIZE 45
 
 #include <fstream>
@@ -24,7 +17,7 @@
 
 #include "application/compression/archive.hpp"
 #include "application/compression/zip.hpp"
-#include "application/connection/curl/curl.hpp"
+#include "application/webConnectors/all.hpp"
 #include "application/logger.hpp"
 
 #include "database/recordsets/tradeRecordset.hpp"
@@ -34,6 +27,13 @@
 #include "application/settings/parser/parseSettings.hpp"
 #include "application/settings.hpp"
 #include "query/eod.hpp"
+
+#ifdef _WIN32
+#include "StdAfx.h"
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
 
 // chrono
 boost::chrono::high_resolution_clock::time_point start;
@@ -77,8 +77,8 @@ int main(int argc, char ** argv)
 		db->connect(settings.database_);
 		dtcc::database::tradeRecordset rs(db);
 
-		// build the curl object	
-		dtcc::connection * cnx = new dtcc::curl(1024 * 1024);
+		// build the webConnector object	
+		auto cnx = dtcc::abstractFactory<dtcc::webConnector, std::string>::createInstance(settings.webConnector_);
 		std::vector<dtcc::database::tradeRecord> recs;			// data buffer
 		recs.reserve(settings.memory_ / sizeof(dtcc::database::tradeRecord));
 

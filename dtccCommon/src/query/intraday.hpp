@@ -6,7 +6,7 @@
 
 #include <boost/date_time.hpp>
 
-#include "application/connection.hpp"
+#include "application/query.hpp"
 #include "application/settings.hpp"
 
 namespace dtcc
@@ -19,6 +19,7 @@ namespace dtcc
 					const boost::gregorian::date & dt,
 					const settings::asset & asset,
 					int counter = 1)
+
 			: query(host, port)
 			, asset_(asset)
 			, dt_(dt)

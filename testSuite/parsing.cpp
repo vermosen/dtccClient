@@ -4,12 +4,13 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 
 #include "database/recordsets/tradeRecordset.hpp"
-#include "database/records/tradeRecordGrammar.hpp"
-#include "database/parse.hpp"
+#include "database/record/parser/tradeRecordGrammar.hpp"
+#include "database/record/parser/parseRecords.hpp"
+#include "database/record/enum.hpp"
 
 boost::chrono::high_resolution_clock::time_point start;
 
-const static std::string testMultiple(
+static std::string testMultiple(
 	R"s("58919739","","NEW","2017-01-10T07:52:46","U","FC","","N","N","OFF","2017-02-01","2017-02-28","","","CO","Energy","Commodity:Energy:Elec:Swap:Cash","Trade","ELECTRICITY-DAILY PHELIX BASE SPOT-EEX","","EUR:MWh","40.9775","","","MWH","MWH","3,400","3,400","","","","","","","","","","","","","","","",""
 "58919722","","NEW","2017-01-10T07:52:45","U","FC","","N","N","OFF","2017-02-01","2017-02-28","","","CO","Energy","Commodity:Energy:Elec:Swap:Cash","Trade","ELECTRICITY-DAILY PHELIX BASE SPOT-EEX","","EUR:MWh","40.9775","","","MWH","MWH","3,400","3,400","","","","","","","","","","","","","","","",""
 "58919741","","NEW","2017-01-10T07:52:46","U","FC","","N","N","","2017-02-01","","","","EQ","Energy","Commodity:Energy:Elec:Swap:Cash","Trade","ELECTRICITY-DAILY PHELIX BASE SPOT-EEX","","EUR:MWh","40.9775","","","MWH","MWH","3,400","3,400","","","","","","","","","","","","","","","",""
@@ -23,13 +24,13 @@ namespace testSuite
 
 		start = boost::chrono::high_resolution_clock::now();
 
-		std::string::const_iterator iter = testMultiple.begin(), end = testMultiple.end();
+		std::string::iterator iter = testMultiple.begin(), end = testMultiple.end();
 
 		boost::gregorian::date dt(2012, 01, 01);
 
-		if (dtcc::database::parse(iter, end, recs, dt))
+		if (dtcc::parser::parseRecords(iter, end, recs, dt))
 		{
-			bool print = false;
+			/*bool print = false;
 
 			if (print)
 			{
@@ -193,7 +194,7 @@ namespace testSuite
 
 					std::cout << "-------------------------" << std::endl;
 				}
-			}
+			}*/
 
 			std::cout << recs.size() << " conversions done in " << boost::chrono::duration_cast<boost::chrono::milliseconds> (
 				boost::chrono::high_resolution_clock::now() - start) << std::endl;

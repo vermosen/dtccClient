@@ -4,7 +4,7 @@
 *  Created on: Sep 25, 2016
 *      Author: vermosen
 */
-
+#pragma once
 #ifndef APPLICATION_LOGGER_HPP_
 #define APPLICATION_LOGGER_HPP_
 

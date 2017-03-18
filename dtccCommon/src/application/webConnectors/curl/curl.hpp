@@ -1,3 +1,4 @@
+#pragma once
 #ifndef CURL_HPP_
 #define CURL_HPP_
 
@@ -11,11 +12,11 @@
 #include <curl/curl.h>
 
 #include "application/logger.hpp"
-#include "application/connection.hpp"
+#include "application/webConnector.hpp"
 
 namespace dtcc
 {
-	class curl : public connection
+	class curl : public webConnector
 	{
 	public:
 		explicit curl(size_t bufferSize = 1024);
@@ -35,6 +36,9 @@ namespace dtcc
 
 		boost::shared_ptr<std::string> buffer_;
 		CURL * curl_;
+
+		// for factory registration
+		static registerType<webConnector, std::string, curl> register_;
 	};
 }
 

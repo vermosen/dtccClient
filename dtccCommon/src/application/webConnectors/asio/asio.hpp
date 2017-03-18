@@ -1,3 +1,4 @@
+#pragma once
 #ifndef ASIO_HPP_
 #define ASIO_HPP_
 
@@ -18,13 +19,13 @@
 #include <openssl/ssl.h>
 
 #include "application/logger.hpp"
-#include "application/connection.hpp"
+#include "application/webConnector.hpp"
 
 #define TIMEOUT 5000
 
 namespace dtcc
 {
-	class asio : public connection
+	class asio : public webConnector
 	{
 	public:
 
@@ -72,6 +73,9 @@ namespace dtcc
 		boost::mutex 				ioMutex_	;
 		boost::condition_variable 	condition_	;
 		boost::atomic<bool> 		answered_	;
+
+		// for factory registration
+		static registerType < webConnector, std::string, asio> register_;
 	};
 } /* namespace dtcc */
 

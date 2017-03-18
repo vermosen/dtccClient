@@ -5,6 +5,7 @@
     <severity>information</severity>
   </logger>
   <database>dsn=sqlServer</database>
+  <webConnector>curl</webConnector>
   <startDate>2016-01-01</startDate>
   <endDate>2016-01-03</endDate>
   <baseUrl>https://kgc0418-tdw-data-0.s3.amazonaws.com/</baseUrl>

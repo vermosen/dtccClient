@@ -6,7 +6,7 @@
 
 #include <boost/date_time.hpp>
 
-#include "application/connection.hpp"
+#include "application/query.hpp"
 #include "application/settings.hpp"
 
 namespace dtcc

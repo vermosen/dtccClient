@@ -1,8 +1,11 @@
-#include "curl.hpp"
+#include "application/webConnectors/curl/curl.hpp"
 
 namespace dtcc
 {
-	curl::curl(size_t bufferSize) : connection(), curl_(curl_easy_init())
+	registerType<webConnector, std::string, curl>
+		curl::register_(std::string("curl"));
+
+	curl::curl(size_t bufferSize) : webConnector(), curl_(curl_easy_init())
 	{
 		buffer_ = boost::shared_ptr<std::string>(new std::string);
 		buffer_->reserve(bufferSize);

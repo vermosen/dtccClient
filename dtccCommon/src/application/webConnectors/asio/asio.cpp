@@ -1,9 +1,12 @@
-#include "asio.hpp"
+#include "application/webConnectors/asio/asio.hpp"
 
 namespace dtcc
 {
+	registerType<webConnector, std::string, asio>
+		asio::register_(std::string("asio"));
+
 	asio::asio(bool verifyHost)
-		:	connection(), 
+		:	webConnector(),
 			context_(boost::asio::ssl::context::sslv23),
 			resolver_(service_),
 			socket_(service_, context_),

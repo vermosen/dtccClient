@@ -28,6 +28,7 @@ namespace dtcc
 
 		logger logger_;
 		std::string database_;
+		std::string webConnector_;
 		boost::gregorian::date startDate_;
 		boost::gregorian::date endDate_;
 		std::string baseUrl_;

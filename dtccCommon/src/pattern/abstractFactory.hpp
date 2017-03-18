@@ -10,21 +10,10 @@ namespace dtcc
 	template <typename C, typename K>
 	class abstractFactory
 	{
+
 	protected:
 		typedef K key_type;
 		typedef std::map<key_type, C*(*)()> map_type;
-		~abstractFactory()
-		{
-			//if (map_)
-			//{
-			//	// TODO
-			//	//for (auto it = map_->begin(); it != map_->end(); it++)
-			//	//{
-			//	//	delete it->second;
-			//	//}
-			//	delete map_;
-			//}
-		}
 
 	public:
 		static boost::shared_ptr<C> createInstance(const K & key)
@@ -38,13 +27,14 @@ namespace dtcc
 		}
 
 	protected:
-		static map_type * getMap()
+		static boost::shared_ptr<map_type> getMap()
 		{
-			if (!map_) { map_ = new map_type; }
+			if (!map_) { map_ = boost::shared_ptr<map_type>(new map_type); }
 			return map_;
 		}
 
-		static map_type * map_;
+		static boost::shared_ptr<map_type> map_;
+
 	};
 
 	// create function

@@ -138,6 +138,7 @@ struct settingsGrammar : qi::grammar<iterator, dtcc::settings(), skipper>
 			qi::omit[rStartTag(_r1)[_a = _1]]
 			>> rLogger(std::string("logger"))
 			>> rText(std::string("database"))
+			>> rText(std::string("webConnector"))
 			>> rDate(std::string("startDate"))
 			>> rDate(std::string("endDate"))
 			>> rText(std::string("baseUrl"))

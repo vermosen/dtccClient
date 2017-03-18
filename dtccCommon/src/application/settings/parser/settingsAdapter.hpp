@@ -36,6 +36,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 	dtcc::settings,
 	(dtcc::settings::logger, logger_)
 	(std::string, database_)
+	(std::string, webConnector_)
 	(boost::gregorian::date, startDate_)
 	(boost::gregorian::date, endDate_)
 	(std::string, baseUrl_)
