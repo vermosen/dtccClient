@@ -37,7 +37,7 @@ namespace dtcc
 		query_ = boost::shared_ptr<boost::asio::ip::tcp::resolver::query>(
 			new boost::asio::ip::tcp::resolver::query(q.host(), "https"));
 
-		if (!answered_ && ready_)
+		if (!answered_)
 
 		{
 			boost::chrono::high_resolution_clock timer;
@@ -64,6 +64,7 @@ namespace dtcc
 			else
 			{
 				LOG_ERROR() << "query failed";
+				throw std::exception();
 			}
 		}
 
@@ -135,7 +136,7 @@ namespace dtcc
 		else
 		{
 			LOG_ERROR() << "Error resolving host address:\r\n" << err.message();
-			condition_.notify_one(); answered_ = true;
+			condition_.notify_one(); answered_ = true; success_ = false;
 		}
 	}
 	void asio::handle_connect(const boost::system::error_code& err)
@@ -152,7 +153,7 @@ namespace dtcc
 				<< "Error connecting host: " 
 				<< err.message();
 
-			condition_.notify_one(); answered_ = true;
+			condition_.notify_one(); answered_ = true; success_ = false;
 		}
 	}
 	void asio::handle_handshake(const boost::system::error_code& err)
@@ -170,7 +171,7 @@ namespace dtcc
 				<< "Error performing handshake: " 
 				<< err.message();
 
-			condition_.notify_one(); answered_ = true;
+			condition_.notify_one(); answered_ = true; success_ = false;
 		}
 	}
 	void asio::handle_write_request(const boost::system::error_code& err, size_t bytes_transferred)
@@ -188,7 +189,7 @@ namespace dtcc
 				<< "Error writing query: " 
 				<< err.message();
 
-			condition_.notify_one(); answered_ = true;
+			condition_.notify_one(); answered_ = true; success_ = false;
 		}
 	}
 	void asio::handle_read_status_line(const boost::system::error_code& err, size_t bytes_transferred)
@@ -210,7 +211,7 @@ namespace dtcc
 				LOG_ERROR() 
 					<< "Invalid response";
 
-				condition_.notify_one(); answered_ = true;
+				condition_.notify_one(); answered_ = true; success_ = false;
 				return;
 			}
 			if (status_code != 200)
@@ -219,7 +220,7 @@ namespace dtcc
 					<< "Response returned with status code " 
 					<< boost::lexical_cast<std::string>(status_code);
 
-				condition_.notify_one(); answered_ = true;
+				condition_.notify_one(); answered_ = true; success_ = false;
 				return;
 			}
 
@@ -239,7 +240,7 @@ namespace dtcc
 				<< "Error: " 
 				<< err.message();
 
-			condition_.notify_one(); answered_ = true;
+			condition_.notify_one(); answered_ = true; success_ = false;
 		}
 	}
 	void asio::handle_read_headers(const boost::system::error_code& err, size_t bytes_transferred)
@@ -271,7 +272,7 @@ namespace dtcc
 				<< "Error: " 
 				<< err.message();
 
-			condition_.notify_one(); answered_ = true;
+			condition_.notify_one(); answered_ = true; success_ = false;
 		}
 	}
 	void asio::handle_read_content(const boost::system::error_code& err, size_t bytes_transferred)
@@ -298,7 +299,7 @@ namespace dtcc
 			}
 
 			success_ = true;
-			condition_.notify_one(); answered_ = true;
+			condition_.notify_one(); answered_ = true; 
 		}
 		else if (err != boost::asio::error::eof)
 		{
@@ -306,7 +307,7 @@ namespace dtcc
 				<< "Error: " 
 				<< err.message();
 
-			condition_.notify_one(); answered_ = true;
+			condition_.notify_one(); answered_ = true; success_ = false;
 		}
 	}
 }

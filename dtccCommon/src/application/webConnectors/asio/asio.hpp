@@ -62,7 +62,6 @@ namespace dtcc
 		boost::asio::streambuf request_	;
 		boost::asio::streambuf response_;
 
-		bool ready_;
 		bool success_;
 
 		// for chucks management

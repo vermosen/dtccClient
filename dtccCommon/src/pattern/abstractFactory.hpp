@@ -25,15 +25,22 @@ namespace dtcc
 			else
 				return boost::shared_ptr<C>(it->second());
 		}
-
 	protected:
-		static boost::shared_ptr<map_type> getMap()
+		virtual ~abstractFactory()
 		{
-			if (!map_) { map_ = boost::shared_ptr<map_type>(new map_type); }
+			if (map_)
+			{
+				map_->clear();
+			}
+		}
+
+		static map_type * getMap()
+		{
+			if (!map_) { map_ = new map_type; }
 			return map_;
 		}
 
-		static boost::shared_ptr<map_type> map_;
+		static map_type * map_;
 
 	};
 
