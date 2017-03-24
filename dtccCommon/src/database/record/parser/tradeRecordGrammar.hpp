@@ -1,7 +1,7 @@
 #ifndef TRADE_RECORD_GRAMMAR_HPP_
 #define TRADE_RECORD_GRAMMAR_HPP_
 
-//#define BOOST_SPIRIT_DEBUG
+#define BOOST_SPIRIT_DEBUG
 
 #include <string>
 #include <cctype>
@@ -95,144 +95,127 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 		: tradeRecordGrammar::base_type(records), fileDate_(fileDate)
 	{
 		rInt		
-			%= qi::lexeme['"' >> qi::int_ >> '"'];
+			%= qi::lexeme[qi::int_];
 
 		rOptInt
-			%= "\"\""
-				|
-			qi::lexeme['"' >> qi::int_ >> '"'];
+			%= -(rInt);
 
-		rOptString
-			%= "\"\""
-				|
-			qi::lexeme['"' > *(ascii::char_ - '"') > '"']; // possible because the last field is not a string
+		//rOptString
+		//	%= *(qi::lit(' '))
+		//			| 
+		//		qi::lexeme[*(ascii::char_ - lit("\",\""))]; // possible because the last field is not a string
 
 		rString 
-			%= qi::lexeme['"' >> +(ascii::char_ - '"') >> '"'];
+			%= qi::lexeme[+(ascii::char_ - lit("\",\""))];
+
+		rOptString
+			%= -(rString);
 
 		rTime
-			%= '"' >>	qi::int_[_pass = (_1 >= 1400	&& _1 < 10000	)] >> "-" >>
-						qi::int_[_pass = (_1 > 0		&& _1 <= 12		)] >> "-" >>
-						qi::int_[_pass = (_1 > 0		&& _1 <= 31		)] >> 'T' >>
-						qi::int_[_pass = (_1 >= 0		&& _1 <= 24		)] >> ":" >>
-						qi::int_[_pass = (_1 >= 0		&& _1 <  60		)] >> ":" >>
-						qi::int_[_pass = (_1 >= 0		&& _1 <  60		)] >> '"';
+			%=	qi::int_[_pass = (_1 >= 1400	&& _1 < 10000	)] >> "-" >>
+				qi::int_[_pass = (_1 > 0		&& _1 <= 12		)] >> "-" >>
+				qi::int_[_pass = (_1 > 0		&& _1 <= 31		)] >> 'T' >>
+				qi::int_[_pass = (_1 >= 0		&& _1 <= 24		)] >> ":" >>
+				qi::int_[_pass = (_1 >= 0		&& _1 <  60		)] >> ":" >>
+				qi::int_[_pass = (_1 >= 0		&& _1 <  60		)];
 
 		rOptTime 
-			%= "\"\""
-				|
-			'"'	>>	qi::int_[_pass = (_1 >= 1400	&& _1 < 10000	)] >> "-" >>
-					qi::int_[_pass = (_1 > 0		&& _1 <= 12		)] >> "-" >>
-					qi::int_[_pass = (_1 > 0		&& _1 <= 31		)] >> 'T' >>
-					qi::int_[_pass = (_1 >= 0		&& _1 <= 24		)] >> ":" >>
-					qi::int_[_pass = (_1 >= 0		&& _1 <  60		)] >> ":" >>
-					qi::int_[_pass = (_1 >= 0		&& _1 <  60		)] >> '"';
+			%= -(rTime);
 
 		rOptDate
-			%= "\"\""
-				|
-			'"' >> qi::int_[_pass = (_1 >= 1400 && _1 < 10000	)] >> "-"
-				>> qi::int_[_pass = (_1 > 0		&& _1 <= 12		)] >> "-"
-				>> qi::int_[_pass = (_1 > 0		&& _1 <= 31		)] >> '"';
+			%= -(qi::int_[_pass = (_1 >= 1400	&& _1 < 10000	)] >> "-" >>
+				 qi::int_[_pass = (_1 > 0		&& _1 <= 12		)] >> "-" >>
+				 qi::int_[_pass = (_1 > 0		&& _1 <= 31		)]);
 		
 		rCleared 
-			%= qi::lexeme['"' >> (ascii::char_("CU")) >> '"'];
+			%= qi::lexeme[(ascii::char_("CU"))];
 
 		rIndOfCollat 
-			%= qi::lexeme['"' >> *(ascii::char_("FOPUC")) >> '"'];
+			%= qi::lexeme[*(ascii::char_("FOPUC"))];
 		
 		rBool 
-			%= qi::lexeme['"' >> pBool >> '"'];
+			%= qi::lexeme[pBool];
 
 		rOptBool
-			%= "\"" >> *(qi::lit(' ')) >> "\""
-				|
-			qi::lexeme['"' >> pBool >> '"'];
+			%= -(rBool);
 
 		rOptVenue 
-			%= "\"\""
-				| 
-			qi::lexeme['"' >> qi::eps > (	qi::lit("ON")	[_val = true	] |
-											qi::lit("OFF")	[_val = false	] |
-											qi::lit("")[_val = boost::none]) >> '"'];
+			%= -(qi::lexeme[qi::eps > (	qi::lit("ON")	[_val = true		] |
+										qi::lit("OFF")	[_val = false		] |
+										qi::lit("")		[_val = boost::none	])]);
 		rOptCcy
-			%= "\"\""
-				|
-			qi::lexeme['"' >> (ascii::char_ - '"') >> (ascii::char_ - '"') >> (ascii::char_ - '"') >> '"'];
+			%= -(qi::lexeme[(ascii::char_ - lit('"')) >> 
+							(ascii::char_ - lit('"')) >> 
+							(ascii::char_ - lit('"'))]);
 
 		rAssetClass
-			%= qi::lexeme['"' >> (ascii::char_ - '"') >> (ascii::char_ - '"') >> '"'];
+			%= qi::lexeme[(ascii::char_ - lit('"')) >> (ascii::char_ - lit('"'))];
 
 		rOptNom
-			%= "\"\""
-				|
-			qi::lexeme['"' >> pCurrency >> '"'];
+			%= -(qi::lexeme[pCurrency]);
 		
 		rOptNomPlus
-			%= "\"\""
-				|
-			qi::lexeme['"' >> pCurrency >> -ascii::char_("+") >> '"'];
+			%= -(qi::lexeme[pCurrency >> -ascii::char_("+")]);
 
 		rEmbedded
-			%= "\"\""
-				|
-			qi::lexeme['"' >> qi::eps > (qi::lit("EMBED1")[_val = true] | qi::lit("")[_val = false]) >> '"'];
+			%= qi::lexeme[qi::eps > (qi::lit("EMBED1")[_val = true] | qi::lit("")[_val = false])];
 
 		rFileDate
 			%= qi::lit("")[_val = fileDate_];
 
-		//rOptCcyPlus.name("rOptCcyPlus");
-		//BOOST_SPIRIT_DEBUG_NODE(rOptCcyPlus);
-		//debug(rOptCcyPlus);
-
 		record 
-			%=  rInt			> ',' >
-				rOptInt			> ',' >
-				rString			> ',' > // ACTION
-				rTime			> ',' >
-				rCleared		> ',' >
-				rIndOfCollat	> ',' >
-				rOptBool		> ',' >
-				rBool			> ',' >
-				rOptBool		> ',' > // BLOCK_TRADES_AND_LARGE_NOTIONAL_OFFFACILITY_SWAPS
-				rOptVenue		> ',' >
-				rOptDate		> ',' >
-				rOptDate		> ',' >
-				rOptString		> ',' >
-				rOptCcy			> ',' >
-				rAssetClass		> ',' >
-				rOptString		> ',' >
-				rOptString		> ',' >
-				rString			> ',' >	
-				rOptString		> ',' > // UNDERLYING_ASSET_1
-				rOptString		> ',' > // UNDERLYING_ASSET_2
-				rOptString		> ',' >
-				rOptNom			> ',' >
-				rOptString		> ',' >
-				rOptNom			> ',' >
-				rOptString		> ',' >
-				rOptString		> ',' >
-				rOptNomPlus		> ',' >
-				rOptNomPlus		> ',' >
-				rOptString		> ',' >
-				rOptString		> ',' >
-				rOptString		> ',' >
-				rOptString		> ',' >
-				rEmbedded		> ',' >
-				rOptNom			> ',' >
-				rOptString		> ',' >
-				rOptString		> ',' >
-				rOptCcy			> ',' >
-				rOptNom			> ',' >
-				rOptDate		> ',' >
-				rOptDate		> ',' >
-				rOptString		> ',' >
-				rOptNom			> ',' >
-				rOptString		> ',' >
-				rOptNom			> 
+			%=	"\"" >
+				rInt			> "\",\"" >
+				rOptInt			> "\",\"" >
+				rString			> "\",\"" > // ACTION
+				rTime			> "\",\"" >
+				rCleared		> "\",\"" >
+				rIndOfCollat	> "\",\"" >
+				rOptBool		> "\",\"" >
+				rBool			> "\",\"" >
+				rOptBool		> "\",\"" > // BLOCK_TRADES_AND_LARGE_NOTIONAL_OFFFACILITY_SWAPS
+				rOptVenue		> "\",\"" >
+				rOptDate		> "\",\"" >
+				rOptDate		> "\",\"" >
+				rOptString		> "\",\"" >
+				rOptCcy			> "\",\"" >
+				rAssetClass		> "\",\"" >
+				rOptString		> "\",\"" >
+				rOptString		> "\",\"" >
+				rString			> "\",\"" >	
+				rOptString		> "\",\"" > // UNDERLYING_ASSET_1
+				rOptString		> "\",\"" > // UNDERLYING_ASSET_2
+				rOptString		> "\",\"" >
+				rOptNom			> "\",\"" >
+				rOptString		> "\",\"" >
+				rOptNom			> "\",\"" >
+				rOptString		> "\",\"" >
+				rOptString		> "\",\"" >
+				rOptNomPlus		> "\",\"" >
+				rOptNomPlus		> "\",\"" >
+				rOptString		> "\",\"" >
+				rOptString		> "\",\"" >
+				rOptString		> "\",\"" >
+				rOptString		> "\",\"" >
+				rEmbedded		> "\",\"" >
+				rOptNom			> "\",\"" >
+				rOptString		> "\",\"" >
+				rOptString		> "\",\"" >
+				rOptCcy			> "\",\"" >
+				rOptNom			> "\",\"" >
+				rOptDate		> "\",\"" >
+				rOptDate		> "\",\"" >
+				rOptString		> "\",\"" >
+				rOptNom			> "\",\"" >
+				rOptString		> "\",\"" >
+				rOptNom			> "\""	  >
 				rFileDate >> qi::eol;
 
 		records = +(record) >> qi::eoi;
+
+		/*rOptBool.name("rOptBool");
+		BOOST_SPIRIT_DEBUG_NODE(rOptBool);
+		debug(rOptBool);*/
 
 		qi::on_error<qi::retry>
 		(

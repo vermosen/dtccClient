@@ -6,11 +6,12 @@ namespace dtcc
 		asio::register_(std::string("asio"));
 
 	asio::asio(const webConnector::args & args)
-		:	webConnector(args),
-			context_(boost::asio::ssl::context::sslv23),
-			resolver_(service_),
-			socket_(service_, context_),
-			answered_(false)
+		: webConnector(args)
+		, context_(boost::asio::ssl::context::sslv23)
+		, resolver_(service_)
+		, socket_(service_, context_)
+		, strand_(service_)
+		, answered_(false)
 	{
 		// load the certificate from default
 		context_.set_default_verify_paths();
@@ -44,7 +45,11 @@ namespace dtcc
 				boost::asio::placeholders::error,
 				boost::asio::placeholders::iterator));
 
-		service_.run();
+		boost::thread t(boost::bind(&boost::asio::io_service::run, &service_));
+
+		boost::mutex::scoped_lock lock(ioMutex_);
+
+		condition_.wait(lock);
 	}
 
 	boost::shared_ptr<std::string> asio::fetch(query & q)
@@ -68,12 +73,12 @@ namespace dtcc
 			boost::chrono::time_point<boost::chrono::high_resolution_clock> start = timer.now();
 			boost::mutex::scoped_lock lock(ioMutex_);
 
-			boost::asio::async_write(socket_, request_,
+			boost::asio::async_write(socket_, request_, strand_.wrap(
 				boost::bind(&asio::handle_write_request, this,
 					boost::asio::placeholders::error,
-					boost::asio::placeholders::bytes_transferred));
+					boost::asio::placeholders::bytes_transferred)));
 
-			 service_.run();
+			service_.run();
 
 			// should be useless...
 			while (!answered_ && boost::chrono::duration_cast<boost::chrono::milliseconds>(
@@ -183,7 +188,7 @@ namespace dtcc
 			LOG_INFO()
 				<< "connection to host " << host_ << " successfull !";
 
-			connected_ = true;
+			connected_ = true; condition_.notify_one();
 		}
 		else
 		{
@@ -191,7 +196,7 @@ namespace dtcc
 				<< "Error performing handshake: " 
 				<< err.message();
 
-			connected_ = false;
+			connected_ = false; condition_.notify_one();
 		}
 	}
 	void asio::handle_write_request(const boost::system::error_code& err, size_t bytes_transferred)
@@ -209,7 +214,7 @@ namespace dtcc
 				<< "Error writing query: " 
 				<< err.message();
 
-			condition_.notify_one(); answered_ = true; success_ = false;
+			answered_ = true; success_ = false; condition_.notify_one();
 		}
 	}
 	void asio::handle_read_status_line(const boost::system::error_code& err, size_t bytes_transferred)
@@ -231,7 +236,7 @@ namespace dtcc
 				LOG_ERROR() 
 					<< "Invalid response";
 
-				condition_.notify_one(); answered_ = true; success_ = false;
+				answered_ = true; success_ = false; condition_.notify_one();
 				return;
 			}
 			if (status_code != 200)
@@ -240,7 +245,7 @@ namespace dtcc
 					<< "Response returned with status code " 
 					<< boost::lexical_cast<std::string>(status_code);
 
-				condition_.notify_one(); answered_ = true; success_ = false;
+				answered_ = true; success_ = false; condition_.notify_one();
 				return;
 			}
 
@@ -260,7 +265,7 @@ namespace dtcc
 				<< "Error: " 
 				<< err.message();
 
-			condition_.notify_one(); answered_ = true; success_ = false;
+			answered_ = true; success_ = false; condition_.notify_one();
 		}
 	}
 	void asio::handle_read_headers(const boost::system::error_code& err, size_t bytes_transferred)
@@ -292,7 +297,7 @@ namespace dtcc
 				<< "Error: " 
 				<< err.message();
 
-			condition_.notify_one(); answered_ = true; success_ = false;
+			answered_ = true; success_ = false; condition_.notify_one();
 		}
 	}
 	void asio::handle_read_content(const boost::system::error_code& err, size_t bytes_transferred)
@@ -318,8 +323,7 @@ namespace dtcc
 				//std::copy_n(&response_, chunckSize_, std::back_inserter(*content_));
 			}
 
-			success_ = true;
-			condition_.notify_one(); answered_ = true; 
+			success_ = true; answered_ = true; condition_.notify_one();
 		}
 		else if (err != boost::asio::error::eof)
 		{
@@ -327,7 +331,7 @@ namespace dtcc
 				<< "Error: " 
 				<< err.message();
 
-			condition_.notify_one(); answered_ = true; success_ = false;
+			answered_ = true; success_ = false; condition_.notify_one();
 		}
 	}
 }

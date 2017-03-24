@@ -73,6 +73,7 @@ namespace dtcc
 		boost::condition_variable 	condition_	;
 		boost::atomic<bool> 		connected_	;
 		boost::atomic<bool> 		answered_	;
+		boost::asio::strand			strand_		;
 
 		// for factory registration
 		static registerType <webConnector, std::string, asio, webConnector::args> register_;

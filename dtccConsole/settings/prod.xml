@@ -12,9 +12,8 @@
     <bufferSize>1024</bufferSize>
   </connector>
   <database>dsn=sqlServer</database>
-  <webConnector>curl</webConnector>
   <startDate>2016-01-01</startDate>
-  <endDate>2016-01-03</endDate>
+  <endDate>2016-01-18</endDate>
   <cacheSize>31457280</cacheSize>
   <assets>
     <asset>

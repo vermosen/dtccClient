@@ -5,15 +5,15 @@
     <severity>information</severity>
   </logger>
   <connector>
-    <type>asio</type>
+    <type>curl</type>
     <protocol>https</protocol>
     <host>kgc0418-tdw-data-0.s3.amazonaws.com</host>
     <port>8080</port>
     <bufferSize>1024</bufferSize>
   </connector>
   <database>dsn=sqlServer</database>
-  <startDate>2016-01-18</startDate>
-  <endDate>2016-01-18</endDate>
+  <startDate>2016-01-13</startDate>
+  <endDate>2016-01-13</endDate>
   <cacheSize>31457280</cacheSize>
   <assets>
     <asset>
