@@ -27,63 +27,41 @@
 
 using namespace boost::spirit;
 
-// erase non ascii character found
-struct stringErrorHandler
-{
-	stringErrorHandler() = default;
-	stringErrorHandler(stringErrorHandler const&) = delete;
-
-	template<typename...> struct result { typedef void type; };
-	template<typename Iter> void operator()(
-		Iter & first_iter, Iter last_iter,
-		Iter error_iter, const qi::info& what) const
-	{
-		Iter start = error_iter, end = start;
-
-		// select the record
-		while (!(*end == '"' && *(end + 1) == ',' && *(end + 2) == '"'))
-		{
-			end++;
-		};
-
-		if (!isascii(*start))
-		{
-			LOG_WARNING() << std::string("found non-ascii sequence in record: ") << std::string(start, end);
-
-			for (auto it = start; it != (end + 1); ++it)
-			{
-				if (!isascii(*it)) *it = (char)0x20;
-			}
-		}
-		else
-		{
-			LOG_FATAL() << std::string("unknown error found in sequence: ") << std::string(start, end);
-
-			throw std::exception();
-		}
-	}
-};
-
-// skip the whole record
+// error handler
 struct errorHandler 
 {
 	errorHandler() = default; 
 	errorHandler(errorHandler const&) = delete;
 
 	template<typename...> struct result { typedef void type; };
-	template<typename Iter> void operator()(
-		Iter & first_iter, Iter last_iter,
-		Iter error_iter, const qi::info& what) const
+	template<typename iter> void operator()(
+		iter & first_iter, iter last_iter,
+		iter error_iter, const qi::info& what) const
 	{
 		// store the beginning of the record
- 		auto temp = first_iter;
+		iter start = first_iter, end = start;
 
-		if (first_iter != last_iter)
+		if (start != last_iter)
 		{
-			// skip the record
-			while (*(first_iter++) != '\n');
+			// advance until the end of the record
+			while (*(end++) != '\n');
 
-			LOG_WARNING() << std::string("Incoherent record found: ") << std::string(temp, first_iter);
+			if (!isascii(*error_iter))
+			{
+				LOG_WARNING() << std::string("found non-ascii sequence in record: ") << std::string(start, end);
+
+				// erase non-ascii chars
+				for (iter it = start; it != end; ++it)
+				{
+					if (!isascii(*it)) *it = (char)0x20;
+				}
+			}
+			else // other error: skip the record
+			{
+				LOG_WARNING() << std::string("Incoherent record found: ") << std::string(start, end);
+
+				first_iter = end;
+			}
 		}
 	}
 };
@@ -100,16 +78,8 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 		rOptInt
 			%= -(rInt);
 
-		//rOptString
-		//	%= *(qi::lit(' '))
-		//			| 
-		//		qi::lexeme[*(ascii::char_ - lit("\",\""))]; // possible because the last field is not a string
-
-		rString 
-			%= qi::lexeme[+(ascii::char_ - lit("\",\""))];
-
-		rOptString
-			%= -(rString);
+		rString
+			%= lexeme[eps > *(ascii::char_ - lit("\",\""))];
 
 		rTime
 			%=	qi::int_[_pass = (_1 >= 1400	&& _1 < 10000	)] >> "-" >>
@@ -177,37 +147,37 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 				rOptVenue		> "\",\"" >
 				rOptDate		> "\",\"" >
 				rOptDate		> "\",\"" >
-				rOptString		> "\",\"" >
+				rString			> "\",\"" >
 				rOptCcy			> "\",\"" >
 				rAssetClass		> "\",\"" >
-				rOptString		> "\",\"" >
-				rOptString		> "\",\"" >
+				rString			> "\",\"" >
+				rString			> "\",\"" >
 				rString			> "\",\"" >	
-				rOptString		> "\",\"" > // UNDERLYING_ASSET_1
-				rOptString		> "\",\"" > // UNDERLYING_ASSET_2
-				rOptString		> "\",\"" >
+				rString			> "\",\"" > // UNDERLYING_ASSET_1
+				rString			> "\",\"" > // UNDERLYING_ASSET_2
+				rString			> "\",\"" >
 				rOptNom			> "\",\"" >
-				rOptString		> "\",\"" >
+				rString			> "\",\"" >
 				rOptNom			> "\",\"" >
-				rOptString		> "\",\"" >
-				rOptString		> "\",\"" >
+				rString			> "\",\"" >
+				rString			> "\",\"" >
 				rOptNomPlus		> "\",\"" >
 				rOptNomPlus		> "\",\"" >
-				rOptString		> "\",\"" >
-				rOptString		> "\",\"" >
-				rOptString		> "\",\"" >
-				rOptString		> "\",\"" >
+				rString			> "\",\"" >
+				rString			> "\",\"" >
+				rString			> "\",\"" >
+				rString			> "\",\"" >
 				rEmbedded		> "\",\"" >
 				rOptNom			> "\",\"" >
-				rOptString		> "\",\"" >
-				rOptString		> "\",\"" >
+				rString			> "\",\"" >
+				rString			> "\",\"" >
 				rOptCcy			> "\",\"" >
 				rOptNom			> "\",\"" >
 				rOptDate		> "\",\"" >
 				rOptDate		> "\",\"" >
-				rOptString		> "\",\"" >
+				rString			> "\",\"" >
 				rOptNom			> "\",\"" >
-				rOptString		> "\",\"" >
+				rString			> "\",\"" >
 				rOptNom			> "\""	  >
 				rFileDate >> qi::eol;
 
@@ -227,17 +197,6 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 				qi::_4  // error what 
 			)
 		);
-
-		qi::on_error<qi::retry>
-		(
-			rOptString, boost::phoenix::bind
-			(boost::phoenix::ref(stringErrorHandler_),
-				qi::_1, // it start
-				qi::_2, // it end
-				qi::_3, // it error
-				qi::_4  // error what  
-			)
-		);
 	}
 
 	qi::rule<iterator, int()						, skipper> rInt;
@@ -246,7 +205,6 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 	qi::rule<iterator, optTimeAdaptator()			, skipper> rOptTime;
 	qi::rule<iterator, optDateAdaptator()			, skipper> rOptDate;
 	qi::rule<iterator, std::string()				, skipper> rString;
-	qi::rule<iterator, std::string()				, skipper> rOptString;
 	qi::rule<iterator, char()						, skipper> rCleared;
 	qi::rule<iterator, std::string()				, skipper> rIndOfCollat;
 	qi::rule<iterator, boost::optional<bool>()		, skipper> rOptBool;
@@ -267,7 +225,6 @@ struct tradeRecordGrammar : qi::grammar<iterator, std::vector<dtcc::database::tr
 
 	boost::gregorian::date fileDate_;
 
-	stringErrorHandler stringErrorHandler_;
 	errorHandler errorHandler_;
 };
 
