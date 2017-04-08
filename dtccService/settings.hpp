@@ -7,6 +7,7 @@
 
 #include "database/record/enum.hpp"
 #include "application/logger.hpp"
+#include "application/asset/description.hpp"
 
 namespace dtcc
 {
@@ -18,12 +19,6 @@ namespace dtcc
 			dtcc::severity severity_;
 		};
 
-		struct asset
-		{
-			database::assetType type_;
-			std::string fileStr_;
-		};
-
 		struct connector
 		{
 			std::string type_;
@@ -33,13 +28,16 @@ namespace dtcc
 			size_t bufferSize_;
 		};
 
+		struct worker
+		{
+			dtcc::asset::description description_;
+		};
+
 		logger logger_;
 		connector connector_;
 		std::string database_;
-		boost::gregorian::date startDate_;
-		boost::gregorian::date endDate_;
 		int64_t memory_;
-		std::vector<asset> assets_;
+		std::vector<worker> workers_;
 	};
 }
 

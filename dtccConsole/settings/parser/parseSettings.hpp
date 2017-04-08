@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
-#include "settingsGrammar.hpp"
-#include "application\settings.hpp"
+#include "settings/parser/settingsGrammar.hpp"
+#include "settings.hpp"
 
 namespace dtcc
 {

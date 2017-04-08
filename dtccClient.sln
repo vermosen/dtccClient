@@ -49,10 +49,13 @@ Global
 		{9BEC38F1-F72A-47DD-8232-441DC5E58CC8}.Release|x64.Build.0 = Release|x64
 		{9BEC38F1-F72A-47DD-8232-441DC5E58CC8}.Release|x86.ActiveCfg = Release|x64
 		{48BB2119-1A66-4451-8D1E-903B6AC85E4B}.Debug (intel)|x64.ActiveCfg = Debug (intel)|x64
+		{48BB2119-1A66-4451-8D1E-903B6AC85E4B}.Debug (intel)|x64.Build.0 = Debug (intel)|x64
 		{48BB2119-1A66-4451-8D1E-903B6AC85E4B}.Debug (intel)|x86.ActiveCfg = Debug (intel)|x64
 		{48BB2119-1A66-4451-8D1E-903B6AC85E4B}.Debug|x64.ActiveCfg = Debug|x64
+		{48BB2119-1A66-4451-8D1E-903B6AC85E4B}.Debug|x64.Build.0 = Debug|x64
 		{48BB2119-1A66-4451-8D1E-903B6AC85E4B}.Debug|x86.ActiveCfg = Debug|x64
 		{48BB2119-1A66-4451-8D1E-903B6AC85E4B}.Release|x64.ActiveCfg = Release|x64
+		{48BB2119-1A66-4451-8D1E-903B6AC85E4B}.Release|x64.Build.0 = Release|x64
 		{48BB2119-1A66-4451-8D1E-903B6AC85E4B}.Release|x86.ActiveCfg = Release|x64
 		{E74C7383-D6BE-481D-B41E-5AB1AAEC4F15}.Debug (intel)|x64.ActiveCfg = Debug (intel)|x64
 		{E74C7383-D6BE-481D-B41E-5AB1AAEC4F15}.Debug (intel)|x86.ActiveCfg = Debug (intel)|x64

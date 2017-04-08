@@ -19,18 +19,15 @@
 #include "application/compression/zip.hpp"
 #include "application/webConnectors/all.hpp"
 
-// temp
-#include "asio/asio.hpp"
-//
-
 #include "database/recordsets/tradeRecordset.hpp"
 #include "database/connectors/sqlServer.hpp"
 #include "database/record/parser/parseRecords.hpp"
 #include "application/logger.hpp"
 #include "application/startup.hpp"
-#include "application/settings/parser/parseSettings.hpp"
-#include "application/settings.hpp"
 #include "application/queries/eod.hpp"
+
+#include "settings/parser/parseSettings.hpp"
+#include "settings.hpp"
 
 #ifdef _WIN32
 #include "StdAfx.h"

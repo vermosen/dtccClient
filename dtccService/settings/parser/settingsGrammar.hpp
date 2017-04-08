@@ -18,7 +18,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/tuple/tuple.hpp>
 
-#include "application/settings/parser/settingsAdapter.hpp"
+#include "settings/parser/settingsAdapter.hpp"
 
 namespace qi = boost::spirit::qi;
 namespace ascii = boost::spirit::ascii;
@@ -46,14 +46,6 @@ struct settingsGrammar : qi::grammar<iterator, dtcc::settings(), skipper>
 
 		rIntBase =
 			lexeme[int_[_val = _1]]
-			;
-
-		rDateBase %=
-			qi::int_[_pass = (qi::_1 >= 1400 && qi::_1 < 10000)][at_c<0>(_val) = _1]
-			> '-'
-			> qi::int_[_pass = (qi::_1 > 0 && qi::_1 <= 12)][at_c<1>(_val) = _1]
-			> '-'
-			> qi::int_[_pass = (qi::_1 > 0 && qi::_1 <= 31)][at_c<2>(_val) = _1]
 			;
 
 		rAssetTypeBase %=
@@ -96,12 +88,6 @@ struct settingsGrammar : qi::grammar<iterator, dtcc::settings(), skipper>
 			>> rEndTag(_a)
 			;
 
-		rDate =
-			rStartTag(_r1)[_a = _1]
-			> rDateBase[_val = _1]
-			> rEndTag(_a)
-			;
-
 		rAssetType =
 			rStartTag(_r1)[_a = _1]
 			> rAssetTypeBase[_val = _1]
@@ -138,9 +124,15 @@ struct settingsGrammar : qi::grammar<iterator, dtcc::settings(), skipper>
 			>> qi::omit[rEndTag(_a)]
 			;
 
-		rAssets =
+		rWorker = 
 			qi::omit[rStartTag(_r1)[_a = _1]]
-			> *(rAsset(std::string("asset")))
+			>> rAsset(std::string("asset"))
+			>> qi::omit[rEndTag(_a)]
+			;
+
+		rWorkers =
+			qi::omit[rStartTag(_r1)[_a = _1]]
+			> *(rWorker(std::string("worker")))
 			> qi::omit[rEndTag(_a)]
 			;
 
@@ -149,10 +141,8 @@ struct settingsGrammar : qi::grammar<iterator, dtcc::settings(), skipper>
 			>> rLogger(std::string("logger"))
 			>> rConnector(std::string("connector"))
 			>> rText(std::string("database"))
-			>> rDate(std::string("startDate"))
-			>> rDate(std::string("endDate"))
 			>> rInt(std::string("cacheSize"))
-			>> rAssets(std::string("assets"))
+			>> rWorkers(std::string("workers"))
 			>> qi::omit[rEndTag(_a)]
 			;
 
@@ -166,17 +156,16 @@ struct settingsGrammar : qi::grammar<iterator, dtcc::settings(), skipper>
 
 	qi::rule<iterator, dtcc::settings(std::string), qi::locals<std::string>, ascii::space_type> rSettings;
 
-	qi::rule<iterator, std::vector<dtcc::settings::asset>(std::string), qi::locals<std::string>, ascii::space_type> rAssets;
-	qi::rule<iterator, dtcc::settings::asset(std::string), qi::locals<std::string>, ascii::space_type> rAsset;
+	qi::rule<iterator, std::vector<dtcc::settings::worker>(std::string), qi::locals<std::string>, ascii::space_type> rWorkers;
+	qi::rule<iterator, dtcc::settings::worker(std::string), qi::locals<std::string>, ascii::space_type> rWorker;
+	qi::rule<iterator, dtcc::asset::description(std::string), qi::locals<std::string>, ascii::space_type> rAsset;
 	qi::rule<iterator, assetTypeAdaptator(std::string), qi::locals<std::string>, ascii::space_type> rAssetType;
 	qi::rule<iterator, severityAdaptator(std::string), qi::locals<std::string>, ascii::space_type> rSeverity;
-	qi::rule<iterator, dateAdaptator(std::string), qi::locals<std::string>, ascii::space_type> rDate;
 	qi::rule<iterator, std::string(std::string), qi::locals<std::string>, ascii::space_type> rText;
 	qi::rule<iterator, int(std::string), qi::locals<std::string>, ascii::space_type> rInt;
 	qi::rule<iterator, dtcc::settings::logger(std::string), qi::locals<std::string>, ascii::space_type> rLogger;
 	qi::rule<iterator, dtcc::settings::connector(std::string), qi::locals<std::string>, ascii::space_type> rConnector;
 
-	qi::rule<iterator, dateAdaptator(), ascii::space_type> rDateBase;
 	qi::rule<iterator, assetTypeAdaptator(), ascii::space_type> rAssetTypeBase;
 	qi::rule<iterator, severityAdaptator(), ascii::space_type> rSeverityBase;
 	qi::rule<iterator, std::string(), ascii::space_type> rTextBase;

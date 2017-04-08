@@ -7,7 +7,7 @@
 #include <boost/date_time.hpp>
 
 #include "application/query.hpp"
-#include "application/settings.hpp"
+#include "application/asset/description.hpp"
 
 namespace dtcc
 {
@@ -15,7 +15,7 @@ namespace dtcc
 	{
 	public:
 		intraday(	const boost::gregorian::date & dt,
-					const settings::asset & asset,
+					const asset::description & asset,
 					int counter = 1)
 			: asset_(asset)
 			, dt_(dt)
@@ -24,7 +24,7 @@ namespace dtcc
 		virtual std::string path() const;
 
 	private:
-		settings::asset asset_;
+		asset::description asset_;
 		boost::gregorian::date dt_;
 		int counter_;
 

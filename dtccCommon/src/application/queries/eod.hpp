@@ -7,7 +7,7 @@
 #include <boost/date_time.hpp>
 
 #include "application/query.hpp"
-#include "application/settings.hpp"
+#include "application/asset/description.hpp"
 
 namespace dtcc
 {
@@ -15,7 +15,7 @@ namespace dtcc
 	{
 	public:
 		eod(const boost::gregorian::date & dt,
-			const settings::asset & asset)
+			const asset::description & asset)
 			: query()
 			, asset_(asset)
 			, dt_(dt) {}
@@ -23,7 +23,7 @@ namespace dtcc
 		virtual std::string path() const;
 
 	private:
-		settings::asset asset_;
+		asset::description asset_;
 		boost::gregorian::date dt_;
 		static std::locale format_;
 	};

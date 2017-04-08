@@ -47,7 +47,7 @@ struct errorHandler
 			while (*(end++) != '\n');
 
 			if (!isascii(*error_iter))
-			{
+			{ 
 				LOG_WARNING() << std::string("found non-ascii sequence in record: ") << std::string(start, end);
 
 				// erase non-ascii chars

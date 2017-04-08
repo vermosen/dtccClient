@@ -8,8 +8,8 @@
 
 namespace dtcc
 {
-	template<typename T>
-	class service : public singleton<service<T> >
+	template<typename Child>
+	class service : public singleton<service<Child>>
 	{
 	public:
 
@@ -25,17 +25,29 @@ namespace dtcc
 		// system shutdown occurs.
 		service();
 
-		~service(void) {}
+		virtual ~service(void) {}
 
 		// Stop the service.
 		void stop();
 
 	protected:
-		void onStart(DWORD dwArgc, LPSTR *pszArgv) { impl_.onStartImpl(dwArgc, pszArgv); };
-		void onStop() { impl_.onStopImpl(); };
-		void onPause() { impl_.onPauseImpl(); };
-		void onContinue() { impl_.onContinueImpl(); };
-		void onShutdown() { impl_.onShutdownImpl(); };
+		void onStart(DWORD dwArgc, LPSTR *pszArgv) { static_cast<Child*>(this)->onStartImpl(dwArgc, pszArgv); };
+		void onStop() 
+		{ 
+			static_cast<Child*>(this)->onStopImpl();
+		};
+		void onPause() 
+		{ 
+			static_cast<Child*>(this)->onPauseImpl();
+		};
+		void onContinue() 
+		{ 
+			static_cast<Child*>(this)->onContinueImpl();
+		};
+		void onShutdown() 
+		{ 
+			static_cast<Child*>(this)->onShutdownImpl();
+		};
 
 		// Set the service status and report the status to the SCM.
 		void setServiceStatus(DWORD dwCurrentState,
@@ -60,14 +72,12 @@ namespace dtcc
 		LPSTR name_;									// The name of the service
 		SERVICE_STATUS status_;							// The status of the service
 		SERVICE_STATUS_HANDLE statusHandle_;			// The service status handle
-
-		T impl_;
 	};
 
 #pragma region Static Members
 
-	template<typename T>
-	BOOL service<T>::run(service &service)
+	template<typename Child>
+	BOOL service<Child>::run(service &service)
 	{
 		SERVICE_TABLE_ENTRY serviceTable[] =
 		{
@@ -92,8 +102,8 @@ namespace dtcc
 	//   * dwArgc   - number of command line arguments
 	//   * lpszArgv - array of command line arguments
 	//
-	template<typename T>
-	void WINAPI service<T>::ServiceMain(DWORD dwArgc, LPSTR *pszArgv)
+	template<typename Child>
+	void WINAPI service<Child>::ServiceMain(DWORD dwArgc, LPSTR *pszArgv)
 	{
 		// Register the handler function for the service
 		instance().statusHandle_ = RegisterServiceCtrlHandler(
@@ -130,8 +140,8 @@ namespace dtcc
 	//   This parameter can also be a user-defined control code ranges from 128 
 	//   to 255.
 	//
-	template<typename T>
-	void WINAPI service<T>::ServiceCtrlHandler(DWORD dwCtrl)
+	template<typename Child>
+	void WINAPI service<Child>::ServiceCtrlHandler(DWORD dwCtrl)
 	{
 		switch (dwCtrl)
 		{
@@ -162,11 +172,11 @@ namespace dtcc
 	//   * fCanShutdown - the service is notified when system shutdown occurs
 	//   * fCanPauseContinue - the service can be paused and continued
 	//
-	template<typename T>
-	service<T>::service()
+	template<typename Child>
+	service<Child>::service()
 	{
 		// Service name must be a valid string and cannot be NULL.
-		name_ = (impl_.name() == "") ? "" : impl_.name().c_str();
+		name_ = (Child::name() == "") ? "" : Child::name().c_str();
 
 		statusHandle_ = NULL;
 
@@ -178,11 +188,11 @@ namespace dtcc
 
 		// The accepted commands of the service.
 		DWORD dwControlsAccepted = 0;
-		if (impl_.canStop())
+		if (static_cast<Child*>(this)->canStop())
 			dwControlsAccepted |= SERVICE_ACCEPT_STOP;
-		if (impl_.canShutdown())
+		if (static_cast<Child*>(this)->canShutdown())
 			dwControlsAccepted |= SERVICE_ACCEPT_SHUTDOWN;
-		if (impl_.canPauseContinue())
+		if (static_cast<Child*>(this)->canPauseContinue())
 			dwControlsAccepted |= SERVICE_ACCEPT_PAUSE_CONTINUE;
 		status_.dwControlsAccepted = dwControlsAccepted;
 
@@ -208,8 +218,8 @@ namespace dtcc
 	//   * dwArgc   - number of command line arguments
 	//   * lpszArgv - array of command line arguments
 	//
-	template<typename T>
-	void service<T>::start(DWORD dwArgc, LPSTR *pszArgv)
+	template<typename Child>
+	void service<Child>::start(DWORD dwArgc, LPSTR *pszArgv)
 	{
 		try
 		{
@@ -240,8 +250,8 @@ namespace dtcc
 		}
 	}
 
-	template<typename T>
-	void service<T>::stop()
+	template<typename Child>
+	void service<Child>::stop()
 	{
 		DWORD dwOriginalState = status_.dwCurrentState;
 		try
@@ -273,8 +283,8 @@ namespace dtcc
 		}
 	}
 
-	template<typename T>
-	void service<T>::pause()
+	template<typename Child>
+	void service<Child>::pause()
 	{
 		try
 		{
@@ -305,8 +315,8 @@ namespace dtcc
 		}
 	}
 
-	template<typename T>
-	void service<T>::_continue()
+	template<typename Child>
+	void service<Child>::_continue()
 	{
 		try
 		{
@@ -337,8 +347,8 @@ namespace dtcc
 		}
 	}
 
-	template<typename T>
-	void service<T>::shutdown()
+	template<typename Child>
+	void service<Child>::shutdown()
 	{
 		try
 		{
@@ -373,8 +383,8 @@ namespace dtcc
 	//   * dwWin32ExitCode - error code to report
 	//   * dwWaitHint - estimated time for pending operation, in milliseconds
 	//
-	template<typename T>
-	void service<T>::setServiceStatus(DWORD dwCurrentState,
+	template<typename Child>
+	void service<Child>::setServiceStatus(DWORD dwCurrentState,
 		DWORD dwWin32ExitCode,
 		DWORD dwWaitHint)
 	{
@@ -412,8 +422,8 @@ namespace dtcc
 	//     EVENTLOG_INFORMATION_TYPE
 	//     EVENTLOG_WARNING_TYPE
 	//
-	template<typename T>
-	void service<T>::writeEventLogEntry(LPSTR pszMessage, WORD wType)
+	template<typename Child>
+	void service<Child>::writeEventLogEntry(LPSTR pszMessage, WORD wType)
 	{
 		HANDLE hEventSource = NULL;
 		LPCSTR lpszStrings[2] = { NULL, NULL };
@@ -448,8 +458,8 @@ namespace dtcc
 	//   * pszFunction - the function that gives the error
 	//   * dwError - the error code
 	//
-	template<typename T>
-	void service<T>::writeErrorLogEntry(LPSTR pszFunction, DWORD dwError)
+	template<typename Child>
+	void service<Child>::writeErrorLogEntry(LPSTR pszFunction, DWORD dwError)
 	{
 		//char szMessage[260];
 		//StringCchPrintf(szMessage, ARRAYSIZE(szMessage),

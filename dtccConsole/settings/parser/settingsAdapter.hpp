@@ -17,7 +17,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/tuple/tuple.hpp>
 
-#include "application/settings.hpp"
+#include "settings.hpp"
 #include "utils/adaptator.hpp"
 
 BOOST_FUSION_ADAPT_STRUCT(
@@ -27,7 +27,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-	dtcc::settings::asset,
+	dtcc::asset::description,
 	(dtcc::database::assetType, type_)
 	(std::string, fileStr_)
 )
@@ -49,7 +49,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 	(boost::gregorian::date, startDate_)
 	(boost::gregorian::date, endDate_)
 	(int64_t, memory_)
-	(std::vector<dtcc::settings::asset>, assets_)
+	(std::vector<dtcc::asset::description>, assets_)
 )
 
 #endif

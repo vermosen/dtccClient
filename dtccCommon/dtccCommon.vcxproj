@@ -25,7 +25,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (intel)|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -160,6 +160,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\application\asset\description.hpp" />
     <ClInclude Include="src\application\compression\archive.hpp" />
     <ClInclude Include="src\application\compression\zip\endOfCentralDirectory.hpp" />
     <ClInclude Include="src\application\compression\zip\centralDirectoryFileHeader.hpp" />
@@ -174,10 +175,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="src\application\query.hpp" />
-    <ClInclude Include="src\application\settings.hpp" />
-    <ClInclude Include="src\application\settings\parser\parseSettings.hpp" />
-    <ClInclude Include="src\application\settings\parser\settingsAdapter.hpp" />
-    <ClInclude Include="src\application\settings\parser\settingsGrammar.hpp" />
     <ClInclude Include="src\application\startup.hpp" />
     <ClCompile Include="src\application\webConnector.cpp">
       <FileType>CppHeader</FileType>
@@ -221,7 +218,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="src\application\logger.cpp" />
-    <ClCompile Include="src\application\settings\parser\parseSettings.cpp" />
     <ClCompile Include="src\application\startup.cpp" />
     <ClCompile Include="src\database\connectors\sqlServer.cpp" />
     <ClCompile Include="src\database\record\parser\parseRecords.cpp" />

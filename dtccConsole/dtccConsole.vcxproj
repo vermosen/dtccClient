@@ -25,7 +25,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug (intel)|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -67,7 +67,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\dtccCommon\src;$(INCLUDE);C:\build\openssl\openssl-1.1.0e-vs2015\include64\;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>.;..\dtccCommon\src;$(INCLUDE);C:\build\openssl\openssl-1.1.0e-vs2015\include64\;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>..\lib;C:\build\openssl\openssl-1.1.0e-vs2015\lib64;$(SOCI)\$(Platform)\$(Configuration);$(GIT)\zlib\contrib\vstudio\vc14\x64\ZlibStat$(Configuration);C:\Git\zlib\contrib\vstudio\vc14\x64\ZlibStatDebug\;C:\Git\curl\builds\libcurl-vc14-x64-$(configuration)-static-ipv6-sspi-winssl\lib;$(LIB);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -139,10 +139,15 @@
   <ItemGroup>
     <ClCompile Include="asio\asio.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="settings\parser\parseSettings.cpp" />
     <ClCompile Include="StdAfx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="asio\asio.hpp" />
+    <ClInclude Include="settings\parser\parseSettings.hpp" />
+    <ClInclude Include="settings\parser\settingsAdapter.hpp" />
+    <ClInclude Include="settings\parser\settingsGrammar.hpp" />
+    <ClInclude Include="settings.hpp" />
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>
   <ItemGroup>

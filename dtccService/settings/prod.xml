@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <settings>
   <logger>
-    <fileStr>dtccConsole_%Y%m%d.log</fileStr>
+    <fileStr>dtccService_%Y%m%d.log</fileStr>
     <severity>information</severity>
   </logger>
   <connector>
@@ -12,13 +12,13 @@
     <bufferSize>1024</bufferSize>
   </connector>
   <database>dsn=sqlServer</database>
-  <startDate>2016-01-07</startDate>
-  <endDate>2016-01-09</endDate>
   <cacheSize>31457280</cacheSize>
-  <assets>
-    <asset>
-      <type>CO</type>
-      <fileStr>COMMODITIES</fileStr>
-    </asset>
-  </assets>
+  <workers>
+    <worker>
+      <asset>
+        <type>CO</type>
+        <fileStr>COMMODITIES</fileStr>
+      </asset>
+    </worker>
+  </workers>
 </settings>

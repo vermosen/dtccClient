@@ -3,6 +3,8 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="StdAfx.cpp" />
+    <ClCompile Include="application\serviceImpl.cpp" />
+    <ClCompile Include="settings\parser\parseSettings.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="application">
@@ -14,9 +16,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="application\serviceImpl.hpp" />
+    <ClInclude Include="settings\parser\parseSettings.hpp" />
+    <ClInclude Include="settings\parser\settingsAdapter.hpp" />
+    <ClInclude Include="settings\parser\settingsGrammar.hpp" />
+    <ClInclude Include="settings.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="script\remove.ps1" />
     <None Include="script\install.ps1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="settings\dev.xml" />
+    <Xml Include="settings\prod.xml" />
   </ItemGroup>
 </Project>

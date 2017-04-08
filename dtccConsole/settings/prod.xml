@@ -12,8 +12,8 @@
     <bufferSize>1024</bufferSize>
   </connector>
   <database>dsn=sqlServer</database>
-  <startDate>2015-04-01</startDate>
-  <endDate>2015-07-01</endDate>
+  <startDate>2016-06-01</startDate>
+  <endDate>2016-10-01</endDate>
   <cacheSize>31457280</cacheSize>
   <assets>
     <asset>
