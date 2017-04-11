@@ -5,6 +5,8 @@
     <ClCompile Include="StdAfx.cpp" />
     <ClCompile Include="application\serviceImpl.cpp" />
     <ClCompile Include="settings\parser\parseSettings.cpp" />
+    <ClCompile Include="application\readers\reader.cpp" />
+    <ClCompile Include="application\workers\worker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="application">
@@ -21,6 +23,12 @@
     <ClInclude Include="settings\parser\settingsAdapter.hpp" />
     <ClInclude Include="settings\parser\settingsGrammar.hpp" />
     <ClInclude Include="settings.hpp" />
+    <ClInclude Include="application\workerBase.hpp" />
+    <ClInclude Include="application\connection.hpp" />
+    <ClInclude Include="application\connections\https.hpp" />
+    <ClInclude Include="application\connections\http.hpp" />
+    <ClInclude Include="application\readers\reader.hpp" />
+    <ClInclude Include="application\workers\worker.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="script\remove.ps1" />

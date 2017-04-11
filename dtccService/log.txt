@@ -1,11 +1,10 @@
 starting install script
 Trying to install service dtccService from path C:\Git\dtccClient\x64\Debug\dtccService.exe with arguments -settings=C:\Git\dtccClient\dtccService\settings\dev.xml
-service dtccService hasn't been removed
-An exception has been thrown
-System.Management.Automation.RuntimeException
-ScriptHalted
-Microsoft.PowerShell.Commands.Internal.Format.FormatStartData
-Microsoft.PowerShell.Commands.Internal.Format.GroupStartData
-Microsoft.PowerShell.Commands.Internal.Format.FormatEntryData
-Microsoft.PowerShell.Commands.Internal.Format.GroupEndData
-Microsoft.PowerShell.Commands.Internal.Format.FormatEndData
+trying to create service (dtccService)
+[SC] CreateService SUCCESS
+trying to start service (dtccService)
+[SC] StartService FAILED 1053:
+
+The service did not respond to the start or control request in a timely fashion.
+
+successfully added Windows service (dtccService)

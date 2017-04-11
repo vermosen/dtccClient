@@ -13,7 +13,7 @@ namespace dtcc
 	{
 	public:
 
-		void loop()
+		void serviceMain()
 		{
 			while (run_)
 			{
@@ -25,7 +25,7 @@ namespace dtcc
 		void onStartImpl(DWORD dwArgc, LPSTR * pszArgv)
 		{
 			LOG_INFO() << "starting service " << name();
-			boost::thread * thr = new boost::thread(boost::bind(&serviceImpl::loop, this));
+			boost::thread * thr = new boost::thread(boost::bind(&serviceImpl::serviceMain, this));
 			thr->detach();
 		}
 		void onStopImpl() { run_ = false; boost::this_thread::sleep(boost::posix_time::milliseconds(5000)); }

@@ -58,6 +58,7 @@
     <ClInclude Include="src\application\queries\eod.hpp" />
     <ClInclude Include="src\application\queries\intraday.hpp" />
     <ClInclude Include="src\application\asset\description.hpp" />
+    <ClInclude Include="src\utils\thread.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\compression\zip.cpp" />

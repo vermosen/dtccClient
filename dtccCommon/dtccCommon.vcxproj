@@ -207,6 +207,7 @@
     <ClInclude Include="src\application\queries\intraday.hpp" />
     <ClInclude Include="src\utils\adaptator.hpp" />
     <ClInclude Include="src\utils\converter.hpp" />
+    <ClInclude Include="src\utils\thread.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\compression\zip.cpp" />
