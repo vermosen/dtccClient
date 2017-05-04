@@ -59,6 +59,7 @@
     <ClInclude Include="src\application\queries\intraday.hpp" />
     <ClInclude Include="src\application\asset\description.hpp" />
     <ClInclude Include="src\utils\thread.hpp" />
+    <ClInclude Include="src\utils\debugger.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\compression\zip.cpp" />
@@ -73,5 +74,7 @@
     <ClCompile Include="src\application\queries\eod.cpp" />
     <ClCompile Include="src\application\queries\intraday.cpp" />
     <ClCompile Include="src\application\webConnector.cpp" />
+    <ClCompile Include="src\application\service.cpp" />
+    <ClCompile Include="src\utils\debugger.cpp" />
   </ItemGroup>
 </Project>

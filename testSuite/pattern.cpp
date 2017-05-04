@@ -8,7 +8,7 @@ namespace testSuite
 {
 	void pattern::abstractFactory()
 	{
-		boost::shared_ptr<base> myBase = dtcc::abstractFactory<base, std::string>::createInstance("DERIVED");
+		boost::shared_ptr<base> myBase = dtcc::abstractFactory<base, std::string, char>::createInstance("DERIVED", 'c');
 
 		if (myBase->foo() != "hello world!")
 		{

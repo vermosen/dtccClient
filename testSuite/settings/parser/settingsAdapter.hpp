@@ -33,7 +33,12 @@ BOOST_FUSION_ADAPT_STRUCT(
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-	dtcc::settings::worker::connector,
+	dtcc::settings::worker,
+	(dtcc::asset::description, description_)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+	dtcc::settings::connector,
 	(std::string, type_)
 	(std::string, protocol_)
 	(std::string, host_)
@@ -42,17 +47,9 @@ BOOST_FUSION_ADAPT_STRUCT(
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-	dtcc::settings::worker,
-	(dtcc::settings::worker::connector, connector_)
-	(dtcc::asset::description, description_)
-	(int, timeoutAfterSuccess_)
-	(int, timeoutAfterFailure_)
-	(int, maxAttempt_)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(
 	dtcc::settings,
 	(dtcc::settings::logger, logger_)
+	(dtcc::settings::connector, connector_)
 	(std::string, database_)
 	(int64_t, memory_)
 	(std::vector<dtcc::settings::worker>, workers_)

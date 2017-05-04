@@ -4,6 +4,7 @@
 
 #include <memory>
 
+#include <boost/asio.hpp>
 #include <boost/thread.hpp>
 
 #include "utils/thread.hpp"

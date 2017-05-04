@@ -16,13 +16,13 @@ namespace dtcc
 	};
 
 	template <class T>
-	T& singleton<T>::instance()
+	T & singleton<T>::instance()
 	{
-		static boost::shared_ptr<T> instance_;
+		static T * instance_;
 
 		if (!instance_)
-			instance_ = boost::shared_ptr<T>(new T);
-		return *instance_;
+			instance_ = new T;
+		return * instance_;
 	}
 }
 

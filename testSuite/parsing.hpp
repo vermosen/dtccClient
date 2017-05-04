@@ -12,6 +12,8 @@ namespace testSuite
 	{
 	public:
 		static void multipleRecords();
+		static void preference();
+
 		static boost::unit_test_framework::test_suite* suite();
 	};
 }

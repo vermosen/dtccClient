@@ -1,5 +1,7 @@
 #include "parsing.hpp"
 
+#include <fstream>
+
 #include <boost/chrono.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 
@@ -7,6 +9,8 @@
 #include "database/record/parser/tradeRecordGrammar.hpp"
 #include "database/record/parser/parseRecords.hpp"
 #include "database/record/enum.hpp"
+
+#include "settings/parser/parseSettings.hpp"
 
 boost::chrono::high_resolution_clock::time_point start;
 
@@ -30,7 +34,7 @@ namespace testSuite
 
 		if (dtcc::parser::parseRecords(iter, end, recs, dt))
 		{
-			/*bool print = false;
+			bool print = false;
 
 			if (print)
 			{
@@ -41,7 +45,12 @@ namespace testSuite
 					std::cout << "ACTION: " << it->ACTION << std::endl;
 					std::cout << "EXECUTION_TIMESTAMP: " << it->EXECUTION_TIMESTAMP << std::endl;
 					std::cout << "CLEARED: " << it->CLEARED << std::endl;
-					std::cout << "INDICATION_OF_COLLATERALIZATION: " << it->INDICATION_OF_COLLATERALIZATION << std::endl;
+
+					if (!it->INDICATION_OF_COLLATERALIZATION)
+						std::cout << "INDICATION_OF_COLLATERALIZATION: (none)" << std::endl;
+					else
+						std::cout << "INDICATION_OF_COLLATERALIZATION: " << *it->INDICATION_OF_COLLATERALIZATION << std::endl;
+
 					if (!it->INDICATION_OF_END_USER_EXCEPTION)
 						std::cout << "INDICATION_OF_END_USER_EXCEPTION: (none)" << std::endl;
 					else
@@ -194,10 +203,12 @@ namespace testSuite
 
 					std::cout << "-------------------------" << std::endl;
 				}
-			}*/
+			}
 
 			std::cout << recs.size() << " conversions done in " << boost::chrono::duration_cast<boost::chrono::milliseconds> (
 				boost::chrono::high_resolution_clock::now() - start) << std::endl;
+
+			BOOST_TEST(true);
 		}
 		else
 		{
@@ -205,10 +216,32 @@ namespace testSuite
 		}
 	}
 
+	void parsing::preference()
+	{
+		std::ifstream file("C:\\Git\\dtccClient\\testSuite\\settings\\dev.xml", std::ios::in | std::ios::binary);
+		std::stringstream buffer; std::string raw; dtcc::settings settings;
+
+		if (file.is_open())
+		{
+			buffer << file.rdbuf();
+			raw = buffer.str();
+
+			if (!dtcc::parser::parseSettings(raw.cbegin(), raw.cend(), settings))
+			{
+				BOOST_ERROR("\n" << " parsing failed");
+			}
+			else
+			{
+				BOOST_TEST(true);
+			}
+		}
+	}
+
 	boost::unit_test_framework::test_suite * parsing::suite()
 	{
 		boost::unit_test_framework::test_suite * suite = BOOST_TEST_SUITE("parsing Tests");
 		suite->add(BOOST_TEST_CASE(&parsing::multipleRecords));
+		suite->add(BOOST_TEST_CASE(&parsing::preference));
 		return suite;
 	}
 }

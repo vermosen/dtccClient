@@ -3,8 +3,15 @@ Trying to install service dtccService from path C:\Git\dtccClient\x64\Debug\dtcc
 trying to create service (dtccService)
 [SC] CreateService SUCCESS
 trying to start service (dtccService)
-[SC] StartService FAILED 1053:
 
-The service did not respond to the start or control request in a timely fashion.
-
+SERVICE_NAME: dtccService 
+        TYPE               : 10  WIN32_OWN_PROCESS  
+        STATE              : 2  START_PENDING 
+                                (STOPPABLE, NOT_PAUSABLE, IGNORES_SHUTDOWN)
+        WIN32_EXIT_CODE    : 0  (0x0)
+        SERVICE_EXIT_CODE  : 0  (0x0)
+        CHECKPOINT         : 0x1
+        WAIT_HINT          : 0x0
+        PID                : 2808
+        FLAGS              : 
 successfully added Windows service (dtccService)

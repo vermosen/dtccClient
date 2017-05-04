@@ -6,8 +6,8 @@
 #include <array>
 #include <utility>
 
-#include <boost/bind.hpp>
 #include <boost/asio.hpp>
+#include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/regex.hpp>
 
@@ -15,7 +15,6 @@
 
 namespace dtcc
 {
-	typedef boost::function<void(const std::string &)> writeDelegate;
 	typedef boost::function<void(const std::string &, bool)> urlReadDelegate;
 
 	class reader

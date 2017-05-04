@@ -19,25 +19,22 @@ namespace dtcc
 			dtcc::severity severity_;
 		};
 
+		struct connector
+		{
+			std::string type_;
+			std::string protocol_;
+			std::string host_;
+			int port_;
+			size_t bufferSize_;
+		};
+
 		struct worker
 		{
-			struct connector
-			{
-				std::string type_;
-				std::string protocol_;
-				std::string host_;
-				int port_;
-				size_t bufferSize_;
-			};
-
-			connector connector_;
 			dtcc::asset::description description_;
-			int timeoutAfterSuccess_;
-			int timeoutAfterFailure_;
-			int maxAttempt_;
 		};
 
 		logger logger_;
+		connector connector_;
 		std::string database_;
 		int64_t memory_;
 		std::vector<worker> workers_;

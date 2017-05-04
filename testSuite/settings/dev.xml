@@ -4,24 +4,27 @@
     <fileStr>C:\Temp\dtccService_%Y%m%d.log</fileStr>
     <severity>information</severity>
   </logger>
+  <connector>
+    <type>curl</type>
+    <protocol>https</protocol>
+    <host>kgc0418-tdw-data-0.s3.amazonaws.com</host>
+    <port>8080</port>
+    <bufferSize>1024</bufferSize>
+  </connector>
   <database>dsn=sqlServer</database>
   <cacheSize>31457280</cacheSize>
   <workers>
     <worker>
-      <connector>
-        <type>asio</type>
-        <protocol>https</protocol>
-        <host>kgc0418-tdw-data-0.s3.amazonaws.com</host>
-        <port>80</port>
-        <bufferSize>1024</bufferSize>
-      </connector>
       <asset>
         <type>CO</type>
         <fileStr>COMMODITIES</fileStr>
       </asset>
-      <timeoutAfterSuccess>1000</timeoutAfterSuccess>
-      <timeoutAfterFailure>10000</timeoutAfterFailure>
-      <maxAttempt>10</maxAttempt>
+    </worker>
+    <worker>
+      <asset>
+        <type>IR</type>
+        <fileStr>RATES</fileStr>
+      </asset>
     </worker>
   </workers>
 </settings>

@@ -5,41 +5,58 @@
 #include <boost/thread.hpp>
 
 #include "application/logger.hpp"
+#include "application/writer.hpp"
+#include "application/worker.hpp"
 #include "application/service.hpp"
+#include "utils/debugger.hpp"
+
+#include "settings.hpp"
 
 namespace dtcc
 {
-	class serviceImpl : public service<serviceImpl>
+	class serviceImpl : public service
 	{
+		friend service;	
 	public:
-
-		void serviceMain()
+		serviceImpl(const settings &settings) : service("dtccService", true, false, false)
 		{
-			while (run_)
-			{
-				LOG_INFO() << "tic";
-				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-			}
+			settings_ = settings;
 		}
 
-		void onStartImpl(DWORD dwArgc, LPSTR * pszArgv)
+	protected:
+		virtual void onStart(DWORD dwArgc, LPSTR * pszArgv)
 		{
-			LOG_INFO() << "starting service " << name();
-			boost::thread * thr = new boost::thread(boost::bind(&serviceImpl::serviceMain, this));
+			run_ = true;
+			LOG_INFO() << "activating service... ";
+			boost::thread * thr = new boost::thread(boost::bind(&serviceImpl::startWorkers, this));
+			LOG_INFO() << "activation completed";
 			thr->detach();
 		}
-		void onStopImpl() { run_ = false; boost::this_thread::sleep(boost::posix_time::milliseconds(5000)); }
-		void onPauseImpl() { run_ = false; }
-		void onContinueImpl() { run_ = true; }
-		void onShutdownImpl() { run_ = false; }
-
-		static std::string name() { return "dtccService"; };
-		bool canStop() { return true; };
-		bool canShutdown() { return true; };
-		bool canPauseContinue() { return true; };
+		virtual void onStop() { run_ = false; boost::this_thread::sleep(boost::posix_time::milliseconds(5000)); }
+		virtual void onPause() { run_ = false; }
+		virtual void onContinue() { run_ = true; }
+		virtual void onShutdown() { run_ = false; }
 
 	private:
-		bool run_ = true;
+		void startWorkers()
+		{
+			writeDelegate f(boost::bind(&writer::write, &w_, _1));
+
+			workers_.resize(settings_.workers_.size());
+
+			for (int i = 0; i < settings_.workers_.size(); i++)
+			{
+				std::string id = boost::lexical_cast<std::string>(i);
+				workers_[i] = boost::shared_ptr<worker>(new worker(settings_.workers_[i], f, "worker " + id));
+			}
+
+			for (auto & i : workers_) i->start();
+		}
+
+		bool run_;
+		settings settings_;
+		std::vector<boost::shared_ptr<worker>> workers_;
+		writer w_;
 	};
 }
 

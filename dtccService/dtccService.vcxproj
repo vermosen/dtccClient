@@ -79,6 +79,7 @@
       <PreprocessorDefinitions>ZLIB_WINAPI;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalOptions>-D_WIN32_WINNT=0x0601 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -130,7 +131,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_DLL;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DLL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -152,7 +153,7 @@
   <ItemGroup>
     <ClCompile Include="application\readers\reader.cpp" />
     <ClCompile Include="application\serviceImpl.cpp" />
-    <ClCompile Include="application\workers\worker.cpp" />
+    <ClCompile Include="application\worker.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="settings\parser\parseSettings.cpp" />
     <ClCompile Include="StdAfx.cpp" />
@@ -164,7 +165,8 @@
     <ClInclude Include="application\readers\reader.hpp" />
     <ClInclude Include="application\serviceImpl.hpp" />
     <ClInclude Include="application\workerBase.hpp" />
-    <ClInclude Include="application\workers\worker.hpp" />
+    <ClInclude Include="application\worker.hpp" />
+    <ClInclude Include="application\writer.hpp" />
     <ClInclude Include="settings.hpp" />
     <ClInclude Include="settings\parser\parseSettings.hpp" />
     <ClInclude Include="settings\parser\settingsAdapter.hpp" />

@@ -126,11 +126,7 @@ struct settingsGrammar : qi::grammar<iterator, dtcc::settings(), skipper>
 
 		rWorker = 
 			qi::omit[rStartTag(_r1)[_a = _1]]
-			>> rConnector(std::string("connector"))
 			>> rAsset(std::string("asset"))
-			>> rInt(std::string("timeoutAfterSuccess"))
-			>> rInt(std::string("timeoutAfterFailure"))
-			>> rInt(std::string("maxAttempt"))
 			>> qi::omit[rEndTag(_a)]
 			;
 
@@ -143,6 +139,7 @@ struct settingsGrammar : qi::grammar<iterator, dtcc::settings(), skipper>
 		rSettings =
 			qi::omit[rStartTag(_r1)[_a = _1]]
 			>> rLogger(std::string("logger"))
+			>> rConnector(std::string("connector"))
 			>> rText(std::string("database"))
 			>> rInt(std::string("cacheSize"))
 			>> rWorkers(std::string("workers"))
@@ -161,13 +158,13 @@ struct settingsGrammar : qi::grammar<iterator, dtcc::settings(), skipper>
 
 	qi::rule<iterator, std::vector<dtcc::settings::worker>(std::string), qi::locals<std::string>, ascii::space_type> rWorkers;
 	qi::rule<iterator, dtcc::settings::worker(std::string), qi::locals<std::string>, ascii::space_type> rWorker;
-	qi::rule<iterator, dtcc::settings::worker::connector(std::string), qi::locals<std::string>, ascii::space_type> rConnector;
 	qi::rule<iterator, dtcc::asset::description(std::string), qi::locals<std::string>, ascii::space_type> rAsset;
 	qi::rule<iterator, assetTypeAdaptator(std::string), qi::locals<std::string>, ascii::space_type> rAssetType;
 	qi::rule<iterator, severityAdaptator(std::string), qi::locals<std::string>, ascii::space_type> rSeverity;
 	qi::rule<iterator, std::string(std::string), qi::locals<std::string>, ascii::space_type> rText;
 	qi::rule<iterator, int(std::string), qi::locals<std::string>, ascii::space_type> rInt;
 	qi::rule<iterator, dtcc::settings::logger(std::string), qi::locals<std::string>, ascii::space_type> rLogger;
+	qi::rule<iterator, dtcc::settings::connector(std::string), qi::locals<std::string>, ascii::space_type> rConnector;
 
 	qi::rule<iterator, assetTypeAdaptator(), ascii::space_type> rAssetTypeBase;
 	qi::rule<iterator, severityAdaptator(), ascii::space_type> rSeverityBase;
