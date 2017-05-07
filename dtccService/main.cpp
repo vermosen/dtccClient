@@ -1,6 +1,8 @@
 #ifndef MAIN_CPP_
 #define MAIN_CPP_
 
+#define FUSION_MAX_VECTOR_SIZE 45
+
 #include <fstream>
 #include <exception>
 

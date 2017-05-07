@@ -40,7 +40,7 @@ namespace dtcc
 	private:
 		void startWorkers()
 		{
-			writeDelegate f(boost::bind(&writer::write, &w_, _1));
+			writeRecordsDelegate f(boost::bind(&writer::write, &w_, _1));
 
 			workers_.resize(settings_.workers_.size());
 

@@ -44,6 +44,10 @@ namespace dtcc
 	{
 		if (!logger::initialized_)
 		{
+			// prevent file release
+			// see http://www.boost.org/doc/libs/1_57_0/libs/log/doc/html/log/rationale/why_crash_on_term.html
+			boost::filesystem::path::imbue(std::locale("C"));
+
 			logger_		= logger_t()				;
 			threshold_  = threshold					;
 			auto c		= boost::log::core::get()	;

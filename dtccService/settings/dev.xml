@@ -16,12 +16,12 @@
         <bufferSize>1024</bufferSize>
       </connector>
       <asset>
-        <type>CO</type>
-        <fileStr>COMMODITIES</fileStr>
+        <type>IR</type>
+        <fileStr>RATES</fileStr>
       </asset>
       <timeoutAfterSuccess>1000</timeoutAfterSuccess>
       <timeoutAfterFailure>10000</timeoutAfterFailure>
-      <maxAttempt>10</maxAttempt>
+      <maxAttempt>5</maxAttempt>
     </worker>
   </workers>
 </settings>

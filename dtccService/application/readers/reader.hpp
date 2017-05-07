@@ -15,7 +15,7 @@
 
 namespace dtcc
 {
-	typedef boost::function<void(const std::string &, bool)> urlReadDelegate;
+	typedef boost::function<void(std::string, bool)> urlReadDelegate;
 
 	class reader
 	{

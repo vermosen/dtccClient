@@ -4,7 +4,7 @@ namespace dtcc
 {
 	namespace zip
 	{
-		zip::zip (const boost::shared_ptr<std::string> & file) 
+		zip::zip (std::string && file) 
 			: file_(file) {}
 		zip::~zip() {}
 		std::set<std::string> zip::getFileSystem()
@@ -50,12 +50,12 @@ namespace dtcc
 		bool zip::readArchiveStructure()
 		{
 			// we start from the bottom and look for the EOCD signature
-			for (auto It = file_->crbegin(); It != file_->crend(); It++)
+			for (auto It = file_.crbegin(); It != file_.crend(); It++)
 			{
 				if (*It == 0x50 && std::equal(It - 3, It, endOfCentralDirectory::eocd::signature.crbegin()))
 				{
 					dir_ = boost::shared_ptr<endOfCentralDirectory>(new endOfCentralDirectory(
-						file_->cbegin(), file_->cend(), utils::make_forward(It)));
+						file_.cbegin(), file_.cend(), utils::make_forward(It)));
 
 					return true;
 				}
@@ -65,7 +65,7 @@ namespace dtcc
 		bool zip::open()
 		{
 			// coherence check: should start with a file header
-			if (std::equal(file_->cbegin(), file_->cbegin() + 4, localFileHeader::signature.begin()))
+			if (std::equal(file_.cbegin(), file_.cbegin() + 4, localFileHeader::signature.begin()))
 				return true;
 			else
 				return false;

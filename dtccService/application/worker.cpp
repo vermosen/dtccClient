@@ -1,15 +1,20 @@
 #include "worker.hpp"
 
+#include "application/compression/zip.hpp"
+#include "application/compression/archive.hpp"
+#include "database/record/parser/parseRecords.hpp"
+
 namespace dtcc
 {
-	worker::worker(settings::worker & settings, writeDelegate write, const std::string name)
-		: workerBase(name)
-		, settings_(settings)
-		, write_(write)
-		, counter_(1)
-		, nFailure_(0)
+	worker::worker(settings::worker & settings, writeRecordsDelegate write, const std::string name)
+		: workerBase	(name		)
+		, settings_		(settings	)
+		, write_		(write		)
+		, counter_		(1			)
+		, nFailure_		(0			)
 	{
 		io_ = boost::shared_ptr<boost::asio::io_service>(new boost::asio::io_service);
+		dt_ = boost::gregorian::day_clock::universal_day();
 	}
 
 	worker::~worker() { io_.reset(); };
@@ -28,7 +33,7 @@ namespace dtcc
 		// build the connection
 		// TODO: use the settings + factories
 		cnx_ = boost::shared_ptr<connection>(new https(io_,
-			connectionDelegate(boost::bind(&worker::connect_callback, this, _1)), true));
+			connectionDelegate(boost::bind(&worker::connect_callback, this, boost::placeholders::_1)), true));
 		cnx_->connect(settings_.connector_.host_, settings_.connector_.port_);
 
 		// barrier
@@ -43,12 +48,16 @@ namespace dtcc
 		// https://kgc0418-tdw-data2-0.s3.amazonaws.com/slices/SLICE_COMMODITIES_2017_05_04_1.zip
 
 		// parse the file name
+		// TODO: parse the date and add a date counter
 		std::stringstream ss;
+
+		auto * temp(new boost::gregorian::date_facet("%Y_%m_%d"));
+		ss.imbue(std::locale(ss.getloc(), temp));
 
 		ss	<< "slices/SLICE_"
 			<< settings_.description_.fileStr_
 			<< "_"
-			<< "2017_05_04"
+			<< dt_
 			<< "_"
 			<< boost::lexical_cast<std::string>(counter_)
 			<< ".zip";
@@ -63,7 +72,8 @@ namespace dtcc
 			LOG_INFO() << "host " + cnx_->host() + " successfully reached";
 
 			reader_ = boost::shared_ptr<reader>(new reader(cnx_,
-				urlReadDelegate(boost::bind(&worker::reader_callback, this, _1, _2))));
+				urlReadDelegate(boost::bind(&worker::reader_callback, this, 
+					boost::placeholders::_1, boost::placeholders::_2))));
 
 			boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterSuccess_));
 			filename_ = filename();
@@ -75,17 +85,65 @@ namespace dtcc
 		}
 	}
 
-	void worker::reader_callback(const std::string & msg, bool result)
+	void worker::reader_callback(std::string msg, bool result)
 	{
-		if (result)
+		try
 		{
-			counter_++;
-			LOG_INFO() << "successfully retrived data from " << filename_;
-			write_(msg); filename_ = filename();
-			boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterSuccess_));
-			reader_->getAsync(filename());
+			if (result)
+			{
+				counter_++;
+				LOG_INFO() << "successfully retrived data from " << filename_;
+
+				// unzipping the records
+				dtcc::archive<dtcc::zip::zip> ar(std::move(msg));
+
+				if (!ar.open())
+				{
+					LOG_ERROR() << "failed to open the archive ";
+				}
+				else
+				{
+					auto fs = ar.fileSystem();
+
+					LOG_INFO() << "found " << fs.size() << " items in the archive";
+
+					for (auto jt = fs.begin(); jt != fs.end(); jt++)
+					{
+						std::string file = ar.get(*jt).str();
+
+						LOG_INFO() << "Zip extraction successfull...";
+
+						boost::chrono::high_resolution_clock::time_point start = boost::chrono::high_resolution_clock::now();
+
+						std::vector<dtcc::database::tradeRecord> recs;
+
+						if (dtcc::parser::parseRecords(file.begin(), file.end(), recs, dt_))
+						{
+							LOG_INFO() << recs.size() << " conversions done in "
+								<< boost::chrono::duration_cast<boost::chrono::milliseconds> (
+									boost::chrono::high_resolution_clock::now() - start);
+
+							start = boost::chrono::high_resolution_clock::now();
+
+							write_(recs);
+						}
+						else
+						{
+							LOG_WARNING() << "failed to extract data from file " << filename_;
+						}
+					}
+
+					filename_ = filename();
+					boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterSuccess_));
+					reader_->getAsync(filename_);
+				}
+			}
+			else
+			{
+				throw std::exception();
+			}
 		}
-		else
+		catch (std::exception & ex)
 		{
 			if (nFailure_ < settings_.maxAttempt_)
 			{
@@ -96,9 +154,11 @@ namespace dtcc
 			}
 			else
 			{
-				LOG_WARNING() << "max attempt reached, aborting task...";
+				// TODO: we wat to continue the loop, but we 
+				// check first if there have been a date change
+				LOG_INFO() << "max attempt reached, checking setup...";
+				reader_->getAsync(filename_);
 			}
-			
 		}
 	}
 }

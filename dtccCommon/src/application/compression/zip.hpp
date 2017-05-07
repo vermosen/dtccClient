@@ -36,7 +36,7 @@ namespace dtcc
 		class zip
 		{
 		public:
-			explicit zip(const boost::shared_ptr<std::string> &);
+			explicit zip(std::string &&);
 			~zip();
 
 			// for now, we return a single string, i.e. the archive only contains 1 file
@@ -47,7 +47,7 @@ namespace dtcc
 			void close();
 
 		private:
-			boost::shared_ptr<std::string> file_;
+			std::string file_;
 			boost::shared_ptr<endOfCentralDirectory> dir_;
 			bool entryOpen_;
 		};

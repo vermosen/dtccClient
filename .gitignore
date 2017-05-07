@@ -241,7 +241,9 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+
+# specific files
 /dtccConsole/My Inspector Results - dtccConsole
 /dtccConsole/My Amplifier XE Results - dtccConsole
 /dtccConsole/My Advisor Results - dtccConsole
-/lib/*
+/lib/dtccCommon_x64_v140_sd.lib

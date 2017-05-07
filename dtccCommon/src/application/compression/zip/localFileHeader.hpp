@@ -20,20 +20,19 @@ namespace dtcc
 			explicit localFileHeader(std::string::const_iterator it);
 
 			std::string::const_iterator begin() const { return dataStart_; }
-			//std::string::const_iterator end() const { return dataStart_ + compressSize_; }
 
 		private:
-			int16_t version_;
-			std::bitset<16> flag_;
-			method compression_;
-			uint16_t modTime_;
-			uint16_t modDate_;
-			uint32_t crc32_;
-			uint32_t compressSize_;
-			uint32_t uncompressSize_;
-			std::string name_;
-			std::string extraField_;
-			std::string::const_iterator dataStart_;
+			int16_t						version_		;
+			std::bitset<16>				flag_			;
+			method						compression_	;
+			uint16_t					modTime_		;
+			uint16_t					modDate_		;
+			uint32_t					crc32_			;
+			uint32_t					compressSize_	;
+			uint32_t					uncompressSize_	;
+			std::string					name_			;
+			std::string					extraField_		;
+			std::string::const_iterator dataStart_		;
 		};
 	}
 }

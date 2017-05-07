@@ -13,10 +13,12 @@ namespace dtcc
 	class archive
 	{
 	public:
-		archive(const boost::shared_ptr<std::string> & stream) 
+
+		// TODO: stupid design, replace boost::shared_ptr<string> with string...
+		archive(std::string && stream) 
 			: isOpen_(false)
 		{
-			method_ = new T(stream);
+			method_ = new T(std::move(stream));
 		};
 
 		~archive() { close(); delete method_; }

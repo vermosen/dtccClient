@@ -8,6 +8,7 @@
 #include <exception>
 #include <array>
 #include <vector>
+#include <functional>
 
 #include <boost/thread.hpp>
 #include <boost/chrono.hpp>
@@ -99,7 +100,7 @@ int main(int argc, char ** argv)
 				dtcc::eod q(dt, *it);
 
 				// we create an archive
-				dtcc::archive<dtcc::zip::zip> ar(cnx->fetch(q));
+				dtcc::archive<dtcc::zip::zip> ar(std::move(*cnx->fetch(q)));
 				
 				if (!ar.open())
 				{
