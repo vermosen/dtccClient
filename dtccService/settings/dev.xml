@@ -21,7 +21,7 @@
       </asset>
       <timeoutAfterSuccess>1000</timeoutAfterSuccess>
       <timeoutAfterFailure>10000</timeoutAfterFailure>
-      <maxAttempt>5</maxAttempt>
+      <maxAttempt>3</maxAttempt>
     </worker>
   </workers>
 </settings>

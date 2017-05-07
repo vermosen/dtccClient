@@ -27,6 +27,7 @@ namespace dtcc
 		~worker();
 
 		void work();
+		void stop();
 
 	private:
 		void connect_callback(bool result);
@@ -38,7 +39,7 @@ namespace dtcc
 
 		std::unique_ptr<boost::thread> t_;
 		boost::condition_variable cv_;
-		bool terminate_;
+		std::atomic<bool> terminate_;
 		boost::mutex m_;
 
 		boost::shared_ptr<boost::asio::io_service::work> ioTask_;

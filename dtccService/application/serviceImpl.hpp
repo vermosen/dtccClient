@@ -32,7 +32,18 @@ namespace dtcc
 			LOG_INFO() << "activation completed";
 			thr->detach();
 		}
-		virtual void onStop() { run_ = false; boost::this_thread::sleep(boost::posix_time::milliseconds(5000)); }
+		virtual void onStop() 
+		{ 
+			run_ = false; 
+
+			// stop all the workers
+			for (auto & i : workers_) i->stop();
+
+			boost::this_thread::sleep(boost::posix_time::milliseconds(20000)); 
+
+			// TODO: purge the data buffer
+		}
+
 		virtual void onPause() { run_ = false; }
 		virtual void onContinue() { run_ = true; }
 		virtual void onShutdown() { run_ = false; }
@@ -42,6 +53,8 @@ namespace dtcc
 		{
 			writeRecordsDelegate f(boost::bind(&writer::write, &w_, _1));
 
+			LOG_INFO() << "creating " << settings_.workers_.size() << "workers";
+
 			workers_.resize(settings_.workers_.size());
 
 			for (int i = 0; i < settings_.workers_.size(); i++)
@@ -49,6 +62,8 @@ namespace dtcc
 				std::string id = boost::lexical_cast<std::string>(i);
 				workers_[i] = boost::shared_ptr<worker>(new worker(settings_.workers_[i], f, "worker " + id));
 			}
+
+			LOG_INFO() << "starting workers...";
 
 			for (auto & i : workers_) i->start();
 		}

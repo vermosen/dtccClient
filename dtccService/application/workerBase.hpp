@@ -39,8 +39,8 @@ namespace dtcc
 	{
 		if (!t_)
 		{
-			t_ = std::move(std::unique_ptr<boost::thread>(new boost::thread(
-				[&]() { static_cast<W*>(this)->work(); })));
+			t_ = std::unique_ptr<boost::thread>(new boost::thread(
+				[&]() { static_cast<W*>(this)->work(); }));
 			setThreadName(t_->get_id(), name_);
 		}
 	}

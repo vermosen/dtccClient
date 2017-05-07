@@ -12,6 +12,7 @@ namespace dtcc
 		, write_		(write		)
 		, counter_		(1			)
 		, nFailure_		(0			)
+		, terminate_	(false		)
 	{
 		io_ = boost::shared_ptr<boost::asio::io_service>(new boost::asio::io_service);
 		dt_ = boost::gregorian::day_clock::universal_day();
@@ -22,8 +23,10 @@ namespace dtcc
 	void worker::work()
 	{
 		launchDebugger();
-
+		
 		// initialize and run the service
+		LOG_INFO() << "starting new io task...";
+
 		ioTask_ = boost::shared_ptr<boost::asio::io_service::work>(new boost::asio::io_service::work(*io_));
 
 		// runs in a separate thread
@@ -32,6 +35,8 @@ namespace dtcc
 
 		// build the connection
 		// TODO: use the settings + factories
+		LOG_INFO() << "building new connector...";
+
 		cnx_ = boost::shared_ptr<connection>(new https(io_,
 			connectionDelegate(boost::bind(&worker::connect_callback, this, boost::placeholders::_1)), true));
 		cnx_->connect(settings_.connector_.host_, settings_.connector_.port_);
@@ -39,13 +44,23 @@ namespace dtcc
 		// barrier
 		boost::unique_lock<boost::mutex> lk(m_);
 		while (!terminate_) cv_.wait(lk);
+
+		// wait 15 seconds before returning
+		boost::this_thread::sleep(boost::posix_time::milliseconds(15000));
+
 		ioTask_.reset();
 		t_->join();
 	}
 
+	void worker::stop()
+	{
+		terminate_ = true;
+		cv_.notify_one();
+	}
+
 	std::string worker::filename()
 	{
-		// https://kgc0418-tdw-data2-0.s3.amazonaws.com/slices/SLICE_COMMODITIES_2017_05_04_1.zip
+		// ex: https://kgc0418-tdw-data2-0.s3.amazonaws.com/slices/SLICE_COMMODITIES_2017_05_04_1.zip
 
 		// parse the file name
 		// TODO: parse the date and add a date counter
@@ -133,9 +148,16 @@ namespace dtcc
 						}
 					}
 
-					filename_ = filename();
-					boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterSuccess_));
-					reader_->getAsync(filename_);
+					if (terminate_)
+					{
+						return;
+					}
+					else
+					{
+						filename_ = filename();
+						boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterSuccess_));
+						reader_->getAsync(filename_);
+					}
 				}
 			}
 			else
@@ -149,15 +171,32 @@ namespace dtcc
 			{
 				nFailure_++;
 				LOG_WARNING() << "failed to retrive data from " << filename_;
-				boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterFailure_));
-				reader_->getAsync(filename_);
+
+				if (terminate_)
+				{
+					return;
+				}
+				else
+				{
+					boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterFailure_));
+					reader_->getAsync(filename_);
+				}
 			}
 			else
 			{
 				// TODO: we wat to continue the loop, but we 
 				// check first if there have been a date change
 				LOG_INFO() << "max attempt reached, checking setup...";
-				reader_->getAsync(filename_);
+
+				if (terminate_)
+				{
+					return;
+				}
+				else
+				{
+					boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterFailure_));
+					reader_->getAsync(filename_);
+				}
 			}
 		}
 	}
