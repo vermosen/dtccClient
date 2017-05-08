@@ -13,14 +13,15 @@ namespace dtcc
 {
 	typedef boost::function<void(bool)> connectionDelegate;
 
-	class connection
+	// TODO: unify with 
+	class protocol
 	{
 	public:
-		connection(boost::shared_ptr<boost::asio::io_service> io, connectionDelegate cnx)
-			: io_(io)
-			, st_(*io_)
-			, cnx_(cnx)
-			, resolver_(*io_) {}
+		protocol(boost::shared_ptr<boost::asio::io_service> io, connectionDelegate cnx)
+			: io_		(io		)
+			, st_		(*io_	)
+			, cnx_		(cnx	)
+			, resolver_	(*io_	) {}
 
 		virtual void connect(const std::string & host, int port) = 0;
 		virtual boost::asio::ip::tcp::socket & socket() = 0;

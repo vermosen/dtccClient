@@ -21,6 +21,8 @@ namespace dtcc
 		public:
 			sqlServer();
 			virtual void connect(const std::string & connectionString);
+
+			static registerTypeNoArgs<connector, std::string, sqlServer> register_;
 		};
 	}
 }

@@ -37,9 +37,14 @@ namespace dtcc
 			int maxAttempt_;
 		};
 
+		struct database
+		{
+			std::string database_;
+		};
+
 		logger logger_;
-		std::string database_;
-		int64_t memory_;
+		database database_;
+		size_t memory_;
 		std::vector<worker> workers_;
 	};
 }

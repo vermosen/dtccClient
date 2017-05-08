@@ -7,6 +7,8 @@
 
 #include "application/logger.hpp"
 #include "database/record/tradeRecord.hpp"
+#include "database/connector.hpp"
+#include "settings.hpp"
 
 namespace dtcc
 {
@@ -15,6 +17,20 @@ namespace dtcc
 	class writer
 	{
 	public:
+		writer(const settings::database & db, size_t bufferSize)
+		{
+			buffer_.resize(bufferSize);
+			ctr_ = dtcc::abstractFactoryNoArgs<database::connector, std::string>::createInstance("sql server");
+			ctr_->connect(db.database_);
+		}
+
+		writer() = delete;
+
+		~writer() 
+		{
+			// TODO: close the connection ?
+		}
+
 		void write(const std::vector<database::tradeRecord> & s)
 		{
 			boost::mutex::scoped_lock lock(m_);
@@ -23,6 +39,8 @@ namespace dtcc
 
 	private:
 		boost::mutex m_;
+		std::vector<database::tradeRecord> buffer_;
+		boost::shared_ptr<database::connector> ctr_;
 	};
 }
 

@@ -27,6 +27,11 @@ BOOST_FUSION_ADAPT_STRUCT(
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
+	dtcc::settings::database,
+	(std::string, database_)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
 	dtcc::asset::description,
 	(dtcc::database::assetType, type_)
 	(std::string, fileStr_)
@@ -53,8 +58,8 @@ BOOST_FUSION_ADAPT_STRUCT(
 BOOST_FUSION_ADAPT_STRUCT(
 	dtcc::settings,
 	(dtcc::settings::logger, logger_)
-	(std::string, database_)
-	(int64_t, memory_)
+	(dtcc::settings::database, database_)
+	(size_t, memory_)
 	(std::vector<dtcc::settings::worker>, workers_)
 )
 

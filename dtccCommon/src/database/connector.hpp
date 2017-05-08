@@ -14,6 +14,8 @@
 
 #include <soci/soci.h>
 
+#include "pattern/abstractFactory.hpp"
+
 namespace dtcc
 {
 	namespace database

@@ -5,15 +5,15 @@
 #include <boost/asio/ssl.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include "application/connection.hpp"
+#include "application/protocol.hpp"
 
 namespace dtcc
 {
-	class https : public connection
+	class https : public protocol
 	{
 	public:
 		https(boost::shared_ptr<boost::asio::io_service> io, connectionDelegate cnx, bool verify = false)
-			: connection(io, cnx)
+			: protocol(io, cnx)
 			, context_(boost::asio::ssl::context::sslv23)
 			, socket_(*io_, context_)
 			, verify_(verify)
@@ -67,7 +67,7 @@ namespace dtcc
 			if (!err)
 			{
 				boost::asio::async_connect(socket_.lowest_layer(), endpoint_iterator,
-					st_.wrap(boost::bind(&connection::handle_connect, this,
+					st_.wrap(boost::bind(&https::handle_connect, this,
 						boost::asio::placeholders::error)));
 			}
 			else

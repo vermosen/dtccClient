@@ -11,7 +11,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/regex.hpp>
 
-#include "application/connection.hpp"
+#include "application/protocol.hpp"
 
 namespace dtcc
 {
@@ -20,7 +20,7 @@ namespace dtcc
 	class reader
 	{
 	public:
-		reader(boost::shared_ptr<connection> cnx, urlReadDelegate write);
+		reader(boost::shared_ptr<protocol> cnx, urlReadDelegate write);
 		~reader();
 
 		void getAsync(const std::string & path);
@@ -35,7 +35,7 @@ namespace dtcc
 
 	private:
 		urlReadDelegate write_;
-		boost::shared_ptr<connection> cnx_;
+		boost::shared_ptr<protocol> cnx_;
 
 		std::string host_;
 		int port_;

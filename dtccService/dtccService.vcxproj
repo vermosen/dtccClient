@@ -159,9 +159,9 @@
     <ClCompile Include="StdAfx.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="application\connection.hpp" />
-    <ClInclude Include="application\connections\http.hpp" />
-    <ClInclude Include="application\connections\https.hpp" />
+    <ClInclude Include="application\protocol.hpp" />
+    <ClInclude Include="application\protocols\http.hpp" />
+    <ClInclude Include="application\protocols\https.hpp" />
     <ClInclude Include="application\readers\reader.hpp" />
     <ClInclude Include="application\serviceImpl.hpp" />
     <ClInclude Include="application\workerBase.hpp" />

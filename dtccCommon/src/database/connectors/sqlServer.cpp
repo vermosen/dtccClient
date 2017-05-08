@@ -6,6 +6,9 @@ namespace dtcc
 {
 	namespace database
 	{
+		registerTypeNoArgs<connector, std::string, sqlServer>
+			sqlServer::register_(std::string("sql server"));
+
 		sqlServer::sqlServer() : connector() {}
 
 		void sqlServer::connect(const std::string & connectionString)

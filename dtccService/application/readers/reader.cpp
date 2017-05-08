@@ -4,7 +4,7 @@ namespace dtcc
 {
 	const boost::regex reader::expr_("(Content-Length: )(\\d+$)(\r)");
 
-	reader::reader(boost::shared_ptr<connection> cnx, urlReadDelegate write)
+	reader::reader(boost::shared_ptr<protocol> cnx, urlReadDelegate write)
 		: cnx_(cnx)
 		, write_(write)
 		, transfert_(1) {}

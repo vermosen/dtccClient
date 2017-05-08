@@ -160,6 +160,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\database\connector.cpp" />
     <ClCompile Include="src\utils\debugger.cpp" />
     <ClInclude Include="src\application\asset\description.hpp" />
     <ClInclude Include="src\application\compression\archive.hpp" />

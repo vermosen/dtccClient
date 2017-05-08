@@ -4,15 +4,15 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include "application/connection.hpp"
+#include "application/protocol.hpp"
 
 namespace dtcc
 {
-	class http : public connection
+	class http : public protocol
 	{
 	public:
 		http(boost::shared_ptr<boost::asio::io_service> io, connectionDelegate cnx)
-			: connection(io, cnx)
+			: protocol(io, cnx)
 			, socket_(*io_) {}
 
 		virtual void connect(const std::string & host, int port)

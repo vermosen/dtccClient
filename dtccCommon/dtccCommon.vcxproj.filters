@@ -76,5 +76,6 @@
     <ClCompile Include="src\application\webConnector.cpp" />
     <ClCompile Include="src\application\service.cpp" />
     <ClCompile Include="src\utils\debugger.cpp" />
+    <ClCompile Include="src\database\connector.cpp" />
   </ItemGroup>
 </Project>

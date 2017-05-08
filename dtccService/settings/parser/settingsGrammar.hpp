@@ -107,6 +107,12 @@ struct settingsGrammar : qi::grammar<iterator, dtcc::settings(), skipper>
 			>> qi::omit[rEndTag(_a)]
 			;
 
+		rDatabase =
+			qi::omit[rStartTag(_r1)[_a = _1]]
+			>> rText(std::string("connection"))
+			>> qi::omit[rEndTag(_a)]
+			;
+
 		rConnector =
 			qi::omit[rStartTag(_r1)[_a = _1]]
 			>> rText(std::string("type"))
@@ -143,7 +149,7 @@ struct settingsGrammar : qi::grammar<iterator, dtcc::settings(), skipper>
 		rSettings =
 			qi::omit[rStartTag(_r1)[_a = _1]]
 			>> rLogger(std::string("logger"))
-			>> rText(std::string("database"))
+			>> rDatabase(std::string("database"))
 			>> rInt(std::string("cacheSize"))
 			>> rWorkers(std::string("workers"))
 			>> qi::omit[rEndTag(_a)]
@@ -168,6 +174,7 @@ struct settingsGrammar : qi::grammar<iterator, dtcc::settings(), skipper>
 	qi::rule<iterator, std::string(std::string), qi::locals<std::string>, ascii::space_type> rText;
 	qi::rule<iterator, int(std::string), qi::locals<std::string>, ascii::space_type> rInt;
 	qi::rule<iterator, dtcc::settings::logger(std::string), qi::locals<std::string>, ascii::space_type> rLogger;
+	qi::rule<iterator, dtcc::settings::database(std::string), qi::locals<std::string>, ascii::space_type> rDatabase;
 
 	qi::rule<iterator, assetTypeAdaptator(), ascii::space_type> rAssetTypeBase;
 	qi::rule<iterator, severityAdaptator(), ascii::space_type> rSeverityBase;

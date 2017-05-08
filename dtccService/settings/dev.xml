@@ -4,7 +4,9 @@
     <fileStr>C:\Temp\dtccService_%Y%m%d.log</fileStr>
     <severity>information</severity>
   </logger>
-  <database>dsn=sqlServer</database>
+  <database>
+    <connection>dsn=sqlServer</connection>
+  </database>
   <cacheSize>31457280</cacheSize>
   <workers>
     <worker>

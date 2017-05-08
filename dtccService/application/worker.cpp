@@ -37,7 +37,7 @@ namespace dtcc
 		// TODO: use the settings + factories
 		LOG_INFO() << "building new connector...";
 
-		cnx_ = boost::shared_ptr<connection>(new https(io_,
+		cnx_ = boost::shared_ptr<protocol>(new https(io_,
 			connectionDelegate(boost::bind(&worker::connect_callback, this, boost::placeholders::_1)), true));
 		cnx_->connect(settings_.connector_.host_, settings_.connector_.port_);
 

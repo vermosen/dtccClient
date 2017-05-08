@@ -11,8 +11,8 @@
 #include <boost/chrono.hpp>
 
 #include "application/workerBase.hpp"
-#include "application/connections/https.hpp"
-#include "application/connections/http.hpp"
+#include "application/protocols/https.hpp"
+#include "application/protocols/http.hpp"
 #include "application/readers/reader.hpp"
 #include "application/writer.hpp"
 #include "utils/debugger.hpp"
@@ -45,7 +45,7 @@ namespace dtcc
 		boost::shared_ptr<boost::asio::io_service::work> ioTask_;
 		boost::shared_ptr<boost::asio::io_service> io_;
 
-		boost::shared_ptr<connection> cnx_;
+		boost::shared_ptr<protocol> cnx_;
 		boost::shared_ptr<reader> reader_;
 		writeRecordsDelegate write_;
 

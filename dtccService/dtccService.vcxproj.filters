@@ -24,12 +24,12 @@
     <ClInclude Include="settings\parser\settingsGrammar.hpp" />
     <ClInclude Include="settings.hpp" />
     <ClInclude Include="application\workerBase.hpp" />
-    <ClInclude Include="application\connection.hpp" />
-    <ClInclude Include="application\connections\https.hpp" />
     <ClInclude Include="application\readers\reader.hpp" />
     <ClInclude Include="application\writer.hpp" />
     <ClInclude Include="application\worker.hpp" />
-    <ClInclude Include="application\connections\http.hpp" />
+    <ClInclude Include="application\protocol.hpp" />
+    <ClInclude Include="application\protocols\http.hpp" />
+    <ClInclude Include="application\protocols\https.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="script\remove.ps1" />
