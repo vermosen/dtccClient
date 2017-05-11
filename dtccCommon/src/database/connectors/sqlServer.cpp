@@ -16,5 +16,10 @@ namespace dtcc
 			session_ = boost::shared_ptr<soci::session>(
 				new soci::session(soci::odbc, connectionString));
 		}
+
+		void sqlServer::close()
+		{
+			session_->close();
+		}
 	}
 }

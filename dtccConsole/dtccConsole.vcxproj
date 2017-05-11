@@ -148,7 +148,7 @@
     <ClInclude Include="settings\parser\settingsAdapter.hpp" />
     <ClInclude Include="settings\parser\settingsGrammar.hpp" />
     <ClInclude Include="settings.hpp" />
-    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="StdAfx.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="settings\dev.xml" />

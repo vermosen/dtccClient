@@ -13,7 +13,7 @@ namespace dtcc
 {
 	typedef boost::function<void(bool)> connectionDelegate;
 
-	// TODO: unify with 
+	// TODO: unify with curl bindings
 	class protocol
 	{
 	public:

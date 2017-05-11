@@ -15,6 +15,8 @@
 #include "settings/parser/parseSettings.hpp"
 #include "settings.hpp"
 
+#include "utils/debugger.hpp"
+
 #ifdef _WIN32
 #include "StdAfx.h"
 #include <WinSock.h>

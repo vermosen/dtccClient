@@ -7,7 +7,7 @@ namespace dtcc
 {
 	serviceImpl::serviceImpl(const settings &settings) 
 		: service("dtccService", true, false, false)
-		, w_(settings.database_, settings.memory_)
+		, w_(settings.memory_)
 	{
 		settings_ = settings;
 	}
@@ -16,6 +16,10 @@ namespace dtcc
 	{
 		run_ = true;
 		LOG_INFO() << "activating service... ";
+
+		launchDebugger();
+
+		w_.connect(settings_.database_); // TODO: timeout
 		boost::thread * thr = new boost::thread(boost::bind(&serviceImpl::startWorkers, this));
 		LOG_INFO() << "activation completed";
 		thr->detach();
@@ -31,6 +35,7 @@ namespace dtcc
 		boost::this_thread::sleep(boost::posix_time::milliseconds(20000));
 
 		// TODO: purge the data buffer
+		w_.close();
 	}
 
 	void serviceImpl::startWorkers()

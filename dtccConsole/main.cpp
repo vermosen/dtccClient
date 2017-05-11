@@ -31,7 +31,7 @@
 #include "settings.hpp"
 
 #ifdef _WIN32
-#include "StdAfx.h"
+#include "StdAfx.hpp"
 #include <Windows.h>
 #else
 #include <unistd.h>

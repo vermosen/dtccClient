@@ -25,8 +25,10 @@ namespace dtcc
 		public:
 			connector() {};
 			virtual ~connector() {};
-			virtual void connect(const std::string & connectionString) = 0;
 			
+			virtual void connect(const std::string & connectionString) = 0;
+			virtual void close() = 0;
+
 			boost::shared_ptr<soci::session> session() { return session_; }
 
 			void begin() { session_->begin(); }

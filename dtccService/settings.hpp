@@ -37,13 +37,13 @@ namespace dtcc
 			int maxAttempt_;
 		};
 
-		struct database
+		struct connectionString
 		{
 			std::string database_;
 		};
 
 		logger logger_;
-		database database_;
+		connectionString database_;
 		size_t memory_;
 		std::vector<worker> workers_;
 	};

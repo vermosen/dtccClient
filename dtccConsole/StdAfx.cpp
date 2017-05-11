@@ -1,4 +1,6 @@
-/* Copyright (C) 2013 Interactive Brokers LLC. All rights reserved. This code is subject to the terms
-* and conditions of the IB API Non-Commercial License or the IB API Commercial License, as applicable. */
+#ifndef STD_AFX_HPP_
+#define STD_AFX_HPP_
 
-#include "StdAfx.h"
+#include "StdAfx.hpp"
+
+#endif
