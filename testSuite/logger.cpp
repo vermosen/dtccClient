@@ -19,7 +19,7 @@ namespace testSuite
 	}
 	boost::unit_test_framework::test_suite* logger::suite()
 	{
-		boost::unit_test_framework::test_suite * suite = BOOST_TEST_SUITE("compression Tests");
+		boost::unit_test_framework::test_suite * suite = BOOST_TEST_SUITE("logger Tests");
 		suite->add(BOOST_TEST_CASE(&logger::simpleLog));
 		return suite;
 	}

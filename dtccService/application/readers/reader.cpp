@@ -1,4 +1,5 @@
 #include "reader.hpp"
+#include "application/logger.hpp"
 
 namespace dtcc
 {
@@ -144,19 +145,21 @@ namespace dtcc
 	{
 		if (!err)
 		{
+			// Continue reading remaining data until EOF.
+			boost::asio::async_read(cnx_->socket(), response_,
+				boost::asio::transfer_at_least(1),
+				cnx_->strand().wrap(boost::bind(&reader::handle_read_content, this,
+					boost::asio::placeholders::error,
+					boost::asio::placeholders::bytes_transferred)));
+		}
+		else if (err == boost::asio::error::eof)
+		{
 			content_ << &response_;
 			write_(content_.str(), true);
-
-			//// Continue reading remaining data until EOF.
-			//boost::asio::async_read(cnx_->socket(), response_,
-			//	boost::asio::transfer_at_least(1),
-			//	cnx_->strand().wrap(boost::bind(&reader::handle_read_content, this,
-			//		boost::asio::placeholders::error,
-			//		boost::asio::placeholders::bytes_transferred)));
 		}
 		else if (err != boost::asio::error::eof)
 		{
-			write_("", false);
+			LOG_ERROR() << "an error has occurred. boost error code: " << err;
 		}
 	}
 }

@@ -11,6 +11,8 @@ if (!$args)
 $name = $args[0]
 $path = $args[1]
 $arg  = $args[2]
+$user = $arg[3]
+$password = $arg[4]
 
 "Trying to install service $name from path $path with arguments $arg" | Add-Content $log
 

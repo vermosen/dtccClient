@@ -17,9 +17,6 @@ namespace dtcc
 		run_ = true;
 		LOG_INFO() << "activating service... ";
 
-		launchDebugger();
-
-		w_.connect(settings_.database_); // TODO: timeout
 		boost::thread * thr = new boost::thread(boost::bind(&serviceImpl::startWorkers, this));
 		LOG_INFO() << "activation completed";
 		thr->detach();
@@ -40,6 +37,17 @@ namespace dtcc
 
 	void serviceImpl::startWorkers()
 	{
+		launchDebugger();
+
+		try
+		{
+			w_.connect(settings_.database_); // TODO: timeout
+		}
+		catch (const std::exception & ex)
+		{
+			int i = 0;
+		}
+
 		writeRecordsDelegate f(boost::bind(&writer::write, &w_, _1));
 
 		LOG_INFO() << "creating " << settings_.workers_.size() << "workers";

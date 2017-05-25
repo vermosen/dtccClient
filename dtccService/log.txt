@@ -7,11 +7,11 @@ trying to start service (dtccService)
 SERVICE_NAME: dtccService 
         TYPE               : 10  WIN32_OWN_PROCESS  
         STATE              : 2  START_PENDING 
-                                (NOT_STOPPABLE, NOT_PAUSABLE, IGNORES_SHUTDOWN)
+                                (STOPPABLE, NOT_PAUSABLE, IGNORES_SHUTDOWN)
         WIN32_EXIT_CODE    : 0  (0x0)
         SERVICE_EXIT_CODE  : 0  (0x0)
-        CHECKPOINT         : 0x0
-        WAIT_HINT          : 0x7d0
-        PID                : 14568
+        CHECKPOINT         : 0x1
+        WAIT_HINT          : 0x0
+        PID                : 63460
         FLAGS              : 
 successfully added Windows service (dtccService)

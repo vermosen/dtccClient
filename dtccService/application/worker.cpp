@@ -22,8 +22,6 @@ namespace dtcc
 
 	void worker::work()
 	{
-		launchDebugger();
-		
 		// initialize and run the service
 		LOG_INFO() << "starting new io task...";
 
