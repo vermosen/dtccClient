@@ -161,7 +161,6 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="application\readers\reader.cpp" />
     <ClCompile Include="application\serviceImpl.cpp" />
     <ClCompile Include="application\worker.cpp" />
     <ClCompile Include="main.cpp" />
@@ -169,10 +168,6 @@
     <ClCompile Include="StdAfx.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="application\protocol.hpp" />
-    <ClInclude Include="application\protocols\http.hpp" />
-    <ClInclude Include="application\protocols\https.hpp" />
-    <ClInclude Include="application\readers\reader.hpp" />
     <ClInclude Include="application\serviceImpl.hpp" />
     <ClInclude Include="application\workerBase.hpp" />
     <ClInclude Include="application\worker.hpp" />

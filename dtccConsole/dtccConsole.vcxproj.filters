@@ -3,11 +3,9 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="StdAfx.cpp" />
-    <ClCompile Include="asio\asio.cpp" />
     <ClCompile Include="settings\parser\parseSettings.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="asio\asio.hpp" />
     <ClInclude Include="settings\parser\parseSettings.hpp" />
     <ClInclude Include="settings\parser\settingsAdapter.hpp" />
     <ClInclude Include="settings\parser\settingsGrammar.hpp" />

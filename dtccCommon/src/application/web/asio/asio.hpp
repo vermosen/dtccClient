@@ -11,17 +11,18 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/regex.hpp>
 
-#include "application/protocol.hpp"
+#include "application/webConnector.hpp"
+#include "application/web/asio/protocol.hpp"
 
 namespace dtcc
 {
 	typedef boost::function<void(const boost::system::error_code& err, std::string)> urlReadDelegate;
 
-	class reader
+	class asio : public webConnector
 	{
 	public:
-		reader(boost::shared_ptr<protocol> cnx, urlReadDelegate write);
-		~reader();
+		asio(boost::shared_ptr<protocol> cnx, urlReadDelegate write);
+		~asio();
 
 		void getAsync();
 		void setPath(const std::string & path);
@@ -58,6 +59,9 @@ namespace dtcc
 		// for size read
 		size_t transfert_;
 		static const boost::regex expr_;
+
+		// for factory registration
+		static registerType<webConnector, std::string, asio, webConnector::args> register_;
 	};
 }
 #endif

@@ -1,17 +1,3 @@
-starting install script
-Trying to install service dtccService from path C:\Git\dtccClient\x64\Debug\dtccService.exe with arguments -settings=C:\Git\dtccClient\dtccService\settings\dev.xml
-trying to create service (dtccService)
-[SC] CreateService SUCCESS
-trying to start service (dtccService)
-
-SERVICE_NAME: dtccService 
-        TYPE               : 10  WIN32_OWN_PROCESS  
-        STATE              : 2  START_PENDING 
-                                (STOPPABLE, NOT_PAUSABLE, IGNORES_SHUTDOWN)
-        WIN32_EXIT_CODE    : 0  (0x0)
-        SERVICE_EXIT_CODE  : 0  (0x0)
-        CHECKPOINT         : 0x1
-        WAIT_HINT          : 0x0
-        PID                : 124144
-        FLAGS              : 
-successfully added Windows service (dtccService)
+starting remove script
+Trying to remove service dtccService
+The service dtccService is not registered

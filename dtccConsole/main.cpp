@@ -18,7 +18,7 @@
 
 #include "application/compression/archive.hpp"
 #include "application/compression/zip.hpp"
-#include "application/webConnectors/all.hpp"
+#include "application/web/all.hpp"
 
 #include "database/recordsets/tradeRecordset.hpp"
 #include "database/connectors/sqlServer.hpp"

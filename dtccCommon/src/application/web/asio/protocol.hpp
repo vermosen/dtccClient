@@ -25,8 +25,10 @@ namespace dtcc
 
 		virtual void connect(const std::string & host, int port) = 0;
 		virtual boost::asio::ip::tcp::socket & socket() = 0;
+		virtual const std::string & name() const = 0;
 
 		// accessors
+		
 		const std::string & host() const { return host_; }
 		int port() const { return port_; }
 

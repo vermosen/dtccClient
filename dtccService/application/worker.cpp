@@ -84,7 +84,7 @@ namespace dtcc
 		{
 			LOG_INFO() << "host " + cnx_->host() + " successfully reached";
 
-			reader_ = boost::shared_ptr<reader>(new reader(cnx_,
+			reader_ = boost::shared_ptr<asio>(new asio(cnx_,
 				urlReadDelegate(boost::bind(&worker::reader_callback, this, 
 					boost::placeholders::_1, boost::placeholders::_2))));
 

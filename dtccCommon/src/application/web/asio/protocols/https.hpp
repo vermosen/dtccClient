@@ -5,7 +5,7 @@
 #include <boost/asio/ssl.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include "application/protocol.hpp"
+#include "application/web/asio/protocol.hpp"
 
 namespace dtcc
 {

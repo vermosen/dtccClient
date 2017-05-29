@@ -163,6 +163,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\application\web\asio\asio.cpp" />
     <ClCompile Include="src\database\connector.cpp" />
     <ClCompile Include="src\utils\debugger.cpp" />
     <ClInclude Include="src\application\asset\description.hpp" />
@@ -173,8 +174,12 @@
     <ClInclude Include="src\application\compression\zip\localFileHeader.hpp" />
     <ClInclude Include="src\application\compression\zip\method.hpp" />
     <ClInclude Include="src\application\webConnector.hpp" />
-    <ClInclude Include="src\application\webConnectors\all.hpp" />
-    <ClInclude Include="src\application\webConnectors\curl\curl.hpp">
+    <ClInclude Include="src\application\web\all.hpp" />
+    <ClInclude Include="src\application\web\asio\protocol.hpp" />
+    <ClInclude Include="src\application\web\asio\protocols\http.hpp" />
+    <ClInclude Include="src\application\web\asio\protocols\https.hpp" />
+    <ClInclude Include="src\application\web\asio\asio.hpp" />
+    <ClInclude Include="src\application\web\curl\curl.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug (intel)|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -220,7 +225,7 @@
     <ClCompile Include="src\application\compression\zip.cpp" />
     <ClCompile Include="src\application\compression\zip\centralDirectoryFileHeader.cpp" />
     <ClCompile Include="src\application\compression\zip\localFileHeader.cpp" />
-    <ClCompile Include="src\application\webConnectors\curl\curl.cpp">
+    <ClCompile Include="src\application\web\curl\curl.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug (intel)|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>

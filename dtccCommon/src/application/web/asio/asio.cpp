@@ -1,23 +1,27 @@
-#include "reader.hpp"
+#include "asio.hpp"
 #include "application/logger.hpp"
 
 namespace dtcc
 {
-	const boost::regex reader::expr_("(Content-Length: )(\\d+$)(\r)");
+	registerType<webConnector, std::string, asio, webConnector::args>
+		asio::register_(std::string("asio"));
 
-	reader::reader(boost::shared_ptr<protocol> cnx, urlReadDelegate write)
-		: cnx_(cnx)
+	const boost::regex asio::expr_("(Content-Length: )(\\d+$)(\r)");
+
+	asio::asio(boost::shared_ptr<protocol> cnx, urlReadDelegate write)
+		: webConnector(boost::tuple<std::string, std::string, int, int>())
+		, cnx_(cnx)
 		, write_(write)
 		, transfert_(1) {}
 
-	reader::~reader() {}
+	asio::~asio() {}
 
-	void reader::setPath(const std::string & path)
+	void asio::setPath(const std::string & path)
 	{
 		path_ = path;
 	}
 
-	void reader::getAsync()
+	void asio::getAsync()
 	{
 		{
 			// first clean the request and response buffers
@@ -32,21 +36,21 @@ namespace dtcc
 		request_stream << " HTTP/1.1\r\n";
 		request_stream << "Host: " << cnx_->host() << "\r\n";
 		request_stream << "Accept: */*\r\n";
-		//request_stream << "Connection: keep-alive\r\n";
+		request_stream << "Connection: keep-alive\r\n";
 		request_stream << "\r\n";
 
 		boost::asio::async_write(cnx_->socket(), *request_,
-			cnx_->strand().wrap(boost::bind(&reader::handle_write_request, this,
+			cnx_->strand().wrap(boost::bind(&asio::handle_write_request, this,
 				boost::asio::placeholders::error,
 				boost::asio::placeholders::bytes_transferred)));
 	}
 
-	void reader::handle_write_request(const boost::system::error_code& err, size_t bytes_transferred)
+	void asio::handle_write_request(const boost::system::error_code& err, size_t bytes_transferred)
 	{
 		if (!err)
 		{
 			boost::asio::async_read_until(cnx_->socket(), *response_, "\r\n",
-				cnx_->strand().wrap(boost::bind(&reader::handle_read_status_line, this,
+				cnx_->strand().wrap(boost::bind(&asio::handle_read_status_line, this,
 					boost::asio::placeholders::error,
 					boost::asio::placeholders::bytes_transferred)));
 		}
@@ -55,7 +59,7 @@ namespace dtcc
 			write_(err, "");
 		}
 	}
-	void reader::handle_read_status_line(const boost::system::error_code& err, size_t bytes_transferred)
+	void asio::handle_read_status_line(const boost::system::error_code& err, size_t bytes_transferred)
 	{
 		if (!err)
 		{
@@ -78,7 +82,7 @@ namespace dtcc
 			{
 				// Read the response headers, which are terminated by a blank line.
 				boost::asio::async_read_until(cnx_->socket(), *response_, "\r\n\r\n",
-					cnx_->strand().wrap(boost::bind(&reader::handle_read_headers, this,
+					cnx_->strand().wrap(boost::bind(&asio::handle_read_headers, this,
 						boost::asio::placeholders::error,
 						boost::asio::placeholders::bytes_transferred)));
 			}
@@ -86,7 +90,7 @@ namespace dtcc
 			{
 				// Read the response headers, which are terminated by a blank line.
 				boost::asio::async_read_until(cnx_->socket(), *response_, "\r\n\r\n",
-					cnx_->strand().wrap(boost::bind(&reader::handle_redirection, this,
+					cnx_->strand().wrap(boost::bind(&asio::handle_redirection, this,
 						boost::asio::placeholders::error,
 						boost::asio::placeholders::bytes_transferred)));
 			}
@@ -100,7 +104,7 @@ namespace dtcc
 			write_(err, "");
 		}
 	}
-	void reader::handle_redirection(const boost::system::error_code& err, size_t bytes_transferred)
+	void asio::handle_redirection(const boost::system::error_code& err, size_t bytes_transferred)
 	{
 		if (!err)
 		{
@@ -120,7 +124,7 @@ namespace dtcc
 		}
 	}
 
-	void reader::handle_read_headers(const boost::system::error_code& err, size_t bytes_transferred)
+	void asio::handle_read_headers(const boost::system::error_code& err, size_t bytes_transferred)
 	{
 		if (!err)
 		{
@@ -145,7 +149,7 @@ namespace dtcc
 			// Start reading remaining data until EOF.
 			boost::asio::async_read(cnx_->socket(), *response_,
 				boost::asio::transfer_at_least(transfert_),
-				cnx_->strand().wrap(boost::bind(&reader::handle_read_content, this,
+				cnx_->strand().wrap(boost::bind(&asio::handle_read_content, this,
 					boost::asio::placeholders::error,
 					boost::asio::placeholders::bytes_transferred)));
 		}
@@ -154,21 +158,25 @@ namespace dtcc
 			write_(err, "");
 		}
 	}
-	void reader::handle_read_content(const boost::system::error_code& err, size_t bytes_transferred)
+	void asio::handle_read_content(const boost::system::error_code& err, size_t bytes_transferred)
 	{
 		if (!err)
 		{
-			// Continue reading remaining data until EOF.
+			// there should be no second callback 
 			boost::asio::async_read(cnx_->socket(), *response_,
 				boost::asio::transfer_at_least(1),
-				cnx_->strand().wrap(boost::bind(&reader::handle_read_content, this,
+				cnx_->strand().wrap(boost::bind(&asio::handle_read_content, this,
 					boost::asio::placeholders::error,
 					boost::asio::placeholders::bytes_transferred)));
+
+			content_ << &*response_;
+			write_(boost::system::errc::make_error_code(boost::system::errc::success), content_.str());
 		}
 		else if (err == boost::asio::error::eof)
 		{
+			// connection has been closed
 			content_ << &*response_;
-			write_(boost::system::errc::make_error_code(boost::system::errc::success), content_.str());
+			write_(err, content_.str());
 		}
 		else if (err != boost::asio::error::eof)
 		{

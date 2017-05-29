@@ -1,4 +1,4 @@
-#include "application/webConnectors/curl/curl.hpp"
+#include "application/web/curl/curl.hpp"
 
 namespace dtcc
 {
