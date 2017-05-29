@@ -12,17 +12,30 @@ namespace dtcc
 
 	reader::~reader() {}
 
-	void reader::getAsync(const std::string & path)
+	void reader::setPath(const std::string & path)
 	{
+		path_ = path;
+	}
+
+	void reader::getAsync()
+	{
+		{
+			// first clean the request and response buffers
+			request_ = boost::shared_ptr<boost::asio::streambuf>(new boost::asio::streambuf());
+			response_ = boost::shared_ptr<boost::asio::streambuf>(new boost::asio::streambuf());
+		}
+
 		// build the query
-		std::ostream request_stream(&request_);
+		std::ostream request_stream(&*request_);
 		request_stream << "GET /";
-		request_stream << path;
+		request_stream << path_;
 		request_stream << " HTTP/1.1\r\n";
 		request_stream << "Host: " << cnx_->host() << "\r\n";
-		request_stream << "Accept: */*\r\n\r\n";
+		request_stream << "Accept: */*\r\n";
+		//request_stream << "Connection: keep-alive\r\n";
+		request_stream << "\r\n";
 
-		boost::asio::async_write(cnx_->socket(), request_,
+		boost::asio::async_write(cnx_->socket(), *request_,
 			cnx_->strand().wrap(boost::bind(&reader::handle_write_request, this,
 				boost::asio::placeholders::error,
 				boost::asio::placeholders::bytes_transferred)));
@@ -32,14 +45,14 @@ namespace dtcc
 	{
 		if (!err)
 		{
-			boost::asio::async_read_until(cnx_->socket(), response_, "\r\n",
+			boost::asio::async_read_until(cnx_->socket(), *response_, "\r\n",
 				cnx_->strand().wrap(boost::bind(&reader::handle_read_status_line, this,
 					boost::asio::placeholders::error,
 					boost::asio::placeholders::bytes_transferred)));
 		}
 		else
 		{
-			write_("", false);
+			write_(err, "");
 		}
 	}
 	void reader::handle_read_status_line(const boost::system::error_code& err, size_t bytes_transferred)
@@ -47,7 +60,7 @@ namespace dtcc
 		if (!err)
 		{
 			// Check that the response is OK.
-			std::istream response_stream(&response_);
+			std::istream response_stream(&*response_);
 			std::string http_version;
 			response_stream >> http_version;
 
@@ -58,13 +71,13 @@ namespace dtcc
 			std::getline(response_stream, status_message);
 			if (!response_stream || http_version.substr(0, 5) != "HTTP/")
 			{
-				write_("", false);
+				write_(boost::system::errc::make_error_code(boost::system::errc::wrong_protocol_type), false);
 			}
 
 			if (status_code == 200)
 			{
 				// Read the response headers, which are terminated by a blank line.
-				boost::asio::async_read_until(cnx_->socket(), response_, "\r\n\r\n",
+				boost::asio::async_read_until(cnx_->socket(), *response_, "\r\n\r\n",
 					cnx_->strand().wrap(boost::bind(&reader::handle_read_headers, this,
 						boost::asio::placeholders::error,
 						boost::asio::placeholders::bytes_transferred)));
@@ -72,19 +85,19 @@ namespace dtcc
 			else if (status_code == 302)							// redirection
 			{
 				// Read the response headers, which are terminated by a blank line.
-				boost::asio::async_read_until(cnx_->socket(), response_, "\r\n\r\n",
+				boost::asio::async_read_until(cnx_->socket(), *response_, "\r\n\r\n",
 					cnx_->strand().wrap(boost::bind(&reader::handle_redirection, this,
 						boost::asio::placeholders::error,
 						boost::asio::placeholders::bytes_transferred)));
 			}
 			else
 			{
-				write_("", false);
+				throw std::exception();
 			}
 		}
 		else
 		{
-			write_("", false);
+			write_(err, "");
 		}
 	}
 	void reader::handle_redirection(const boost::system::error_code& err, size_t bytes_transferred)
@@ -92,7 +105,7 @@ namespace dtcc
 		if (!err)
 		{
 			// Process the response headers.
-			std::istream response_stream(&response_);
+			std::istream response_stream(&*response_);
 
 			// unload the bufstream in header_ until we reached the content (standalone empty line)
 			// TODO: we may reach the end of the packet before the end of the header
@@ -103,7 +116,7 @@ namespace dtcc
 		}
 		else
 		{
-			write_("", false);
+			write_(err, "");
 		}
 	}
 
@@ -112,7 +125,7 @@ namespace dtcc
 		if (!err)
 		{
 			// Process the response headers.
-			std::istream response_stream(&response_);
+			std::istream response_stream(&*response_);
 
 			// unload the bufstream in header_ until we reached the content (standalone empty line)
 			// TODO: we may reach the end of the packet before the end of the header
@@ -130,7 +143,7 @@ namespace dtcc
 			}
 
 			// Start reading remaining data until EOF.
-			boost::asio::async_read(cnx_->socket(), response_,
+			boost::asio::async_read(cnx_->socket(), *response_,
 				boost::asio::transfer_at_least(transfert_),
 				cnx_->strand().wrap(boost::bind(&reader::handle_read_content, this,
 					boost::asio::placeholders::error,
@@ -138,7 +151,7 @@ namespace dtcc
 		}
 		else
 		{
-			write_("", false);
+			write_(err, "");
 		}
 	}
 	void reader::handle_read_content(const boost::system::error_code& err, size_t bytes_transferred)
@@ -146,7 +159,7 @@ namespace dtcc
 		if (!err)
 		{
 			// Continue reading remaining data until EOF.
-			boost::asio::async_read(cnx_->socket(), response_,
+			boost::asio::async_read(cnx_->socket(), *response_,
 				boost::asio::transfer_at_least(1),
 				cnx_->strand().wrap(boost::bind(&reader::handle_read_content, this,
 					boost::asio::placeholders::error,
@@ -154,8 +167,8 @@ namespace dtcc
 		}
 		else if (err == boost::asio::error::eof)
 		{
-			content_ << &response_;
-			write_(content_.str(), true);
+			content_ << &*response_;
+			write_(boost::system::errc::make_error_code(boost::system::errc::success), content_.str());
 		}
 		else if (err != boost::asio::error::eof)
 		{

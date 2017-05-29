@@ -12,7 +12,7 @@
     <bufferSize>1024</bufferSize>
   </connector>
   <database>dsn=sqlServer</database>
-  <cacheSize>31457280</cacheSize>
+  <cacheSize>1000</cacheSize>
   <workers>
     <worker>
       <asset>

@@ -15,7 +15,7 @@
 
 namespace dtcc
 {
-	typedef boost::function<void(std::string, bool)> urlReadDelegate;
+	typedef boost::function<void(const boost::system::error_code& err, std::string)> urlReadDelegate;
 
 	class reader
 	{
@@ -23,7 +23,8 @@ namespace dtcc
 		reader(boost::shared_ptr<protocol> cnx, urlReadDelegate write);
 		~reader();
 
-		void getAsync(const std::string & path);
+		void getAsync();
+		void setPath(const std::string & path);
 
 	private:
 		// client callbacks
@@ -37,14 +38,15 @@ namespace dtcc
 		urlReadDelegate write_;
 		boost::shared_ptr<protocol> cnx_;
 
-		std::string host_;
-		int port_;
+		std::string path_;
+		/*std::string host_;
+		int port_;*/
 
 		std::stringstream content_;
 		std::stringstream header_;
 
-		boost::asio::streambuf request_;
-		boost::asio::streambuf response_;
+		boost::shared_ptr<boost::asio::streambuf> request_;
+		boost::shared_ptr<boost::asio::streambuf> response_;
 
 		bool ready_;
 		bool success_;

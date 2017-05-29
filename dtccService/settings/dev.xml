@@ -7,7 +7,7 @@
   <database>
     <connection>dsn=sqlServer</connection>
   </database>
-  <cacheSize>31457280</cacheSize>
+  <cacheSize>100</cacheSize>
   <workers>
     <worker>
       <connector>
@@ -18,11 +18,11 @@
         <bufferSize>1024</bufferSize>
       </connector>
       <asset>
-        <type>IR</type>
-        <fileStr>RATES</fileStr>
+        <type>EQ</type>
+        <fileStr>EQUITIES</fileStr>
       </asset>
-      <timeoutAfterSuccess>1000</timeoutAfterSuccess>
-      <timeoutAfterFailure>10000</timeoutAfterFailure>
+      <timeoutAfterSuccess>100</timeoutAfterSuccess>
+      <timeoutAfterFailure>1000</timeoutAfterFailure>
       <maxAttempt>3</maxAttempt>
     </worker>
   </workers>

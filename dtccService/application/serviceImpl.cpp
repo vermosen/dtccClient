@@ -24,20 +24,28 @@ namespace dtcc
 
 	void serviceImpl::onStop()
 	{
+		LOG_INFO() << "called onStop method... ";
+
 		run_ = false;
 
 		// stop all the workers
 		for (auto & i : workers_) i->stop();
 
-		boost::this_thread::sleep(boost::posix_time::milliseconds(20000));
+		// TODO: pass a setting
+		boost::this_thread::sleep(boost::posix_time::milliseconds(30000));
 
 		// TODO: purge the data buffer
 		w_.close();
+
+		LOG_INFO() << "onStop method successfully completed";
 	}
 
 	void serviceImpl::startWorkers()
 	{
+
+		#ifdef _DEBUG
 		launchDebugger();
+		#endif
 
 		try
 		{

@@ -43,8 +43,8 @@ namespace dtcc
 		boost::unique_lock<boost::mutex> lk(m_);
 		while (!terminate_) cv_.wait(lk);
 
-		// wait 15 seconds before returning
-		boost::this_thread::sleep(boost::posix_time::milliseconds(15000));
+		// wait x seconds before returning
+		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 
 		ioTask_.reset();
 		t_->join();
@@ -56,7 +56,7 @@ namespace dtcc
 		cv_.notify_one();
 	}
 
-	std::string worker::filename()
+	void worker::setFilename()
 	{
 		// ex: https://kgc0418-tdw-data2-0.s3.amazonaws.com/slices/SLICE_COMMODITIES_2017_05_04_1.zip
 
@@ -75,7 +75,7 @@ namespace dtcc
 			<< boost::lexical_cast<std::string>(counter_)
 			<< ".zip";
 
-		return ss.str();
+		filename_ = ss.str();
 	}
 
 	void worker::connect_callback(bool result)
@@ -89,8 +89,9 @@ namespace dtcc
 					boost::placeholders::_1, boost::placeholders::_2))));
 
 			boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterSuccess_));
-			filename_ = filename();
-			reader_->getAsync(filename_);
+			setFilename();
+			reader_->setPath(filename_);
+			reader_->getAsync();
 		}
 		else // abort or retry ?
 		{
@@ -98,11 +99,11 @@ namespace dtcc
 		}
 	}
 
-	void worker::reader_callback(std::string msg, bool result)
+	void worker::reader_callback(const boost::system::error_code& err, std::string msg)
 	{
 		try
 		{
-			if (result)
+			if (!err)
 			{
 				counter_++;
 				LOG_INFO() << "successfully retrived data from " << filename_;
@@ -126,17 +127,17 @@ namespace dtcc
 
 						LOG_INFO() << "Zip extraction successfull...";
 
-						boost::chrono::high_resolution_clock::time_point start = boost::chrono::high_resolution_clock::now();
+						//boost::chrono::high_resolution_clock::time_point start = boost::chrono::high_resolution_clock::now();
 
 						std::vector<dtcc::database::tradeRecord> recs;
 
 						if (dtcc::parser::parseRecords(file.begin(), file.end(), recs, dt_))
 						{
-							LOG_INFO() << recs.size() << " conversions done in "
-								<< boost::chrono::duration_cast<boost::chrono::milliseconds> (
-									boost::chrono::high_resolution_clock::now() - start);
+							//LOG_INFO() << recs.size() << " conversions done in "
+							//	<< boost::chrono::duration_cast<boost::chrono::milliseconds> (
+							//		boost::chrono::high_resolution_clock::now() - start);
 
-							start = boost::chrono::high_resolution_clock::now();
+							//start = boost::chrono::high_resolution_clock::now();
 
 							write_(recs);
 						}
@@ -152,14 +153,19 @@ namespace dtcc
 					}
 					else
 					{
-						filename_ = filename();
-						boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterSuccess_));
-						reader_->getAsync(filename_);
+						cnx_->connect(settings_.connector_.host_, settings_.connector_.port_);
 					}
 				}
 			}
+			else if(err == boost::asio::error::connection_aborted)
+			{
+				// we just reset the connection and try again
+				boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterFailure_));
+				cnx_->connect(settings_.connector_.host_, settings_.connector_.port_);
+			}
 			else
 			{
+				// we reset the connection
 				throw std::exception();
 			}
 		}
@@ -177,7 +183,7 @@ namespace dtcc
 				else
 				{
 					boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterFailure_));
-					reader_->getAsync(filename_);
+					reader_->getAsync();
 				}
 			}
 			else
@@ -193,7 +199,7 @@ namespace dtcc
 				else
 				{
 					boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterFailure_));
-					reader_->getAsync(filename_);
+					reader_->getAsync();
 				}
 			}
 		}

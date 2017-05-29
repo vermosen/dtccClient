@@ -67,9 +67,10 @@
     <LibraryPath>..\lib;C:\build\openssl\openssl-1.1.0e-vs2015\lib64;$(SOCI)\$(Platform)\$(Configuration);$(GIT)\zlib\contrib\vstudio\vc14\$(Platform)\ZlibStat$(Configuration);C:\Git\curl\builds\libcurl-vc14-$(Platform)-$(configuration)-static-sspi-winssl\lib;$(LIB);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
-    <IncludePath>.;..\dtccCommon\src;$(INCLUDE);$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>..\lib;$(LIB);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>.;..\dtccCommon\src;$(INCLUDE);C:\build\openssl\openssl-1.1.0e-vs2015\include64\;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>..\lib;C:\build\openssl\openssl-1.1.0e-vs2015\lib64;$(SOCI)\$(Platform)\$(Configuration);$(GIT)\zlib\contrib\vstudio\vc14\$(Platform)\ZlibStat$(Configuration);C:\Git\curl\builds\libcurl-vc14-$(Platform)-$(configuration)-static-sspi-winssl\lib;$(LIB);$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <CustomBuildAfterTargets>BscMake</CustomBuildAfterTargets>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -126,29 +127,38 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_DLL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ZLIB_WINAPI;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalOptions>-D_WIN32_WINNT=0x0601 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>zlibstat.lib;dtccCommon_x64_v140_s.lib;libsoci_core_4_0.lib;libsoci_odbc_4_0.lib;libsslMT.lib;libcryptoMT.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ShowProgress>LinkVerbose</ShowProgress>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <AdditionalDependencies>dtccCommon_x64_v140_s.lib;zlibstat.lib;libcurl_a.lib;libsoci_core_4_0.lib;libsoci_odbc_4_0.lib;libsslMT.lib;libcryptoMT.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ShowProgress>NotSet</ShowProgress>
+      <AdditionalLibraryDirectories>C:\Git\zlib\contrib\vstudio\vc14\x64\ZlibStatRelease</AdditionalLibraryDirectories>
+      <AdditionalOptions>/WHOLEARCHIVE:dtccCommon_x64_v140_s.lib /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreBuildEvent>
       <Command>PowerShell -File "$(ProjectDir)script\remove.ps1" "$(ProjectName)"</Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>PowerShell -File "$(ProjectDir)script\install.ps1" "$(ProjectName)" "$(TargetPath)"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
+    <CustomBuildStep>
+      <Command>PowerShell.exe -File "$(ProjectDir)script\install.ps1" "$(ProjectName)" "$(TargetPath)" -settings=C:\Git\dtccClient\dtccService\settings\dev.xml</Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Outputs>foo</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="application\readers\reader.cpp" />
