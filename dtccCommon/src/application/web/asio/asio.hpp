@@ -11,14 +11,14 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/regex.hpp>
 
-#include "application/webConnector.hpp"
+#include "application/web/webReader.hpp"
 #include "application/web/asio/protocol.hpp"
 
 namespace dtcc
 {
 	typedef boost::function<void(const boost::system::error_code& err, std::string)> urlReadDelegate;
 
-	class asio : public webConnector
+	class asio : public webReader
 	{
 	public:
 		asio(boost::shared_ptr<protocol> cnx, urlReadDelegate write);
@@ -61,7 +61,7 @@ namespace dtcc
 		static const boost::regex expr_;
 
 		// for factory registration
-		static registerType<webConnector, std::string, asio, webConnector::args> register_;
+		static registerType<webReader, std::string, asio, webReader::args> register_;
 	};
 }
 #endif

@@ -79,10 +79,10 @@ int main(int argc, char ** argv)
 		db->connect(settings.database_);
 		dtcc::database::tradeRecordset rs(db);
 
-		// build the webConnector object	
-		auto cnx = dtcc::abstractFactory<dtcc::webConnector, std::string, dtcc::webConnector::args>::createInstance(
+		// build the webReader object	
+		auto cnx = dtcc::abstractFactory<dtcc::webReader, std::string, dtcc::webReader::args>::createInstance(
 			settings.connector_.type_, 
-			dtcc::webConnector::args(
+			dtcc::webReader::args(
 				settings.connector_.protocol_, 
 				settings.connector_.host_, 
 				settings.connector_.port_));

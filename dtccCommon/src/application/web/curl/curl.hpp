@@ -12,14 +12,14 @@
 #include <curl/curl.h>
 
 #include "application/logger.hpp"
-#include "application/webConnector.hpp"
+#include "application/web/webReader.hpp"
 
 namespace dtcc
 {
-	class curl : public webConnector
+	class curl : public webReader
 	{
 	public:
-		explicit curl(const webConnector::args & args);
+		explicit curl(const webReader::args & args);
 		~curl();
 
 		// TODO: make thread safe !
@@ -38,7 +38,7 @@ namespace dtcc
 		CURL * curl_;
 
 		// for factory registration
-		static registerType<webConnector, std::string, curl, webConnector::args> register_;
+		static registerType<webReader, std::string, curl, webReader::args> register_;
 	};
 }
 

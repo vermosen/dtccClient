@@ -10,14 +10,14 @@
 
 namespace dtcc
 {
-	class webConnector
+	class webReader
 	{
 	public:
 		typedef boost::tuple<std::string, std::string, int, int> args;
 
-		webConnector(const args & t)
+		webReader(const args & t)
 		: protocol_(boost::get<0>(t)), host_(boost::get<1>(t)), port_(boost::get<2>(t)) {};
-		virtual ~webConnector() {};
+		virtual ~webReader() {};
 
 		virtual boost::shared_ptr<std::string> fetch(query & q) = 0;
 

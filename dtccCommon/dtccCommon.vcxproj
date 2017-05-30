@@ -173,7 +173,7 @@
     <ClInclude Include="src\application\compression\zip\file.hpp" />
     <ClInclude Include="src\application\compression\zip\localFileHeader.hpp" />
     <ClInclude Include="src\application\compression\zip\method.hpp" />
-    <ClInclude Include="src\application\webConnector.hpp" />
+    <ClInclude Include="src\application\web\webReader.hpp" />
     <ClInclude Include="src\application\web\all.hpp" />
     <ClInclude Include="src\application\web\asio\protocol.hpp" />
     <ClInclude Include="src\application\web\asio\protocols\http.hpp" />
@@ -187,7 +187,7 @@
     <ClInclude Include="src\application\query.hpp" />
     <ClInclude Include="src\application\startup.hpp" />
     <ClCompile Include="src\application\service.cpp" />
-    <ClCompile Include="src\application\webConnector.cpp">
+    <ClCompile Include="src\application\web\webReader.cpp">
       <FileType>CppHeader</FileType>
     </ClCompile>
     <ClInclude Include="src\database\connector.hpp" />

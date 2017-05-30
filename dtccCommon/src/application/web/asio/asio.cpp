@@ -3,13 +3,13 @@
 
 namespace dtcc
 {
-	registerType<webConnector, std::string, asio, webConnector::args>
+	registerType<webReader, std::string, asio, webReader::args>
 		asio::register_(std::string("asio"));
 
 	const boost::regex asio::expr_("(Content-Length: )(\\d+$)(\r)");
 
 	asio::asio(boost::shared_ptr<protocol> cnx, urlReadDelegate write)
-		: webConnector(boost::tuple<std::string, std::string, int, int>())
+		: webReader(boost::tuple<std::string, std::string, int, int>())
 		, cnx_(cnx)
 		, write_(write)
 		, transfert_(1) {}

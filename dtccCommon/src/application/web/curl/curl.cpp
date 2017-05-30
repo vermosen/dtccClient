@@ -2,11 +2,11 @@
 
 namespace dtcc
 {
-	registerType<webConnector, std::string, curl, webConnector::args>
+	registerType<webReader, std::string, curl, webReader::args>
 		curl::register_(std::string("curl"));
 
-	curl::curl(const webConnector::args & args)
-		: webConnector(args), curl_(curl_easy_init())
+	curl::curl(const webReader::args & args)
+		: webReader(args), curl_(curl_easy_init())
 	{
 		buffer_ = boost::shared_ptr<std::string>(new std::string);
 		buffer_->reserve(boost::get<3>(args));
