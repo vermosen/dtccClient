@@ -35,8 +35,8 @@ namespace dtcc
 		// TODO: use the settings + factories
 		LOG_INFO() << "building new connector...";
 
-		cnx_ = boost::shared_ptr<protocol>(new https(io_,
-			connectionDelegate(boost::bind(&worker::connect_callback, this, boost::placeholders::_1)), true));
+		cnx_ = boost::shared_ptr<web::protocol>(new web::https(io_,
+			web::connectionDelegate(boost::bind(&worker::connect_callback, this, boost::placeholders::_1)), true));
 		cnx_->connect(settings_.connector_.host_, settings_.connector_.port_);
 
 		// barrier
@@ -84,14 +84,13 @@ namespace dtcc
 		{
 			LOG_INFO() << "host " + cnx_->host() + " successfully reached";
 
-			reader_ = boost::shared_ptr<asio>(new asio(cnx_,
-				urlReadDelegate(boost::bind(&worker::reader_callback, this, 
+			reader_ = boost::shared_ptr<dtcc::web::reader>(new dtcc::web::asio(cnx_,
+				web::urlReadDelegate(boost::bind(&worker::reader_callback, this,
 					boost::placeholders::_1, boost::placeholders::_2))));
 
 			boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterSuccess_));
 			setFilename();
-			reader_->setPath(filename_);
-			reader_->getAsync();
+			reader_->getAsync(web::query(filename_));
 		}
 		else // abort or retry ?
 		{

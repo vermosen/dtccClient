@@ -16,17 +16,23 @@
 
 namespace dtcc
 {
-	class query
+	namespace web
 	{
-	public:
-		explicit query() {}
-		virtual ~query() {}
-		virtual std::string path() const = 0;
-		std::string url(const std::string & protocol, const std::string & host) const
+		class query
 		{
-			return protocol + "://" + host + "/" + this->path();
-		}
-	};
+		public:
+			explicit query(const std::string & path) : path_(path) {}
+			virtual ~query() {}
+			std::string url(const protocol & cnx) const
+			{
+				return cnx. + "://" + host + "/" + path_;
+			}
+			const std::string & path() const { return path_; }
+
+		private:
+			std::string path_;
+		};
+	}
 }
 
 #endif#pragma once

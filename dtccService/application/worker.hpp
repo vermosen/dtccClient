@@ -45,8 +45,8 @@ namespace dtcc
 		boost::shared_ptr<boost::asio::io_service::work> ioTask_;
 		boost::shared_ptr<boost::asio::io_service> io_;
 
-		boost::shared_ptr<protocol> cnx_;
-		boost::shared_ptr<asio> reader_;
+		boost::shared_ptr<web::protocol> cnx_;
+		boost::shared_ptr<web::asio> reader_;
 		writeRecordsDelegate write_;
 
 		std::string filename_;

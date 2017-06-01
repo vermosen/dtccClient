@@ -11,53 +11,61 @@
 
 namespace dtcc
 {
-	typedef boost::function<void(bool)> connectionDelegate;
-
-	// TODO: unify with curl bindings
-	class protocol
+	namespace web
 	{
-	public:
-		protocol(boost::shared_ptr<boost::asio::io_service> io, connectionDelegate cnx)
-			: io_		(io		)
-			, st_		(*io_	)
-			, cnx_		(cnx	)
-			, resolver_	(*io_	) {}
+		typedef boost::function<void(bool)> connectionDelegate;
 
-		virtual void connect(const std::string & host, int port) = 0;
-		virtual boost::asio::ip::tcp::socket & socket() = 0;
-		virtual const std::string & name() const = 0;
-
-		// accessors
-		
-		const std::string & host() const { return host_; }
-		int port() const { return port_; }
-
-		boost::shared_ptr<boost::asio::io_service>	io_service() { return io_; };
-		boost::asio::strand	&			strand() { return st_; };
-
-		void handle_connect(const boost::system::error_code& err)
+		// TODO: unify with curl bindings
+		class protocol
 		{
-			if (!err)
+		public:
+			enum type
 			{
-				cnx_(true);
-			}
-			else
+				http = 1,
+				https = 2
+			};
+
+			protocol(boost::shared_ptr<boost::asio::io_service> io, connectionDelegate cnx)
+				: io_(io)
+				, st_(*io_)
+				, cnx_(cnx)
+				, resolver_(*io_) {}
+
+			virtual void connect(const std::string & host, int port) = 0;
+			virtual boost::asio::ip::tcp::socket & socket() = 0;
+			
+			// accessors
+			virtual const std::string & name() const = 0;
+			const std::string & host() const { return host_; }
+			int port() const { return port_; }
+
+			boost::shared_ptr<boost::asio::io_service>	io_service() { return io_; };
+			boost::asio::strand	&			strand() { return st_; };
+
+			void handle_connect(const boost::system::error_code& err)
 			{
-				// TODO: error handler
-				cnx_(false);
+				if (!err)
+				{
+					cnx_(true);
+				}
+				else
+				{
+					// TODO: error handler
+					cnx_(false);
+				}
 			}
-		}
 
-	protected:
-		boost::shared_ptr<boost::asio::io_service> io_;
+		protected:
+			boost::shared_ptr<boost::asio::io_service> io_;
 
-		boost::asio::strand st_;
-		boost::asio::ip::tcp::resolver resolver_;
+			boost::asio::strand st_;
+			boost::asio::ip::tcp::resolver resolver_;
 
-		connectionDelegate cnx_;
-		std::string host_;
-		int port_;
-	};
+			connectionDelegate cnx_;
+			std::string host_;
+			int port_;
+		};
+	}
 }
 
 

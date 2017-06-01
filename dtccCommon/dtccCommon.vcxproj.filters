@@ -51,19 +51,19 @@
     <ClInclude Include="src\database\record\parser\tradeRecordPolicies.hpp" />
     <ClInclude Include="src\database\record\enum.hpp" />
     <ClInclude Include="src\database\record\tradeRecord.hpp" />
-    <ClInclude Include="src\application\query.hpp" />
-    <ClInclude Include="src\application\queries\eod.hpp" />
-    <ClInclude Include="src\application\queries\intraday.hpp" />
     <ClInclude Include="src\application\asset\description.hpp" />
     <ClInclude Include="src\utils\thread.hpp" />
     <ClInclude Include="src\utils\debugger.hpp" />
-    <ClInclude Include="src\application\web\asio\protocols\http.hpp" />
-    <ClInclude Include="src\application\web\asio\protocols\https.hpp" />
     <ClInclude Include="src\application\web\asio\protocol.hpp" />
     <ClInclude Include="src\application\web\curl\curl.hpp" />
     <ClInclude Include="src\application\web\all.hpp" />
     <ClInclude Include="src\application\web\asio\asio.hpp" />
-    <ClInclude Include="src\application\web\webReader.hpp" />
+    <ClInclude Include="src\application\web\reader.hpp" />
+    <ClInclude Include="src\application\web\query.hpp" />
+    <ClInclude Include="src\application\web\asio\protocols\http.hpp" />
+    <ClInclude Include="src\application\web\asio\protocols\https.hpp" />
+    <ClInclude Include="src\application\web\queries\eod.hpp" />
+    <ClInclude Include="src\application\web\queries\intraday.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\compression\zip.cpp" />
@@ -74,13 +74,13 @@
     <ClCompile Include="src\application\startup.cpp" />
     <ClCompile Include="src\database\record\parser\parseRecords.cpp" />
     <ClCompile Include="src\application\compression\zip\localFileHeader.cpp" />
-    <ClCompile Include="src\application\queries\eod.cpp" />
-    <ClCompile Include="src\application\queries\intraday.cpp" />
     <ClCompile Include="src\application\service.cpp" />
     <ClCompile Include="src\utils\debugger.cpp" />
     <ClCompile Include="src\database\connector.cpp" />
     <ClCompile Include="src\application\web\curl\curl.cpp" />
     <ClCompile Include="src\application\web\asio\asio.cpp" />
-    <ClCompile Include="src\application\web\webReader.cpp" />
+    <ClCompile Include="src\application\web\reader.cpp" />
+    <ClCompile Include="src\application\web\queries\eod.cpp" />
+    <ClCompile Include="src\application\web\queries\intraday.cpp" />
   </ItemGroup>
 </Project>
