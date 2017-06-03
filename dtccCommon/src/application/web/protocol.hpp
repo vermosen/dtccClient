@@ -13,7 +13,7 @@ namespace dtcc
 {
 	namespace web
 	{
-		typedef boost::function<void(bool)> connectionDelegate;
+		typedef boost::function<void(const boost::system::error_code&)> connectionDelegate;
 
 		// TODO: unify with curl bindings
 		class protocol
@@ -35,32 +35,31 @@ namespace dtcc
 			virtual boost::asio::ip::tcp::socket & socket() = 0;
 			
 			// accessors
-			virtual const std::string & name() const = 0;
+			type name() const { return type_; }
 			const std::string & host() const { return host_; }
 			int port() const { return port_; }
 
-			boost::shared_ptr<boost::asio::io_service>	io_service() { return io_; };
-			boost::asio::strand	&			strand() { return st_; };
+			boost::shared_ptr<boost::asio::io_service> io_service() { return io_; };
+			boost::asio::strand	& strand() { return st_; };
 
 			void handle_connect(const boost::system::error_code& err)
 			{
 				if (!err)
 				{
-					cnx_(true);
+					cnx_(boost::system::errc::make_error_code(boost::system::errc::success));
 				}
 				else
 				{
-					// TODO: error handler
-					cnx_(false);
+					cnx_(err);
 				}
 			}
 
 		protected:
 			boost::shared_ptr<boost::asio::io_service> io_;
-
 			boost::asio::strand st_;
 			boost::asio::ip::tcp::resolver resolver_;
 
+			type type_;
 			connectionDelegate cnx_;
 			std::string host_;
 			int port_;

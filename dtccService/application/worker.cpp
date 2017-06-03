@@ -14,7 +14,7 @@ namespace dtcc
 		, nFailure_		(0			)
 		, terminate_	(false		)
 	{
-		io_ = boost::shared_ptr<boost::asio::io_service>(new boost::asio::io_service);
+		io_.reset(new boost::asio::io_service);
 		dt_ = boost::gregorian::day_clock::universal_day();
 	}
 
@@ -25,7 +25,7 @@ namespace dtcc
 		// initialize and run the service
 		LOG_INFO() << "starting new io task...";
 
-		ioTask_ = boost::shared_ptr<boost::asio::io_service::work>(new boost::asio::io_service::work(*io_));
+		ioTask_.reset(new boost::asio::io_service::work(*io_));
 
 		// runs in a separate thread
 		t_ = std::unique_ptr<boost::thread>(new boost::thread([&] { io_->run(); }));
@@ -46,6 +46,7 @@ namespace dtcc
 		// wait x seconds before returning
 		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 
+		// not clear
 		ioTask_.reset();
 		t_->join();
 	}
@@ -56,41 +57,42 @@ namespace dtcc
 		cv_.notify_one();
 	}
 
-	void worker::setFilename()
+	//void worker::setFilename()
+	//{
+	//	// ex: https://kgc0418-tdw-data2-0.s3.amazonaws.com/slices/SLICE_COMMODITIES_2017_05_04_1.zip
+
+	//	// parse the file name
+	//	// TODO: parse the date and add a date counter
+	//	std::stringstream ss;
+
+	//	auto * temp(new boost::gregorian::date_facet("%Y_%m_%d"));
+	//	ss.imbue(std::locale(ss.getloc(), temp));
+
+	//	ss	<< "slices/SLICE_"
+	//		<< settings_.description_.fileStr_
+	//		<< "_"
+	//		<< dt_
+	//		<< "_"
+	//		<< boost::lexical_cast<std::string>(counter_)
+	//		<< ".zip";
+
+	//	filename_ = ss.str();
+	//}
+
+	void worker::connect_callback(const boost::system::error_code& err)
 	{
-		// ex: https://kgc0418-tdw-data2-0.s3.amazonaws.com/slices/SLICE_COMMODITIES_2017_05_04_1.zip
-
-		// parse the file name
-		// TODO: parse the date and add a date counter
-		std::stringstream ss;
-
-		auto * temp(new boost::gregorian::date_facet("%Y_%m_%d"));
-		ss.imbue(std::locale(ss.getloc(), temp));
-
-		ss	<< "slices/SLICE_"
-			<< settings_.description_.fileStr_
-			<< "_"
-			<< dt_
-			<< "_"
-			<< boost::lexical_cast<std::string>(counter_)
-			<< ".zip";
-
-		filename_ = ss.str();
-	}
-
-	void worker::connect_callback(bool result)
-	{
-		if (result == true)
+		if (!err)
 		{
 			LOG_INFO() << "host " + cnx_->host() + " successfully reached";
 
-			reader_ = boost::shared_ptr<dtcc::web::reader>(new dtcc::web::asio(cnx_,
+			reader_.reset(new dtcc::web::asio(cnx_,
 				web::urlReadDelegate(boost::bind(&worker::reader_callback, this,
 					boost::placeholders::_1, boost::placeholders::_2))));
 
 			boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterSuccess_));
-			setFilename();
-			reader_->getAsync(web::query(filename_));
+			qr_ = boost::shared_ptr<web::intraday>(new web::intraday(dt_, settings_.description_));
+
+			reader_->getAsync(qr_);
 		}
 		else // abort or retry ?
 		{
@@ -152,7 +154,11 @@ namespace dtcc
 					}
 					else
 					{
-						cnx_->connect(settings_.connector_.host_, settings_.connector_.port_);
+						// cnx_->connect(settings_.connector_.host_, settings_.connector_.port_);
+						// submit a new qr
+						
+						reader_->getAsync(qr_);
+
 					}
 				}
 			}
@@ -182,7 +188,7 @@ namespace dtcc
 				else
 				{
 					boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterFailure_));
-					reader_->getAsync();
+					reader_->getAsync(qr_);
 				}
 			}
 			else
@@ -198,7 +204,7 @@ namespace dtcc
 				else
 				{
 					boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterFailure_));
-					reader_->getAsync();
+					reader_->getAsync(qr_);
 				}
 			}
 		}

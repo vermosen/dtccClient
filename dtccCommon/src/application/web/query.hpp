@@ -13,6 +13,7 @@
 
 #include <curl/curl.h>
 #include "application/logger.hpp"
+#include "application/web/protocol.hpp"
 
 namespace dtcc
 {
@@ -21,11 +22,11 @@ namespace dtcc
 		class query
 		{
 		public:
-			explicit query(const std::string & path) : path_(path) {}
+			explicit query() {}
 			virtual ~query() {}
 			std::string url(const protocol & cnx) const
 			{
-				return cnx. + "://" + host + "/" + path_;
+				return cnx.name() + "://" + cnx.host() + "/" + path_;
 			}
 			const std::string & path() const { return path_; }
 

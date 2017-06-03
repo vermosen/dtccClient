@@ -16,19 +16,22 @@ namespace dtcc
 		class intraday : public query
 		{
 		public:
-			intraday(const boost::gregorian::date & dt,
-				const asset::description & asset,
-				int counter = 1)
+			intraday(	const boost::gregorian::date & date,
+						const asset::description & asset,
+						int counter = 1)
 				: query()
 				, asset_(asset)
-				, dt_(dt)
+				, date_(date)
 				, counter_(counter) {}
 
 			virtual std::string path() const;
+			inline boost::gregorian::date date() const;
+			inline asset::description asset() const;
+			inline int & counter();
 
 		private:
 			asset::description asset_;
-			boost::gregorian::date dt_;
+			boost::gregorian::date date_;
 			int counter_;
 
 			static std::locale format_;

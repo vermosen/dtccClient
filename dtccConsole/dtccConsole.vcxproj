@@ -86,7 +86,7 @@
       <ShowProgress>NotSet</ShowProgress>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
-      <AdditionalOptions>/WHOLEARCHIVE:dtccCommon_x64_v140_sd.lib %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/WHOLEARCHIVE:dtccCommon_x64_v140_sd.lib /IGNORE:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ProjectReference>
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
@@ -136,11 +136,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="application\appRunner.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="settings\parser\parseSettings.cpp" />
     <ClCompile Include="StdAfx.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\appRunner.hpp" />
     <ClInclude Include="settings\parser\parseSettings.hpp" />
     <ClInclude Include="settings\parser\settingsAdapter.hpp" />
     <ClInclude Include="settings\parser\settingsGrammar.hpp" />

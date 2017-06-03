@@ -4,7 +4,7 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include "application/web/asio/protocol.hpp"
+#include "application/web/protocol.hpp"
 
 namespace dtcc
 {

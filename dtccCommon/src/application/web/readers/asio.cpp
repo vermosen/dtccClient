@@ -10,24 +10,22 @@ namespace dtcc
 
 		const boost::regex asio::expr_("(Content-Length: )(\\d+$)(\r)");
 
-		asio::asio(boost::shared_ptr<protocol> cnx, urlReadDelegate write)
+		asio::asio(const boost::shared_ptr<protocol> & cnx, const urlReadDelegate & write)
 			: reader(cnx, write)
 			, transfert_(1) {}
 
 		asio::~asio() {}
 
-		void asio::getAsync(const query & q)
+		void asio::getAsync(const boost::shared_ptr<query> & q)
 		{
-			{
-				// first clean the request and response buffers
-				request_ = boost::shared_ptr<boost::asio::streambuf>(new boost::asio::streambuf());
-				response_ = boost::shared_ptr<boost::asio::streambuf>(new boost::asio::streambuf());
-			}
+			// first clean the request and response buffers
+			request_ = boost::shared_ptr<boost::asio::streambuf>(new boost::asio::streambuf());
+			response_ = boost::shared_ptr<boost::asio::streambuf>(new boost::asio::streambuf());
 
 			// build the query
 			std::ostream request_stream(&*request_);
 			request_stream << "GET /";
-			request_stream << q.path();
+			request_stream << q->path();
 			request_stream << " HTTP/1.1\r\n";
 			request_stream << "Host: " << cnx_->host() << "\r\n";
 			request_stream << "Accept: */*\r\n";

@@ -4,6 +4,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="StdAfx.cpp" />
     <ClCompile Include="settings\parser\parseSettings.cpp" />
+    <ClCompile Include="application\appRunner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="settings\parser\parseSettings.hpp" />
@@ -11,6 +12,7 @@
     <ClInclude Include="settings\parser\settingsGrammar.hpp" />
     <ClInclude Include="settings.hpp" />
     <ClInclude Include="StdAfx.hpp" />
+    <ClInclude Include="application\appRunner.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="settings\prod.xml" />

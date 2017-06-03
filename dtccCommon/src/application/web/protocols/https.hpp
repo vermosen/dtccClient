@@ -5,7 +5,7 @@
 #include <boost/asio/ssl.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include "application/web/asio/protocol.hpp"
+#include "application/web/protocol.hpp"
 
 namespace dtcc
 {
@@ -22,8 +22,6 @@ namespace dtcc
 			{
 				context_.set_default_verify_paths();
 			}
-
-			const std::string & name() const { return "https"; }
 
 			virtual void connect(const std::string & host, int port)
 			{
@@ -78,7 +76,7 @@ namespace dtcc
 				else
 				{
 					// TODO: error handler
-					cnx_(false);
+					cnx_(err);
 				}
 			}
 

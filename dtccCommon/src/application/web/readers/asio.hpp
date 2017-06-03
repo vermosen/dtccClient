@@ -12,20 +12,19 @@
 #include <boost/regex.hpp>
 
 #include "application/web/reader.hpp"
-#include "application/web/asio/protocol.hpp"
+#include "application/web/protocol.hpp"
 
 namespace dtcc
 {
 	namespace web
 	{
-		class asio : reader
+		class asio : public reader
 		{
 		public:
-			asio(boost::shared_ptr<protocol> cnx, urlReadDelegate write);
+			asio(const boost::shared_ptr<protocol> & cnx, const urlReadDelegate & write);
 			~asio();
 
-			virtual void getAsync(const query & q);
-			//void setPath(const std::string & path);
+			virtual void getAsync(const boost::shared_ptr<query> & q);
 
 		private:
 			// client callbacks

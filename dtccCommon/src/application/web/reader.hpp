@@ -8,26 +8,29 @@
 
 #include "pattern/abstractFactory.hpp"
 #include "application/web/query.hpp"
-#include "application/web/asio/protocol.hpp"
+#include "application/web/protocol.hpp"
 
 namespace dtcc
 {
 	namespace web
 	{
-		// TODO: return a string reference
-		typedef boost::function<void(const boost::system::error_code& err, std::string)> urlReadDelegate;
+		// a callback function TODO: use move semantic
+		typedef boost::function<void(const boost::system::error_code&, std::string)> urlReadDelegate;
 
 		class reader
 		{
 		public:
-			reader(boost::shared_ptr<protocol> cnx, urlReadDelegate write);
+			reader(const boost::shared_ptr<protocol> & cnx, const urlReadDelegate & write);
 			virtual ~reader();
 
-			virtual void getAsync(const query & q) = 0;
+			virtual void getAsync(const boost::shared_ptr<query> & query) = 0;
+
+			boost::shared_ptr<query> getQuery();
 
 		protected:
 			urlReadDelegate write_;
 			boost::shared_ptr<protocol> cnx_;
+			boost::shared_ptr<query> query_;
 		};
 	}
 }
