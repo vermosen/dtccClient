@@ -35,9 +35,9 @@ namespace dtcc
 			virtual boost::asio::ip::tcp::socket & socket() = 0;
 			
 			// accessors
-			type name() const { return type_; }
 			const std::string & host() const { return host_; }
 			int port() const { return port_; }
+			type name() const { return type_; }
 
 			boost::shared_ptr<boost::asio::io_service> io_service() { return io_; };
 			boost::asio::strand	& strand() { return st_; };
@@ -56,13 +56,13 @@ namespace dtcc
 
 		protected:
 			boost::shared_ptr<boost::asio::io_service> io_;
-			boost::asio::strand st_;
 			boost::asio::ip::tcp::resolver resolver_;
+			boost::asio::strand st_;
 
-			type type_;
 			connectionDelegate cnx_;
 			std::string host_;
 			int port_;
+			type type_;
 		};
 	}
 }

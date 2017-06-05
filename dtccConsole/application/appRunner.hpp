@@ -45,7 +45,7 @@ namespace dtcc
 		void run();
 
 		void connect_callback	(const boost::system::error_code& err);
-		void load_callback		(const boost::system::error_code& err, std::string data);
+		void load_callback		(const boost::system::error_code& err, const dtcc::web::content & ct);
 
 	private:
 		dtcc::settings settings_;
@@ -64,6 +64,10 @@ namespace dtcc
 		boost::condition_variable cv_;
 		std::atomic<bool> finished_;
 		boost::mutex m_;
+
+		// the iterator
+		std::vector<asset::description>::const_iterator it_;
+		boost::gregorian::date dt_;
 	};
 }
 

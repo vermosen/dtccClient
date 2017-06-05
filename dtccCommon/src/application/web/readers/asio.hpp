@@ -18,43 +18,41 @@ namespace dtcc
 {
 	namespace web
 	{
-		class asio : public reader
+		namespace asio
 		{
-		public:
-			asio(const boost::shared_ptr<protocol> & cnx, const urlReadDelegate & write);
-			~asio();
+			class reader : public web::reader
+			{
+			public:
+				reader(const boost::shared_ptr<protocol> & cnx, const urlReadDelegate & write);
+				~reader();
 
-			virtual void getAsync(const boost::shared_ptr<query> & q);
+				virtual void getAsync(const boost::shared_ptr<query> &);
 
-		private:
-			// client callbacks
-			void handle_write_request	(const boost::system::error_code& err, size_t bytes_transferred);
-			void handle_read_status_line(const boost::system::error_code& err, size_t bytes_transferred);
-			void handle_redirection		(const boost::system::error_code& err, size_t bytes_transferred);
-			void handle_read_headers	(const boost::system::error_code& err, size_t bytes_transferred);
-			void handle_read_content	(const boost::system::error_code& err, size_t bytes_transferred);
+			private:
+				// client callbacks
+				void handle_write_request(const boost::system::error_code& err, size_t bytes_transferred);
+				void handle_read_status_line(const boost::system::error_code& err, size_t bytes_transferred);
+				void handle_redirection(const boost::system::error_code& err, size_t bytes_transferred);
+				void handle_read_headers(const boost::system::error_code& err, size_t bytes_transferred);
+				void handle_read_content(const boost::system::error_code& err, size_t bytes_transferred);
 
-		private:
-			std::stringstream content_;
-			std::stringstream header_;
+			private:
+				content content_;
+				std::stringstream header_;
 
-			boost::shared_ptr<boost::asio::streambuf> request_;
-			boost::shared_ptr<boost::asio::streambuf> response_;
+				// r/w buffers
+				boost::asio::streambuf request_;
+				boost::asio::streambuf response_;
 
-			bool ready_;
-			bool success_;
+				/*bool ready_; bool success_;*/
 
-			// for chucks management
-			bool chunked_;
-			int chunckSize_;
+				// for header read
+				static const boost::regex expr_;
 
-			// for size read
-			size_t transfert_;
-			static const boost::regex expr_;
-
-			// for factory registration
-			//static registerType<webReader, std::string, asio, webReader::args> register_;
-		};
+				// for factory registration
+				//static registerType<webReader, std::string, asio, webReader::args> register_;
+			};
+		}
 	}
 }
 #endif

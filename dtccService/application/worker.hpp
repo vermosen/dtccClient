@@ -7,8 +7,9 @@
 #include <sstream>
 
 #include <boost/asio.hpp>
-#include "boost/date_time/gregorian/gregorian.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/chrono.hpp>
+#include <boost/lambda/lambda.hpp>
 
 #include "application/workerBase.hpp"
 #include "application/web/protocols/https.hpp"
@@ -31,8 +32,8 @@ namespace dtcc
 		void stop();
 
 	private:
-		void connect_callback(bool result);
-		void reader_callback(const boost::system::error_code& err, std::string msg);		// TODO: see if the string get copied here and how to avoid copy
+		void connect_callback(const boost::system::error_code& err);
+		void reader_callback(const boost::system::error_code& err, const dtcc::web::content & ct);		// TODO: see if the string get copied here and how to avoid copy
 
 		// void error_callback() // TODO
 		settings::worker & settings_;

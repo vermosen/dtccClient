@@ -11,6 +11,23 @@ namespace dtcc
 {
 	namespace web
 	{
+		namespace asio
+		{
+			class https
+			{
+				https(boost::shared_ptr<boost::asio::io_service> io) {};
+			};
+		}
+		
+		namespace curl
+		{
+			class https
+			{
+				https() {};
+			};
+		}
+
+		/*template <typename connector>*/
 		class https : public protocol
 		{
 		public:

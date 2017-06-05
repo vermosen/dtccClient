@@ -47,8 +47,7 @@ namespace dtcc
 				}
 				else
 				{
-					// TODO: error handler
-					cnx_(false);
+					cnx_(err);
 				}
 			}
 

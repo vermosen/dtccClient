@@ -176,7 +176,7 @@
     <ClInclude Include="settings\parser\parseSettings.hpp" />
     <ClInclude Include="settings\parser\settingsAdapter.hpp" />
     <ClInclude Include="settings\parser\settingsGrammar.hpp" />
-    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="StdAfx.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="script\install.ps1" />

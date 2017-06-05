@@ -37,6 +37,7 @@ namespace dtcc
 
 		cnx_ = boost::shared_ptr<web::protocol>(new web::https(io_,
 			web::connectionDelegate(boost::bind(&worker::connect_callback, this, boost::placeholders::_1)), true));
+
 		cnx_->connect(settings_.connector_.host_, settings_.connector_.port_);
 
 		// barrier
@@ -57,37 +58,17 @@ namespace dtcc
 		cv_.notify_one();
 	}
 
-	//void worker::setFilename()
-	//{
-	//	// ex: https://kgc0418-tdw-data2-0.s3.amazonaws.com/slices/SLICE_COMMODITIES_2017_05_04_1.zip
-
-	//	// parse the file name
-	//	// TODO: parse the date and add a date counter
-	//	std::stringstream ss;
-
-	//	auto * temp(new boost::gregorian::date_facet("%Y_%m_%d"));
-	//	ss.imbue(std::locale(ss.getloc(), temp));
-
-	//	ss	<< "slices/SLICE_"
-	//		<< settings_.description_.fileStr_
-	//		<< "_"
-	//		<< dt_
-	//		<< "_"
-	//		<< boost::lexical_cast<std::string>(counter_)
-	//		<< ".zip";
-
-	//	filename_ = ss.str();
-	//}
-
 	void worker::connect_callback(const boost::system::error_code& err)
 	{
 		if (!err)
 		{
+			cnx_->socket().set_option(boost::asio::socket_base::keep_alive(true));
+
 			LOG_INFO() << "host " + cnx_->host() + " successfully reached";
 
-			reader_.reset(new dtcc::web::asio(cnx_,
+			reader_.reset(new dtcc::web::asio::reader(cnx_,
 				web::urlReadDelegate(boost::bind(&worker::reader_callback, this,
-					boost::placeholders::_1, boost::placeholders::_2))));
+					boost::asio::placeholders::error, boost::lambda::_2))));
 
 			boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterSuccess_));
 			qr_ = boost::shared_ptr<web::intraday>(new web::intraday(dt_, settings_.description_));
@@ -100,7 +81,7 @@ namespace dtcc
 		}
 	}
 
-	void worker::reader_callback(const boost::system::error_code& err, std::string msg)
+	void worker::reader_callback(const boost::system::error_code& err, const dtcc::web::content & ct)
 	{
 		try
 		{
@@ -110,7 +91,7 @@ namespace dtcc
 				LOG_INFO() << "successfully retrived data from " << filename_;
 
 				// unzipping the records
-				dtcc::archive<dtcc::zip::zip> ar(std::move(msg));
+				dtcc::archive<dtcc::zip::zip> ar(std::move(ct.stream_.str()));
 
 				if (!ar.open())
 				{
@@ -134,12 +115,6 @@ namespace dtcc
 
 						if (dtcc::parser::parseRecords(file.begin(), file.end(), recs, dt_))
 						{
-							//LOG_INFO() << recs.size() << " conversions done in "
-							//	<< boost::chrono::duration_cast<boost::chrono::milliseconds> (
-							//		boost::chrono::high_resolution_clock::now() - start);
-
-							//start = boost::chrono::high_resolution_clock::now();
-
 							write_(recs);
 						}
 						else

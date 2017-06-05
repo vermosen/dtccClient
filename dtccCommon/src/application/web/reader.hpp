@@ -14,8 +14,18 @@ namespace dtcc
 {
 	namespace web
 	{
+		// the response content
+		class content
+		{
+		public:
+			size_t length_;
+			std::stringstream stream_;
+			bool chunked_;
+			size_t chunkSize_;
+		};
+
 		// a callback function TODO: use move semantic
-		typedef boost::function<void(const boost::system::error_code&, std::string)> urlReadDelegate;
+		typedef boost::function<void(const boost::system::error_code&, const content &)> urlReadDelegate;
 
 		class reader
 		{

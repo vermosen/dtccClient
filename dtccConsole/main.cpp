@@ -1,22 +1,6 @@
 #ifndef MAIN_CPP_
 #define MAIN_CPP_
 
-//#define FUSION_MAX_VECTOR_SIZE 45
-
-//#include <fstream>
-//#include <streambuf>
-//#include <exception>
-//#include <array>
-//#include <vector>
-//#include <functional>
-
-//#include <boost/thread.hpp>
-//#include <boost/chrono.hpp>
-//#include <boost/lexical_cast.hpp>
-//#include <boost/iostreams/device/file.hpp>
-//#include <boost/iostreams/stream.hpp>
-//#include <boost/lambda/lambda.hpp>
-
 #include "application/logger.hpp"
 #include "application/startup.hpp"
 #include "application/appRunner.hpp"

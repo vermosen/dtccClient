@@ -18,29 +18,32 @@ namespace dtcc
 {
 	namespace web
 	{
-		//class curl : public reader
-		//{
-		//public:
-		//	explicit curl(const reader::args & args);
-		//	~curl();
+		namespace curl
+		{
+			//class reader : public web::reader
+			//{
+			//public:
+			//	explicit reader(const reader::args & args);
+			//	~reader();
 
-		//	// TODO: make thread safe !
-		//	virtual boost::shared_ptr<std::string> getAsync(query & q);
+			//	// TODO: make thread safe !
+			//	virtual boost::shared_ptr<std::string> getAsync(query & q);
 
-		//private:
-		//	void appendBody(char *, size_t);
-		//	void appendHeader(char *, size_t);
+			//private:
+			//	void appendBody(char *, size_t);
+			//	void appendHeader(char *, size_t);
 
-		//	// callbacks
-		//	static size_t writeMemoryCallback(char * contents, size_t size, size_t nmemb, std::function<void(char *, size_t)> * writer);
-		//	static size_t writeHeaderCallback(char * contents, size_t size, size_t nmemb, std::function<void(char *, size_t)> * writer);
+			//	// callbacks
+			//	static size_t writeMemoryCallback(char * contents, size_t size, size_t nmemb, std::function<void(char *, size_t)> * writer);
+			//	static size_t writeHeaderCallback(char * contents, size_t size, size_t nmemb, std::function<void(char *, size_t)> * writer);
 
-		//	boost::shared_ptr<std::string> buffer_;
-		//	CURL * curl_;
+			//	boost::shared_ptr<std::string> buffer_;
+			//	CURL * curl_;
 
-		//	// for factory registration
-		//	static registerType<reader, std::string, curl, reader::args> register_;
-		//};
+			//	// for factory registration
+			//	static registerType<reader, std::string, curl, reader::args> register_;
+			//};
+		}
 	}
 }
 

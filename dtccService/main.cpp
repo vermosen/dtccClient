@@ -1,8 +1,6 @@
 #ifndef MAIN_CPP_
 #define MAIN_CPP_
 
-
-
 #include <fstream>
 #include <exception>
 
@@ -18,7 +16,7 @@
 #include "utils/debugger.hpp"
 
 #ifdef _WIN32
-#include "StdAfx.h"
+#include "StdAfx.hpp"
 #include <WinSock.h>
 #include <Windows.h>
 #else

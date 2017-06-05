@@ -16,7 +16,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="StdAfx.h" />
     <ClInclude Include="application\serviceImpl.hpp" />
     <ClInclude Include="settings\parser\parseSettings.hpp" />
     <ClInclude Include="settings\parser\settingsAdapter.hpp" />
@@ -25,6 +24,7 @@
     <ClInclude Include="application\workerBase.hpp" />
     <ClInclude Include="application\writer.hpp" />
     <ClInclude Include="application\worker.hpp" />
+    <ClInclude Include="StdAfx.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="script\remove.ps1" />

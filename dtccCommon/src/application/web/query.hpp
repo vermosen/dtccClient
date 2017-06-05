@@ -26,12 +26,9 @@ namespace dtcc
 			virtual ~query() {}
 			std::string url(const protocol & cnx) const
 			{
-				return cnx.name() + "://" + cnx.host() + "/" + path_;
+				return cnx.name() + "://" + cnx.host() + "/" + path();
 			}
-			const std::string & path() const { return path_; }
-
-		private:
-			std::string path_;
+			virtual std::string path() const = 0;
 		};
 	}
 }

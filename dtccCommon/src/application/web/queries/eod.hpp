@@ -20,7 +20,8 @@ namespace dtcc
 				const asset::description & asset)
 				: query()
 				, asset_(asset)
-				, date_(date) {}
+				, date_(date)
+				, format_(std::locale::classic(), new boost::gregorian::date_facet("%Y_%m_%d")) {}
 
 			virtual std::string path() const;
 			boost::gregorian::date date() const;
@@ -29,7 +30,7 @@ namespace dtcc
 		private:
 			asset::description asset_;
 			boost::gregorian::date date_;
-			static std::locale format_;
+			std::locale format_;
 		};
 	}
 }

@@ -4,9 +4,9 @@
 
 #include <boost/thread.hpp>
 
+#include "application/worker.hpp"
 #include "application/logger.hpp"
 #include "application/writer.hpp"
-#include "application/worker.hpp"
 #include "application/service.hpp"
 #include "utils/debugger.hpp"
 

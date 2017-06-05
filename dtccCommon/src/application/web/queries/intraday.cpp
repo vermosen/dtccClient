@@ -4,8 +4,6 @@ namespace dtcc
 {
 	namespace web
 	{
-		std::locale intraday::format_(std::locale::classic(), new boost::gregorian::date_facet("%Y_%m_%d"));
-
 		std::string intraday::path() const
 		{
 			std::stringstream path;
