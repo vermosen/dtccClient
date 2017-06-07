@@ -61,7 +61,6 @@ namespace dtcc
 		LPSTR name_;									// The name of the service
 		SERVICE_STATUS status_;							// The status of the service
 		SERVICE_STATUS_HANDLE statusHandle_;			// The service status handle
-
 		static service * instance_;						// the service instance
 	};
 }

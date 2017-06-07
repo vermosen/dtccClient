@@ -15,55 +15,73 @@ namespace dtcc
 	{
 		typedef boost::function<void(const boost::system::error_code&)> connectionDelegate;
 
-		// TODO: unify with curl bindings
 		class protocol
 		{
 		public:
 			enum type
 			{
-				http = 1,
-				https = 2
+				http	= 1,
+				https	= 2
 			};
 
-			protocol(boost::shared_ptr<boost::asio::io_service> io, connectionDelegate cnx)
-				: io_(io)
-				, st_(*io_)
-				, cnx_(cnx)
-				, resolver_(*io_) {}
+			protocol(type type, const connectionDelegate & dlg, bool keepAlive) : dlg_(dlg) {}
 
-			virtual void connect(const std::string & host, int port) = 0;
-			virtual boost::asio::ip::tcp::socket & socket() = 0;
-			
-			// accessors
-			const std::string & host() const { return host_; }
-			int port() const { return port_; }
-			type name() const { return type_; }
+			void connect(const std::string & host, int port)
+			{
+				host_ = host; port_ = port;
+				this->connectImpl();
+			}
 
-			boost::shared_ptr<boost::asio::io_service> io_service() { return io_; };
-			boost::asio::strand	& strand() { return st_; };
+			virtual void connectImpl() = 0;
 
 			void handle_connect(const boost::system::error_code& err)
 			{
 				if (!err)
 				{
-					cnx_(boost::system::errc::make_error_code(boost::system::errc::success));
+					dlg_(boost::system::errc::make_error_code(boost::system::errc::success));
 				}
 				else
 				{
-					cnx_(err);
+					dlg_(err);
 				}
 			}
 
-		protected:
-			boost::shared_ptr<boost::asio::io_service> io_;
-			boost::asio::ip::tcp::resolver resolver_;
-			boost::asio::strand st_;
+			// accessors
+			const std::string & host() const { return host_; }
+			int port() const { return port_; }
+			type name() const { return type_; }
+			bool keepAlive() const { return keepAlive_; }
 
-			connectionDelegate cnx_;
+		protected:
+			connectionDelegate dlg_;
 			std::string host_;
 			int port_;
 			type type_;
+			bool keepAlive_;
 		};
+
+		namespace asio
+		{
+			class protocol : public web::protocol
+			{
+			public:
+
+				protocol(web::protocol::type type, boost::shared_ptr<boost::asio::io_service> io, const connectionDelegate & dlg, bool keepAlive)
+					: web::protocol(type, dlg, keepAlive)
+					, io_(io)
+					, st_(*io_)
+					, resolver_(*io_) {}
+
+				virtual boost::asio::ip::tcp::socket & socket() = 0;
+				boost::shared_ptr<boost::asio::io_service> io_service() { return io_; };
+				boost::asio::strand	& strand() { return st_; };
+
+			protected:
+				boost::shared_ptr<boost::asio::io_service> io_;
+				boost::asio::ip::tcp::resolver resolver_;
+				boost::asio::strand st_;
+			};
+		}
 	}
 }
 

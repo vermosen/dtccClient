@@ -25,8 +25,8 @@ namespace dtcc
 		setThreadName(t_->get_id(), "io runner");
 
 		// build the protocol object
-		cnx_.reset(new dtcc::web::https(io_, dtcc::web::connectionDelegate(
-			boost::bind(&appRunner::connect_callback, this, boost::asio::placeholders::error))));
+		cnx_.reset(new dtcc::web::asio::https(io_, dtcc::web::connectionDelegate(
+			boost::bind(&appRunner::connect_callback, this, boost::asio::placeholders::error)), false, true));
 
 		cnx_->connect(settings_.connector_.host_, settings_.connector_.port_);
 
@@ -60,6 +60,7 @@ namespace dtcc
 		{
 			LOG_ERROR() << err.category().name() << ":" << err.value();
 			finished_ = true;
+			cv_.notify_one();
 		}
 	}
 	void appRunner::load_callback(const boost::system::error_code& err, const dtcc::web::content & ct)
@@ -168,12 +169,14 @@ namespace dtcc
 							{
 								LOG_INFO() << "All the activity successfully finished !";
 								finished_ = true;
+								cv_.notify_one();
 							}
 						}
 						else
 						{
 							LOG_ERROR() << "An error has occurred while converting the records";
 							finished_ = true;
+							cv_.notify_one();
 						}
 					}
 				}
@@ -188,6 +191,7 @@ namespace dtcc
 		{
 			LOG_ERROR() << err.category().name() << ":" << err.value();
 			finished_ = true;
+			cv_.notify_one();
 		}
 	}
 }

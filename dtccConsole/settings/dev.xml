@@ -13,7 +13,7 @@
   </connector>
   <database>dsn=sqlServer</database>
   <startDate>2016-01-07</startDate>
-  <endDate>2016-02-07</endDate>
+  <endDate>2016-01-10</endDate>
   <cacheSize>31457280</cacheSize>
   <assets>
     <asset>

@@ -4,9 +4,9 @@
 
 #include <boost/thread.hpp>
 
-#include "application/worker.hpp"
+#include "application/service/worker.hpp"
 #include "application/logger.hpp"
-#include "application/writer.hpp"
+#include "application/service/writer.hpp"
 #include "application/service.hpp"
 #include "utils/debugger.hpp"
 
@@ -29,13 +29,17 @@ namespace dtcc
 		virtual void onShutdown() { run_ = false; }
 
 	private:
-		void startWriter();
+		void connectWriter();
 		void startWorkers();
 
 		bool run_;
 		settings settings_;
 		std::vector<boost::shared_ptr<worker>> workers_;
 		writer w_;
+
+		boost::condition_variable cv_;
+		std::atomic<bool> terminate_;
+		boost::mutex m_;
 	};
 }
 

@@ -44,10 +44,11 @@ namespace dtcc
 				boost::asio::streambuf request_;
 				boost::asio::streambuf response_;
 
-				/*bool ready_; bool success_;*/
-
 				// for header read
 				static const boost::regex expr_;
+
+				// the connection protocol
+				boost::shared_ptr<protocol> cnx_;
 
 				// for factory registration
 				//static registerType<webReader, std::string, asio, webReader::args> register_;

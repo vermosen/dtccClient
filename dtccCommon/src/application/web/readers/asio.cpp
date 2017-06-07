@@ -13,7 +13,8 @@ namespace dtcc
 			const boost::regex reader::expr_("(Content-Length: )(\\d+$)(\r)");
 
 			reader::reader(const boost::shared_ptr<protocol> & cnx, const urlReadDelegate & write) 
-				: web::reader(cnx, write) {}
+				: web::reader(write)
+				, cnx_(cnx) {}
 
 			reader::~reader() {}
 
@@ -29,11 +30,16 @@ namespace dtcc
 				request_stream << " HTTP/1.1\r\n";
 				request_stream << "Host: " << cnx_->host() << "\r\n";
 				request_stream << "Accept: */*\r\n";
-				request_stream << "Connection: keep-alive\r\n";
-				request_stream << "\r\n";
 
-				// keep the socket alive
-				cnx_->socket().set_option(boost::asio::socket_base::keep_alive(true));
+				if (cnx_->keepAlive())
+				{
+					request_stream << "Connection: keep-alive\r\n";
+
+					// keep the socket alive
+					cnx_->socket().set_option(boost::asio::socket_base::keep_alive(true));
+				}
+
+				request_stream << "\r\n";
 
 				boost::asio::async_write(cnx_->socket(), request_,
 					cnx_->strand().wrap(boost::bind(&reader::handle_write_request, this,

@@ -161,17 +161,17 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="application\serviceImpl.cpp" />
-    <ClCompile Include="application\worker.cpp" />
+    <ClCompile Include="application\service\serviceImpl.cpp" />
+    <ClCompile Include="application\service\worker.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="settings\parser\parseSettings.cpp" />
     <ClCompile Include="StdAfx.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="application\serviceImpl.hpp" />
-    <ClInclude Include="application\workerBase.hpp" />
-    <ClInclude Include="application\worker.hpp" />
-    <ClInclude Include="application\writer.hpp" />
+    <ClInclude Include="application\service\serviceImpl.hpp" />
+    <ClInclude Include="application\service\worker.hpp" />
+    <ClInclude Include="application\service\workerBase.hpp" />
+    <ClInclude Include="application\service\writer.hpp" />
     <ClInclude Include="settings.hpp" />
     <ClInclude Include="settings\parser\parseSettings.hpp" />
     <ClInclude Include="settings\parser\settingsAdapter.hpp" />

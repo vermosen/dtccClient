@@ -21,7 +21,7 @@
 
 #include "application/compression/archive.hpp"
 #include "application/compression/zip.hpp"
-#include "application/web/readers/all.hpp"
+#include "application/web/readers/asio.hpp"
 
 #include "database/recordsets/tradeRecordset.hpp"
 #include "database/connectors/sqlServer.hpp"
@@ -55,7 +55,7 @@ namespace dtcc
 		boost::shared_ptr<boost::asio::io_service::work> ioTask_;
 
 		boost::shared_ptr<dtcc::database::connector> db_;
-		boost::shared_ptr<dtcc::web::protocol> cnx_;
+		boost::shared_ptr<dtcc::web::asio::protocol> cnx_;
 		boost::shared_ptr<dtcc::web::reader> rd_;
 
 		boost::chrono::high_resolution_clock::time_point start_;		// chrono

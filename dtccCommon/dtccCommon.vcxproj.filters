@@ -62,8 +62,6 @@
     <ClInclude Include="src\application\web\protocols\http.hpp" />
     <ClInclude Include="src\application\web\protocols\https.hpp" />
     <ClInclude Include="src\application\web\readers\asio.hpp" />
-    <ClInclude Include="src\application\web\readers\curl.hpp" />
-    <ClInclude Include="src\application\web\readers\all.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\compression\zip.cpp" />
@@ -81,6 +79,5 @@
     <ClCompile Include="src\application\web\queries\eod.cpp" />
     <ClCompile Include="src\application\web\queries\intraday.cpp" />
     <ClCompile Include="src\application\web\readers\asio.cpp" />
-    <ClCompile Include="src\application\web\readers\curl.cpp" />
   </ItemGroup>
 </Project>

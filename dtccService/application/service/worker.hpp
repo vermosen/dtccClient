@@ -11,12 +11,12 @@
 #include <boost/chrono.hpp>
 #include <boost/lambda/lambda.hpp>
 
-#include "application/workerBase.hpp"
+#include "application/service/writer.hpp"
+#include "application/service/workerBase.hpp"
 #include "application/web/protocols/https.hpp"
 #include "application/web/protocols/http.hpp"
 #include "application/web/readers/asio.hpp"
 #include "application/web/queries/intraday.hpp"
-#include "application/writer.hpp"
 #include "utils/debugger.hpp"
 #include "settings.hpp"
 
@@ -32,6 +32,8 @@ namespace dtcc
 		void stop();
 
 	private:
+		void updateQuery();
+
 		void connect_callback(const boost::system::error_code& err);
 		void reader_callback(const boost::system::error_code& err, const dtcc::web::content & ct);		// TODO: see if the string get copied here and how to avoid copy
 
@@ -47,8 +49,8 @@ namespace dtcc
 		boost::shared_ptr<boost::asio::io_service> io_;
 
 		boost::shared_ptr<web::intraday> qr_;
-		boost::shared_ptr<web::protocol> cnx_;
-		boost::shared_ptr<web::asio> reader_;
+		boost::shared_ptr<web::asio::protocol> cnx_;
+		boost::shared_ptr<web::asio::reader> reader_;
 		writeRecordsDelegate write_;
 
 		std::string filename_;

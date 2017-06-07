@@ -6,7 +6,7 @@
 
 #include <boost/thread.hpp>
 
-#include "application/serviceImpl.hpp"
+#include "application/service/serviceImpl.hpp"
 #include "application/logger.hpp"
 #include "application/startup.hpp"
 
