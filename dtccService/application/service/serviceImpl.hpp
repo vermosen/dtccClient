@@ -24,22 +24,21 @@ namespace dtcc
 		virtual void onStart(DWORD dwArgc, LPSTR * pszArgv);
 		virtual void onStop();
 
-		virtual void onPause() { run_ = false; }
-		virtual void onContinue() { run_ = true; }
-		virtual void onShutdown() { run_ = false; }
+		virtual void onPause()	  { pause_ = false	; cv2_.notify_one(); }
+		virtual void onContinue() { pause_ = true	; cv2_.notify_one(); }
+		virtual void onShutdown() { run_   = false	; cv1_.notify_one(); }
 
 	private:
 		void connectWriter();
 		void startWorkers();
 
-		bool run_;
 		settings settings_;
-		std::vector<boost::shared_ptr<worker>> workers_;
+		std::vector<boost::shared_ptr<worker> > workers_;
 		writer w_;
 
-		boost::condition_variable cv_;
-		std::atomic<bool> terminate_;
-		boost::mutex m_;
+		boost::condition_variable cv1_, cv2_;
+		std::atomic<bool> run_, pause_;
+		boost::mutex m1_, m2_;
 	};
 }
 

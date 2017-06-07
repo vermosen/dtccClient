@@ -42,7 +42,6 @@ namespace dtcc
 
 	void serviceImpl::startWorkers()
 	{
-
 		connectWriter();
 		LOG_INFO() << "reached database... ";
 
@@ -67,8 +66,20 @@ namespace dtcc
 		for (auto & i : workers_) i->start();
 
 		// barrier
-		boost::unique_lock<boost::mutex> lk(m_);
-		while (!terminate_) cv_.wait(lk);
+		boost::unique_lock<boost::mutex> lk(m1_);
+		while (run_) cv1_.wait(lk);
+
+		// tell all the worker to stop
+		for (auto & it : workers_)
+		{
+			it->stop();
+		}
+
+		// wait another 15 secs for the cleanup
+		boost::this_thread::sleep(boost::posix_time::milliseconds(20000));
+
+		// commit all the pending records
+		w_.close();
 	}
 
 	void serviceImpl::connectWriter()

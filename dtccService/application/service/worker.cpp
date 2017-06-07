@@ -36,7 +36,7 @@ namespace dtcc
 		LOG_INFO() << "building new connector...";
 
 		cnx_ = boost::shared_ptr<web::asio::protocol>(new web::asio::https(io_,
-			web::connectionDelegate(boost::bind(&worker::connect_callback, this, boost::placeholders::_1)), true, true));
+			web::connectionDelegate(boost::bind(&worker::connect_callback, this, boost::placeholders::_1)), false, true));
 
 		cnx_->connect(settings_.connector_.host_, settings_.connector_.port_);
 
@@ -67,9 +67,9 @@ namespace dtcc
 	{
 		if (!err)
 		{
-			cnx_->socket().set_option(boost::asio::socket_base::keep_alive(true));
-
 			LOG_INFO() << "host " + cnx_->host() + " successfully reached";
+
+			updateQuery();
 
 			reader_.reset(new dtcc::web::asio::reader(cnx_,
 				web::urlReadDelegate(boost::bind(&worker::reader_callback, this,

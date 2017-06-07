@@ -33,7 +33,7 @@ namespace dtcc
 		}
 
 		void connect(const settings::connectionString & db) { ctr_->connect(db.database_); }
-		void close() { ctr_->close(); }
+		void close() { save(); ctr_->close(); }
 
 		void write(const std::vector<database::tradeRecord> & s)
 		{

@@ -38,6 +38,10 @@ namespace dtcc
 					// keep the socket alive
 					cnx_->socket().set_option(boost::asio::socket_base::keep_alive(true));
 				}
+				else
+				{
+					request_stream << "Connection: close\r\n";
+				}
 
 				request_stream << "\r\n";
 
