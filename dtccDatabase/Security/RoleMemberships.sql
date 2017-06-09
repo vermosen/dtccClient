@@ -1,0 +1,10 @@
+﻿ALTER ROLE [db_owner] ADD MEMBER [NT Service\MSSQLSERVER];
+
+
+GO
+ALTER ROLE [db_datareader] ADD MEMBER [NT AUTHORITY\SYSTEM];
+
+
+GO
+ALTER ROLE [db_datawriter] ADD MEMBER [NT AUTHORITY\SYSTEM];
+
