@@ -83,7 +83,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>dtccCommon_x64_v140_sd.lib;zlibstat.lib;libcurl_a_debug.lib;libsoci_core_4_0.lib;libsoci_odbc_4_0.lib;libsslMTd.lib;libcryptoMTd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cassandra.lib;dtccCommon_x64_v140_sd.lib;zlibstat.lib;libcurl_a_debug.lib;libsoci_core_4_0.lib;libsoci_odbc_4_0.lib;libsslMTd.lib;libcryptoMTd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>

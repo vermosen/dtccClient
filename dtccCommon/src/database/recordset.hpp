@@ -26,7 +26,7 @@ namespace dtcc
 			typedef K keyType;
 			typedef T recordType;
 		public:
-			explicit recordset(boost::shared_ptr<connector> conn) : connector_(conn) {}
+			explicit recordset() {}
 			virtual ~recordset() {};
 
 			// implement crud operations
@@ -35,9 +35,6 @@ namespace dtcc
 			virtual void remove(const std::string & filter) = 0;
 			virtual void select(std::vector<recordType> & ret, const std::string & filter) = 0;
 			virtual void select(const std::vector<keyType> & keys, std::vector<recordType> & ret) = 0;
-
-		protected:
-			boost::shared_ptr<connector> connector_;
 		};
 	}
 }

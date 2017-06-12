@@ -5,7 +5,6 @@
 #include <boost/chrono.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 
-#include "database/recordsets/tradeRecordset.hpp"
 #include "database/record/parser/tradeRecordGrammar.hpp"
 #include "database/record/parser/parseRecords.hpp"
 #include "database/record/enum.hpp"

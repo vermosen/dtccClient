@@ -88,6 +88,7 @@
       </MultiProcessorCompilation>
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
+      <ObjectFileName>$(IntDir)/%(RelativeDir)/</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -117,6 +118,7 @@
       </MultiProcessorCompilation>
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
+      <ObjectFileName>$(IntDir)/%(RelativeDir)/</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -148,6 +150,7 @@
       </AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <ObjectFileName>$(IntDir)/%(RelativeDir)/</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -164,7 +167,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\application\web\readers\asio.cpp" />
+    <ClCompile Include="src\database\cassandra\recordsets\tradeRecordset.cpp" />
     <ClCompile Include="src\database\connector.cpp" />
+    <ClCompile Include="src\database\cassandra\connector.cpp" />
     <ClCompile Include="src\utils\debugger.cpp" />
     <ClInclude Include="src\application\asset\description.hpp" />
     <ClInclude Include="src\application\compression\archive.hpp" />
@@ -184,8 +189,10 @@
     <ClCompile Include="src\application\web\reader.cpp">
       <FileType>CppHeader</FileType>
     </ClCompile>
+    <ClInclude Include="src\database\cassandra\recordsets\tradeRecordset.hpp" />
     <ClInclude Include="src\database\connector.hpp" />
-    <ClInclude Include="src\database\connectors\sqlServer.hpp" />
+    <ClInclude Include="src\database\cassandra\connector.hpp" />
+    <ClInclude Include="src\database\sql\connector.hpp" />
     <ClInclude Include="src\database\record\parser\tradeAdapter.hpp" />
     <ClInclude Include="src\database\record\enum.hpp" />
     <ClInclude Include="src\database\record\enums\cleared.hpp" />
@@ -197,8 +204,8 @@
     <ClInclude Include="src\application\service.hpp" />
     <ClInclude Include="src\application\compression\zip.hpp" />
     <ClInclude Include="src\database\record\parser\parseRecords.hpp" />
-    <ClInclude Include="src\database\recordsets\tradeRecordset.hpp" />
-    <ClInclude Include="src\database\tradeConverter.hpp" />
+    <ClInclude Include="src\database\sql\recordsets\tradeRecordset.hpp" />
+    <ClInclude Include="src\database\sql\recordsets\tradeConverter.hpp" />
     <ClInclude Include="src\database\record\parser\tradeRecordGrammar.hpp" />
     <ClInclude Include="src\database\record\parser\tradeRecordPolicies.hpp" />
     <ClInclude Include="src\database\record\tradeRecord.hpp" />
@@ -221,9 +228,9 @@
     <ClCompile Include="src\application\compression\zip\localFileHeader.cpp" />
     <ClCompile Include="src\application\logger.cpp" />
     <ClCompile Include="src\application\startup.cpp" />
-    <ClCompile Include="src\database\connectors\sqlServer.cpp" />
+    <ClCompile Include="src\database\sql\connector.cpp" />
     <ClCompile Include="src\database\record\parser\parseRecords.cpp" />
-    <ClCompile Include="src\database\recordsets\tradeRecordset.cpp" />
+    <ClCompile Include="src\database\sql\recordsets\tradeRecordset.cpp" />
     <ClCompile Include="src\application\web\queries\eod.cpp" />
     <ClCompile Include="src\application\web\queries\intraday.cpp" />
   </ItemGroup>

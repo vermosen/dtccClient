@@ -85,7 +85,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>dtccCommon_x64_v140_sd.lib;zlibstat.lib;libcurl_a_debug.lib;libsoci_core_4_0.lib;libsoci_odbc_4_0.lib;libsslMTd.lib;libcryptoMTd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cassandra.lib;dtccCommon_x64_v140_sd.lib;zlibstat.lib;libcurl_a_debug.lib;libsoci_core_4_0.lib;libsoci_odbc_4_0.lib;libsslMTd.lib;libcryptoMTd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Git\zlib\contrib\vstudio\vc14\x64\ZlibStatDebug</AdditionalLibraryDirectories>
       <AdditionalOptions>/WHOLEARCHIVE:dtccCommon_x64_v140_sd.lib /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
       <ShowProgress>NotSet</ShowProgress>

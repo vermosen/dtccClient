@@ -108,7 +108,7 @@ namespace dtcc
 					{
 						std::string file = ar.get(*jt).str();
 
-						LOG_INFO() << "Zip extraction successfull...";
+						LOG_INFO() << "Zip extraction successful...";
 
 						std::vector<dtcc::database::tradeRecord> recs;
 

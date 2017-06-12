@@ -7,7 +7,7 @@
 
 #include <soci/soci.h>
 
-#include "record/tradeRecord.hpp"
+#include "database/record/tradeRecord.hpp"
 
 namespace soci
 {

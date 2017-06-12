@@ -12,6 +12,6 @@ SERVICE_NAME: dtccService
         SERVICE_EXIT_CODE  : 0  (0x0)
         CHECKPOINT         : 0x1
         WAIT_HINT          : 0x0
-        PID                : 153188
+        PID                : 50628
         FLAGS              : 
 successfully added Windows service (dtccService)

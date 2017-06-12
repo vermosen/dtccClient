@@ -23,8 +23,8 @@
 #include "application/compression/zip.hpp"
 #include "application/web/readers/asio.hpp"
 
-#include "database/recordsets/tradeRecordset.hpp"
-#include "database/connectors/sqlServer.hpp"
+#include "database/sql/recordsets/tradeRecordset.hpp"
+#include "database/sql/connector.hpp"
 #include "database/record/parser/parseRecords.hpp"
 #include "application/logger.hpp"
 #include "application/startup.hpp"
@@ -54,7 +54,7 @@ namespace dtcc
 		boost::shared_ptr<boost::asio::io_service> io_;
 		boost::shared_ptr<boost::asio::io_service::work> ioTask_;
 
-		boost::shared_ptr<dtcc::database::connector> db_;
+		boost::shared_ptr<dtcc::database::sql::connector> db_;
 		boost::shared_ptr<dtcc::web::asio::protocol> cnx_;
 		boost::shared_ptr<dtcc::web::reader> rd_;
 

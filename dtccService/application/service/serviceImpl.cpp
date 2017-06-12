@@ -51,7 +51,11 @@ namespace dtcc
 
 		writeRecordsDelegate f(boost::bind(&writer::write, &w_, _1));
 
-		LOG_INFO() << "creating " << settings_.workers_.size() << "workers";
+		LOG_INFO() 
+			<< "creating " 
+			<< settings_.workers_.size() 
+			<< " worker" 
+			<< (settings_.workers_.size() > 1 ? "s" : "");
 
 		workers_.resize(settings_.workers_.size());
 

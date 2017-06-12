@@ -33,9 +33,6 @@
     <ClInclude Include="src\pattern\enumManager.hpp" />
     <ClInclude Include="src\database\connector.hpp" />
     <ClInclude Include="src\database\recordset.hpp" />
-    <ClInclude Include="src\database\connectors\sqlServer.hpp" />
-    <ClInclude Include="src\database\recordsets\tradeRecordset.hpp" />
-    <ClInclude Include="src\database\tradeConverter.hpp" />
     <ClInclude Include="src\application\startup.hpp" />
     <ClInclude Include="src\utils\adaptator.hpp" />
     <ClInclude Include="src\database\record\enums\action.hpp" />
@@ -62,12 +59,15 @@
     <ClInclude Include="src\application\web\protocols\http.hpp" />
     <ClInclude Include="src\application\web\protocols\https.hpp" />
     <ClInclude Include="src\application\web\readers\asio.hpp" />
+    <ClInclude Include="src\database\sql\recordsets\tradeRecordset.hpp" />
+    <ClInclude Include="src\database\cassandra\recordsets\tradeRecordset.hpp" />
+    <ClInclude Include="src\database\sql\connector.hpp" />
+    <ClInclude Include="src\database\cassandra\connector.hpp" />
+    <ClInclude Include="src\database\sql\recordsets\tradeConverter.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\compression\zip.cpp" />
     <ClCompile Include="src\application\compression\zip\centralDirectoryFileHeader.cpp" />
-    <ClCompile Include="src\database\connectors\sqlServer.cpp" />
-    <ClCompile Include="src\database\recordsets\tradeRecordset.cpp" />
     <ClCompile Include="src\application\logger.cpp" />
     <ClCompile Include="src\application\startup.cpp" />
     <ClCompile Include="src\database\record\parser\parseRecords.cpp" />
@@ -79,5 +79,9 @@
     <ClCompile Include="src\application\web\queries\eod.cpp" />
     <ClCompile Include="src\application\web\queries\intraday.cpp" />
     <ClCompile Include="src\application\web\readers\asio.cpp" />
+    <ClCompile Include="src\database\sql\recordsets\tradeRecordset.cpp" />
+    <ClCompile Include="src\database\cassandra\recordsets\tradeRecordset.cpp" />
+    <ClCompile Include="src\database\sql\connector.cpp" />
+    <ClCompile Include="src\database\cassandra\connector.cpp" />
   </ItemGroup>
 </Project>

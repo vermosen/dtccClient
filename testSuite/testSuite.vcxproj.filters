@@ -2,28 +2,30 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="compression.cpp" />
-    <ClCompile Include="converter.cpp" />
-    <ClCompile Include="pattern.cpp" />
-    <ClCompile Include="logger.cpp" />
     <ClCompile Include="registrable\base.cpp" />
     <ClCompile Include="registrable\derived.cpp" />
-    <ClCompile Include="parsing.cpp" />
     <ClCompile Include="settings\parser\parseSettings.cpp" />
+    <ClCompile Include="tests\compression.cpp" />
+    <ClCompile Include="tests\converter.cpp" />
+    <ClCompile Include="tests\logger.cpp" />
+    <ClCompile Include="tests\parsing.cpp" />
+    <ClCompile Include="tests\pattern.cpp" />
+    <ClCompile Include="tests\cassandra.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="compression.hpp" />
-    <ClInclude Include="converter.hpp" />
-    <ClInclude Include="logger.hpp" />
-    <ClInclude Include="pattern.hpp" />
     <ClInclude Include="registrable\base.hpp" />
     <ClInclude Include="registrable\derived.hpp" />
     <ClInclude Include="registrable\enum.hpp" />
-    <ClInclude Include="parsing.hpp" />
     <ClInclude Include="settings\parser\parseSettings.hpp" />
     <ClInclude Include="settings\parser\settingsAdapter.hpp" />
     <ClInclude Include="settings\parser\settingsGrammar.hpp" />
     <ClInclude Include="settings.hpp" />
+    <ClInclude Include="tests\compression.hpp" />
+    <ClInclude Include="tests\converter.hpp" />
+    <ClInclude Include="tests\pattern.hpp" />
+    <ClInclude Include="tests\parsing.hpp" />
+    <ClInclude Include="tests\logger.hpp" />
+    <ClInclude Include="tests\cassandra.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

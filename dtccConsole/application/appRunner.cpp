@@ -8,7 +8,7 @@ namespace dtcc
 		, dt_(settings_.startDate_)
 	{
 		LOG_INFO() << "Trying to connect to sql server";
-		db_.reset(new dtcc::database::sqlServer());	// TODO: get the db type from the settings
+		db_.reset(new dtcc::database::sql::connector());	// TODO: get the db type from the settings
 		io_.reset(new boost::asio::io_service);
 	}
 
@@ -16,8 +16,9 @@ namespace dtcc
 
 	void appRunner::run()
 	{
+		db_->setConnectionString(settings_.database_);
 		// connect the database
-		db_->connect(settings_.database_);
+		db_->connect();
 
 		// start the io service
 		ioTask_.reset(new boost::asio::io_service::work(*io_));
@@ -69,7 +70,7 @@ namespace dtcc
 		{
 			if (ct.stream_.str().size() != 0)
 			{
-				dtcc::database::tradeRecordset rs(db_);
+				dtcc::database::sql::tradeRecordset rs(db_);
 
 				// TODO: error check
 				std::vector<dtcc::database::tradeRecord> recs;			// data buffer
@@ -90,7 +91,7 @@ namespace dtcc
 						std::string file = ar.get(*jt).str();
 
 						LOG_INFO()
-							<< "Zip extraction successfull...";
+							<< "Zip extraction successful...";
 
 						start_ = boost::chrono::high_resolution_clock::now();
 

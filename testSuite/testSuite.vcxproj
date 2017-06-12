@@ -83,7 +83,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>dtccCommon_x64_v140_sd.lib;zlibstat.lib;libcurl_a_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cassandra.lib;dtccCommon_x64_v140_sd.lib;zlibstat.lib;libcurl_a_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>$(TargetDir)$(TargetName).exe"</Command>
@@ -132,22 +132,24 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="compression.cpp" />
-    <ClCompile Include="converter.cpp" />
-    <ClCompile Include="logger.cpp" />
+    <ClCompile Include="tests\cassandra.cpp" />
+    <ClCompile Include="tests\compression.cpp" />
+    <ClCompile Include="tests\converter.cpp" />
+    <ClCompile Include="tests\logger.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="parsing.cpp" />
-    <ClCompile Include="pattern.cpp" />
+    <ClCompile Include="tests\parsing.cpp" />
+    <ClCompile Include="tests\pattern.cpp" />
     <ClCompile Include="registrable\base.cpp" />
     <ClCompile Include="registrable\derived.cpp" />
     <ClCompile Include="settings\parser\parseSettings.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="compression.hpp" />
-    <ClInclude Include="converter.hpp" />
-    <ClInclude Include="logger.hpp" />
-    <ClInclude Include="parsing.hpp" />
-    <ClInclude Include="pattern.hpp" />
+    <ClInclude Include="tests\cassandra.hpp" />
+    <ClInclude Include="tests\compression.hpp" />
+    <ClInclude Include="tests\converter.hpp" />
+    <ClInclude Include="tests\logger.hpp" />
+    <ClInclude Include="tests\parsing.hpp" />
+    <ClInclude Include="tests\pattern.hpp" />
     <ClInclude Include="registrable\base.hpp" />
     <ClInclude Include="registrable\derived.hpp" />
     <ClInclude Include="registrable\enum.hpp" />

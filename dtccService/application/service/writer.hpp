@@ -9,7 +9,7 @@
 
 #include "application/logger.hpp"
 #include "database/record/tradeRecord.hpp"
-#include "database/recordsets/tradeRecordset.hpp"
+#include "database/sql/recordsets/tradeRecordset.hpp"
 #include "database/connector.hpp"
 #include "settings.hpp"
 
@@ -22,7 +22,7 @@ namespace dtcc
 	public:
 		writer(size_t bufferSize) : sz_(bufferSize)
 		{
-			ctr_ = dtcc::abstractFactoryNoArgs<database::connector, std::string>::createInstance("sql server");
+			cnx_.reset(new dtcc::database::sql::connector());
 		}
 
 		writer() = delete;
@@ -32,8 +32,12 @@ namespace dtcc
 			// TODO: close the connection ?
 		}
 
-		void connect(const settings::connectionString & db) { ctr_->connect(db.database_); }
-		void close() { save(); ctr_->close(); }
+		void connect(const settings::connectionString & db) 
+		{
+			cnx_->setConnectionString(db.database_);
+			cnx_->connect();
+		}
+		void close() { save(); cnx_->close(); }
 
 		void write(const std::vector<database::tradeRecord> & s)
 		{
@@ -53,7 +57,7 @@ namespace dtcc
 		void save()
 		{
 			// unloads the buffer
-			database::tradeRecordset rs(ctr_);
+			database::sql::tradeRecordset rs(cnx_);
 			auto res = rs.insert(buffer_);
 			buffer_.clear();
 		}
@@ -61,7 +65,7 @@ namespace dtcc
 		size_t sz_;
 		boost::mutex m_;
 		std::vector<database::tradeRecord> buffer_;			// not the best, change to queue ?
-		boost::shared_ptr<database::connector> ctr_;
+		boost::shared_ptr<database::sql::connector> cnx_;
 	};
 }
 

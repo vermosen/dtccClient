@@ -26,17 +26,14 @@ namespace dtcc
 			connector() {};
 			virtual ~connector() {};
 			
-			virtual void connect(const std::string & connectionString) = 0;
+			virtual void connect() = 0;
 			virtual void close() = 0;
 
-			boost::shared_ptr<soci::session> session() { return session_; }
+			virtual void begin() = 0;
+			virtual void commit() = 0;
+			virtual void rollback() = 0;
 
-			void begin() { session_->begin(); }
-			void commit() { session_->commit(); }
-			void rollback() { session_->rollback(); }
-
-		protected:
-			boost::shared_ptr<soci::session> session_;
+			virtual void execute(const std::string & statement) = 0;
 		};
 	}
 }
