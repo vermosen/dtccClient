@@ -4,8 +4,6 @@ namespace dtcc
 {
 	namespace web
 	{
-		std::locale eod::format_(std::locale::classic(), new boost::gregorian::date_facet("%Y_%m_%d"));
-
 		std::string eod::path() const
 		{
 			std::stringstream path;

@@ -14,13 +14,25 @@ namespace dtcc
 {
 	namespace web
 	{
+		// the response content
+		class content
+		{
+		public:
+			size_t length_;
+			std::stringstream stream_;
+			bool chunked_;
+			size_t chunkSize_;
+
+			bool isEmpty() const { return length_ == 0; }
+		};
+
 		// a callback function TODO: use move semantic
-		typedef boost::function<void(const boost::system::error_code&, std::string)> urlReadDelegate;
+		typedef boost::function<void(const boost::system::error_code&, const content &)> urlReadDelegate;
 
 		class reader
 		{
 		public:
-			reader(const boost::shared_ptr<protocol> & cnx, const urlReadDelegate & write);
+			reader(const urlReadDelegate &);
 			virtual ~reader();
 
 			virtual void getAsync(const boost::shared_ptr<query> & query) = 0;
@@ -29,7 +41,6 @@ namespace dtcc
 
 		protected:
 			urlReadDelegate write_;
-			boost::shared_ptr<protocol> cnx_;
 			boost::shared_ptr<query> query_;
 		};
 	}

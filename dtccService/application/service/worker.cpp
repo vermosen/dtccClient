@@ -35,18 +35,14 @@ namespace dtcc
 		// TODO: use the settings + factories
 		LOG_INFO() << "building new connector...";
 
-		cnx_ = boost::shared_ptr<web::protocol>(new web::https(io_,
-			web::connectionDelegate(boost::bind(&worker::connect_callback, this, boost::placeholders::_1)), true));
+		cnx_ = boost::shared_ptr<web::asio::protocol>(new web::asio::https(io_,
+			web::connectionDelegate(boost::bind(&worker::connect_callback, this, boost::placeholders::_1)), false, true));
+
 		cnx_->connect(settings_.connector_.host_, settings_.connector_.port_);
 
 		// barrier
 		boost::unique_lock<boost::mutex> lk(m_);
 		while (!terminate_) cv_.wait(lk);
-
-		// wait x seconds before returning
-		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-
-		// not clear
 		ioTask_.reset();
 		t_->join();
 	}
@@ -54,43 +50,30 @@ namespace dtcc
 	void worker::stop()
 	{
 		terminate_ = true;
-		cv_.notify_one();
 	}
 
-	//void worker::setFilename()
-	//{
-	//	// ex: https://kgc0418-tdw-data2-0.s3.amazonaws.com/slices/SLICE_COMMODITIES_2017_05_04_1.zip
+	void worker::updateQuery()
+	{
+		if (nFailure_ >= settings_.maxAttempt_ && dt_ != boost::gregorian::day_clock::universal_day())
+		{
+			dt_ = boost::gregorian::day_clock::universal_day();
+			counter_ = 1;
+			nFailure_ = 0;
+		}
 
-	//	// parse the file name
-	//	// TODO: parse the date and add a date counter
-	//	std::stringstream ss;
-
-	//	auto * temp(new boost::gregorian::date_facet("%Y_%m_%d"));
-	//	ss.imbue(std::locale(ss.getloc(), temp));
-
-	//	ss	<< "slices/SLICE_"
-	//		<< settings_.description_.fileStr_
-	//		<< "_"
-	//		<< dt_
-	//		<< "_"
-	//		<< boost::lexical_cast<std::string>(counter_)
-	//		<< ".zip";
-
-	//	filename_ = ss.str();
-	//}
-
+		qr_.reset(new dtcc::web::intraday(dt_, settings_.description_, counter_));
+	}
 	void worker::connect_callback(const boost::system::error_code& err)
 	{
 		if (!err)
 		{
 			LOG_INFO() << "host " + cnx_->host() + " successfully reached";
 
-			reader_.reset(new dtcc::web::asio(cnx_,
-				web::urlReadDelegate(boost::bind(&worker::reader_callback, this,
-					boost::placeholders::_1, boost::placeholders::_2))));
+			updateQuery();
 
-			boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterSuccess_));
-			qr_ = boost::shared_ptr<web::intraday>(new web::intraday(dt_, settings_.description_));
+			reader_.reset(new dtcc::web::asio::reader(cnx_,
+				web::urlReadDelegate(boost::bind(&worker::reader_callback, this,
+					boost::asio::placeholders::error, boost::lambda::_2))));
 
 			reader_->getAsync(qr_);
 		}
@@ -100,17 +83,16 @@ namespace dtcc
 		}
 	}
 
-	void worker::reader_callback(const boost::system::error_code& err, std::string msg)
+	void worker::reader_callback(const boost::system::error_code& err, const dtcc::web::content & ct)
 	{
 		try
 		{
-			if (!err)
+			if (!err || (err == boost::asio::error::eof && !ct.isEmpty()))
 			{
-				counter_++;
 				LOG_INFO() << "successfully retrived data from " << filename_;
 
 				// unzipping the records
-				dtcc::archive<dtcc::zip::zip> ar(std::move(msg));
+				dtcc::archive<dtcc::zip::zip> ar(std::move(ct.stream_.str()));
 
 				if (!ar.open())
 				{
@@ -128,19 +110,12 @@ namespace dtcc
 
 						LOG_INFO() << "Zip extraction successfull...";
 
-						//boost::chrono::high_resolution_clock::time_point start = boost::chrono::high_resolution_clock::now();
-
 						std::vector<dtcc::database::tradeRecord> recs;
 
 						if (dtcc::parser::parseRecords(file.begin(), file.end(), recs, dt_))
 						{
-							//LOG_INFO() << recs.size() << " conversions done in "
-							//	<< boost::chrono::duration_cast<boost::chrono::milliseconds> (
-							//		boost::chrono::high_resolution_clock::now() - start);
-
-							//start = boost::chrono::high_resolution_clock::now();
-
-							write_(recs);
+							write_(recs); counter_++; 
+							this->updateQuery();
 						}
 						else
 						{
@@ -148,23 +123,24 @@ namespace dtcc
 						}
 					}
 
+					boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterSuccess_));
+
 					if (terminate_)
 					{
-						return;
+						cv_.notify_one();
 					}
 					else
 					{
-						// cnx_->connect(settings_.connector_.host_, settings_.connector_.port_);
-						// submit a new qr
-						
+						if(err)
+							cnx_->connect(settings_.connector_.host_, settings_.connector_.port_);
+						else
 						reader_->getAsync(qr_);
-
 					}
 				}
 			}
 			else if(err == boost::asio::error::connection_aborted)
 			{
-				// we just reset the connection and try again
+				// we reset the connection and try again
 				boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterFailure_));
 				cnx_->connect(settings_.connector_.host_, settings_.connector_.port_);
 			}
@@ -176,37 +152,22 @@ namespace dtcc
 		}
 		catch (std::exception & ex)
 		{
-			if (nFailure_ < settings_.maxAttempt_)
+			if (terminate_)
 			{
-				nFailure_++;
-				LOG_WARNING() << "failed to retrive data from " << filename_;
-
-				if (terminate_)
-				{
-					return;
-				}
-				else
-				{
-					boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterFailure_));
-					reader_->getAsync(qr_);
-				}
+				cv_.notify_one();
 			}
-			else
+
+			LOG_WARNING() << "failed to retrive data from " << filename_;
+			boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterFailure_));
+
+			if (++nFailure_ >= settings_.maxAttempt_)
 			{
-				// TODO: we wat to continue the loop, but we 
 				// check first if there have been a date change
 				LOG_INFO() << "max attempt reached, checking setup...";
-
-				if (terminate_)
-				{
-					return;
-				}
-				else
-				{
-					boost::this_thread::sleep(boost::posix_time::milliseconds(settings_.timeoutAfterFailure_));
-					reader_->getAsync(qr_);
-				}
+				this->updateQuery();
 			}
+
+			reader_->getAsync(qr_);
 		}
 	}
 }

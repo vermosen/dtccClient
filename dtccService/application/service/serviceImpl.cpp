@@ -42,19 +42,12 @@ namespace dtcc
 
 	void serviceImpl::startWorkers()
 	{
+		connectWriter();
+		LOG_INFO() << "reached database... ";
 
 		#ifdef _DEBUG
 		launchDebugger();
 		#endif
-
-		try
-		{
-			w_.connect(settings_.database_); // TODO: timeout
-		}
-		catch (const std::exception & ex)
-		{
-			int i = 0;
-		}
 
 		writeRecordsDelegate f(boost::bind(&writer::write, &w_, _1));
 
@@ -71,11 +64,36 @@ namespace dtcc
 		LOG_INFO() << "starting workers...";
 
 		for (auto & i : workers_) i->start();
+
+		// barrier
+		boost::unique_lock<boost::mutex> lk(m1_);
+		while (run_) cv1_.wait(lk);
+
+		// tell all the worker to stop
+		for (auto & it : workers_)
+		{
+			it->stop();
+		}
+
+		// wait another 15 secs for the cleanup
+		boost::this_thread::sleep(boost::posix_time::milliseconds(20000));
+
+		// commit all the pending records
+		w_.close();
 	}
 
-	void serviceImpl::startWriter()
+	void serviceImpl::connectWriter()
 	{
-
+		try
+		{
+			w_.connect(settings_.database_); // TODO: timeout
+		}
+		catch (const std::exception & ex)
+		{
+			// TODO: retry
+			LOG_ERROR() << ex.what();
+			throw ex;
+		}
 	}
 }
 #endif

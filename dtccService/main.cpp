@@ -1,14 +1,12 @@
 #ifndef MAIN_CPP_
 #define MAIN_CPP_
 
-
-
 #include <fstream>
 #include <exception>
 
 #include <boost/thread.hpp>
 
-#include "application/serviceImpl.hpp"
+#include "application/service/serviceImpl.hpp"
 #include "application/logger.hpp"
 #include "application/startup.hpp"
 
@@ -18,7 +16,7 @@
 #include "utils/debugger.hpp"
 
 #ifdef _WIN32
-#include "StdAfx.h"
+#include "StdAfx.hpp"
 #include <WinSock.h>
 #include <Windows.h>
 #else

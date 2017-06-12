@@ -21,7 +21,7 @@
 
 #include "application/compression/archive.hpp"
 #include "application/compression/zip.hpp"
-#include "application/web/readers/all.hpp"
+#include "application/web/readers/asio.hpp"
 
 #include "database/recordsets/tradeRecordset.hpp"
 #include "database/connectors/sqlServer.hpp"
@@ -45,7 +45,7 @@ namespace dtcc
 		void run();
 
 		void connect_callback	(const boost::system::error_code& err);
-		void load_callback		(const boost::system::error_code& err, std::string data);
+		void load_callback		(const boost::system::error_code& err, const dtcc::web::content & ct);
 
 	private:
 		dtcc::settings settings_;
@@ -55,7 +55,7 @@ namespace dtcc
 		boost::shared_ptr<boost::asio::io_service::work> ioTask_;
 
 		boost::shared_ptr<dtcc::database::connector> db_;
-		boost::shared_ptr<dtcc::web::protocol> cnx_;
+		boost::shared_ptr<dtcc::web::asio::protocol> cnx_;
 		boost::shared_ptr<dtcc::web::reader> rd_;
 
 		boost::chrono::high_resolution_clock::time_point start_;		// chrono
@@ -64,6 +64,10 @@ namespace dtcc
 		boost::condition_variable cv_;
 		std::atomic<bool> finished_;
 		boost::mutex m_;
+
+		// the iterator
+		std::vector<asset::description>::const_iterator it_;
+		boost::gregorian::date dt_;
 	};
 }
 

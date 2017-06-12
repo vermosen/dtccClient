@@ -1,5 +1,5 @@
-#ifndef STD_AFX_HPP_
-#define STD_AFX_HPP_
+#ifndef STD_AFX_CPP_
+#define STD_AFX_CPP_
 
 #include "StdAfx.hpp"
 

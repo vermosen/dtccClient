@@ -3,9 +3,9 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="StdAfx.cpp" />
-    <ClCompile Include="application\serviceImpl.cpp" />
     <ClCompile Include="settings\parser\parseSettings.cpp" />
-    <ClCompile Include="application\worker.cpp" />
+    <ClCompile Include="application\service\serviceImpl.cpp" />
+    <ClCompile Include="application\service\worker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="application">
@@ -16,15 +16,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="application\serviceImpl.hpp" />
     <ClInclude Include="settings\parser\parseSettings.hpp" />
     <ClInclude Include="settings\parser\settingsAdapter.hpp" />
     <ClInclude Include="settings\parser\settingsGrammar.hpp" />
     <ClInclude Include="settings.hpp" />
-    <ClInclude Include="application\workerBase.hpp" />
-    <ClInclude Include="application\writer.hpp" />
-    <ClInclude Include="application\worker.hpp" />
+    <ClInclude Include="StdAfx.hpp" />
+    <ClInclude Include="application\service\serviceImpl.hpp" />
+    <ClInclude Include="application\service\worker.hpp" />
+    <ClInclude Include="application\service\workerBase.hpp" />
+    <ClInclude Include="application\service\writer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="script\remove.ps1" />

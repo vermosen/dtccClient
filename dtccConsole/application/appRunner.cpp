@@ -2,7 +2,10 @@
 
 namespace dtcc
 {
-	appRunner::appRunner(const dtcc::settings & settings) : settings_(settings)
+	appRunner::appRunner(const dtcc::settings & settings)
+		: settings_(settings)
+		, it_(settings_.assets_.cbegin())
+		, dt_(settings_.startDate_)
 	{
 		LOG_INFO() << "Trying to connect to sql server";
 		db_.reset(new dtcc::database::sqlServer());	// TODO: get the db type from the settings
@@ -22,10 +25,11 @@ namespace dtcc
 		setThreadName(t_->get_id(), "io runner");
 
 		// build the protocol object
-		cnx_.reset(new dtcc::web::https(io_, dtcc::web::connectionDelegate(
-			boost::bind(&appRunner::connect_callback, this, boost::asio::placeholders::error))));
+		cnx_.reset(new dtcc::web::asio::https(io_, dtcc::web::connectionDelegate(
+			boost::bind(&appRunner::connect_callback, this, boost::asio::placeholders::error)), false, true));
+
 		cnx_->connect(settings_.connector_.host_, settings_.connector_.port_);
-		
+
 		// barrier
 		boost::unique_lock<boost::mutex> lk(m_);
 		while (!finished_)
@@ -42,106 +46,152 @@ namespace dtcc
 		if (!err)
 		{
 			// build the reader object	
-			rd_.reset(new dtcc::web::asio(cnx_, dtcc::web::urlReadDelegate(
+			rd_.reset(new dtcc::web::asio::reader(cnx_, dtcc::web::urlReadDelegate(
 				boost::bind(&appRunner::load_callback, this, boost::asio::placeholders::error, boost::lambda::_2))));
 
-			// main loop
-			for (auto dt = settings_.startDate_; dt <= settings_.endDate_; dt += boost::gregorian::date_duration(1))
-			{
-				LOG_INFO() << "Start activity on " << boost::gregorian::to_simple_string(dt);
+			LOG_INFO()	<< "Start activity on " 
+						<< boost::gregorian::to_simple_string(settings_.startDate_) 
+						<< " and asset " 
+						<< it_->fileStr_;
 
-				for (auto it = settings_.assets_.cbegin(); it != settings_.assets_.cend(); it++)
-				{
-					rd_->getAsync(boost::shared_ptr<dtcc::web::query>(new dtcc::web::eod(dt, *it)));			// get async
-				}
-
-				// add a day
-				dt += boost::gregorian::date_duration(1);
-			}
+			rd_->getAsync(boost::shared_ptr<dtcc::web::query>(new dtcc::web::eod(dt_, *it_)));
 		}
 		else 
 		{
 			LOG_ERROR() << err.category().name() << ":" << err.value();
 			finished_ = true;
+			cv_.notify_one();
 		}
 	}
-	void appRunner::load_callback(const boost::system::error_code& err, std::string data)
+	void appRunner::load_callback(const boost::system::error_code& err, const dtcc::web::content & ct)
 	{
-		if (!err)
+		if (!err || err == boost::asio::error::eof)
 		{
-			dtcc::database::tradeRecordset rs(db_);
-
-			// TODO: error check
-			std::vector<dtcc::database::tradeRecord> recs;			// data buffer
-
-			dtcc::archive<dtcc::zip::zip> ar(std::move(data));
-
-			if (!ar.open())
+			if (ct.stream_.str().size() != 0)
 			{
-				LOG_ERROR() << "failed to open the archive ";
-			}
-			else
-			{
-				auto fs = ar.fileSystem();
+				dtcc::database::tradeRecordset rs(db_);
 
-				for (auto jt = fs.begin(); jt != fs.end(); jt++)
+				// TODO: error check
+				std::vector<dtcc::database::tradeRecord> recs;			// data buffer
+
+				dtcc::archive<dtcc::zip::zip> ar(std::move(ct.stream_.str()));
+
+				if (!ar.open())
 				{
-					std::string file = ar.get(*jt).str();
+					LOG_ERROR()
+						<< "failed to open the archive ";
+				}
+				else
+				{
+					auto fs = ar.fileSystem();
 
-					LOG_INFO() << "Zip extraction successfull...";
-
-					start_ = boost::chrono::high_resolution_clock::now();
-
-					LOG_INFO() << "Starting record conversion...";
-
-					auto qr = boost::static_pointer_cast<dtcc::web::eod>(rd_->getQuery());
-
-					if (dtcc::parser::parseRecords(file.begin(), file.end(), recs, qr->date()))
+					for (auto jt = fs.begin(); jt != fs.end(); jt++)
 					{
-						LOG_INFO() << recs.size() << " conversions done in "
-							<< boost::chrono::duration_cast<boost::chrono::milliseconds> (
-								boost::chrono::high_resolution_clock::now() - start_);
+						std::string file = ar.get(*jt).str();
+
+						LOG_INFO()
+							<< "Zip extraction successfull...";
 
 						start_ = boost::chrono::high_resolution_clock::now();
 
-						// date facet
-						std::ostringstream os;
-						auto * temp(new boost::gregorian::date_facet("%Y-%m-%d"));
-						os.imbue(std::locale(os.getloc(), temp));
-						os << qr->date();
+						LOG_INFO()
+							<< "Starting record conversion...";
 
-						std::string id = boost::lexical_cast<std::string>(static_cast<int>(qr->asset().type_));
-						std::string filter = "FILE_DATE = '" + os.str() + "' AND ASSET_CLASS = " + id;
+						auto qr = boost::static_pointer_cast<dtcc::web::eod>(rd_->getQuery());
 
-						rs.remove(filter);
+						if (dtcc::parser::parseRecords(file.begin(), file.end(), recs, qr->date()))
+						{
+							LOG_INFO()
+								<< recs.size() << " conversions done in "
+								<< boost::chrono::duration_cast<boost::chrono::milliseconds> (
+									boost::chrono::high_resolution_clock::now() - start_);
 
-						start_ = boost::chrono::high_resolution_clock::now();
+							start_ = boost::chrono::high_resolution_clock::now();
 
-						LOG_INFO() << "Trades cleanup done in "
-							<< boost::chrono::duration_cast<boost::chrono::milliseconds> (
-								boost::chrono::high_resolution_clock::now() - start_);
+							// date facet
+							std::ostringstream os;
+							auto * temp(new boost::gregorian::date_facet("%Y-%m-%d"));
+							os.imbue(std::locale(os.getloc(), temp));
 
-						start_ = boost::chrono::high_resolution_clock::now();
+							// filter
+							os << "FILE_DATE = '"
+								<< qr->date()
+								<< "' AND ASSET_CLASS = "
+								<< boost::lexical_cast<std::string>(static_cast<int>(qr->asset().type_));
 
-						auto ids = rs.insert(recs);
-						recs.clear();
+							rs.remove(os.str());
 
-						LOG_INFO() << ids.size() << " insertions done in "
-							<< boost::chrono::duration_cast<boost::chrono::milliseconds> (
-								boost::chrono::high_resolution_clock::now() - start_);
-					}
-					else
-					{
-						LOG_ERROR() << "An error has occurred while converting the records";
-						finished_ = true;
+							start_ = boost::chrono::high_resolution_clock::now();
+
+							LOG_INFO()
+								<< "Trades cleanup done in "
+								<< boost::chrono::duration_cast<boost::chrono::milliseconds> (
+									boost::chrono::high_resolution_clock::now() - start_);
+
+							start_ = boost::chrono::high_resolution_clock::now();
+
+							auto ids = rs.insert(recs);
+							recs.clear();
+
+							LOG_INFO() << ids.size() << " insertions done in "
+								<< boost::chrono::duration_cast<boost::chrono::milliseconds> (
+									boost::chrono::high_resolution_clock::now() - start_);
+
+							// next iteration
+							if (++it_ == settings_.assets_.cend())
+							{
+								it_ = settings_.assets_.cbegin();
+								dt_ += boost::gregorian::days(1);
+							}
+
+							if (dt_ <= settings_.endDate_)
+							{
+								LOG_INFO()
+									<< "Start activity on date "
+									<< boost::gregorian::to_simple_string(qr->date())
+									<< " and asset "
+									<< it_->fileStr_;
+
+								if (!err)
+								{
+									// get
+									rd_->getAsync(boost::shared_ptr<dtcc::web::query>(new dtcc::web::eod(dt_, *it_)));
+								}
+								else
+								{
+									LOG_WARNING() << "connection has been closed by the distant server. ";
+
+									// we need to reconnect to the server first
+									cnx_->connect(settings_.connector_.host_, settings_.connector_.port_);
+								}
+							}
+							else
+							{
+								LOG_INFO() << "All the activity successfully finished !";
+								finished_ = true;
+								cv_.notify_one();
+							}
+						}
+						else
+						{
+							LOG_ERROR() << "An error has occurred while converting the records";
+							finished_ = true;
+							cv_.notify_one();
+						}
 					}
 				}
 			}
+			else // EOF raised during the reconnection
+			{
+				LOG_WARNING() << "connection has been closed by the distant server. ";
+				cnx_->connect(settings_.connector_.host_, settings_.connector_.port_);
+			}			
 		}
-		else
+		else 
 		{
 			LOG_ERROR() << err.category().name() << ":" << err.value();
 			finished_ = true;
+			cv_.notify_one();
 		}
 	}
 }

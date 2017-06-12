@@ -13,9 +13,8 @@ namespace dtcc
 {
 	namespace web
 	{
-		reader::reader(const boost::shared_ptr<protocol> & cnx, const urlReadDelegate & write)
-				: cnx_(cnx)
-				, write_(write) {};
+		reader::reader(const urlReadDelegate & write)
+				: write_(write) {};
 
 		reader::~reader() {};
 

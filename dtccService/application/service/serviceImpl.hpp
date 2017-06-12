@@ -4,9 +4,9 @@
 
 #include <boost/thread.hpp>
 
+#include "application/service/worker.hpp"
 #include "application/logger.hpp"
-#include "application/writer.hpp"
-#include "application/worker.hpp"
+#include "application/service/writer.hpp"
 #include "application/service.hpp"
 #include "utils/debugger.hpp"
 
@@ -24,18 +24,21 @@ namespace dtcc
 		virtual void onStart(DWORD dwArgc, LPSTR * pszArgv);
 		virtual void onStop();
 
-		virtual void onPause() { run_ = false; }
-		virtual void onContinue() { run_ = true; }
-		virtual void onShutdown() { run_ = false; }
+		virtual void onPause()	  { pause_ = false	; cv2_.notify_one(); }
+		virtual void onContinue() { pause_ = true	; cv2_.notify_one(); }
+		virtual void onShutdown() { run_   = false	; cv1_.notify_one(); }
 
 	private:
-		void startWriter();
+		void connectWriter();
 		void startWorkers();
 
-		bool run_;
 		settings settings_;
-		std::vector<boost::shared_ptr<worker>> workers_;
+		std::vector<boost::shared_ptr<worker> > workers_;
 		writer w_;
+
+		boost::condition_variable cv1_, cv2_;
+		std::atomic<bool> run_, pause_;
+		boost::mutex m1_, m2_;
 	};
 }
 
