@@ -37,17 +37,26 @@ namespace dtcc
 		// TODO: purge the data buffer
 		w_.close();
 
-		LOG_INFO() << "onStop method successfully completed";
+		LOG_INFO() 
+			<< "onStop method successfully completed";
 	}
 
 	void serviceImpl::startWorkers()
 	{
 		connectWriter();
-		LOG_INFO() << "reached database... ";
+
+		LOG_INFO() 
+			<< "reached database... ";
 
 		#ifdef _DEBUG
 		launchDebugger();
 		#endif
+
+		// cleanup
+		w_.cleanup(boost::gregorian::day_clock::universal_day());
+
+		LOG_INFO() 
+			<< "cleaned database... ";
 
 		writeRecordsDelegate f(boost::bind(&writer::write, &w_, _1));
 
@@ -62,10 +71,12 @@ namespace dtcc
 		for (int i = 0; i < settings_.workers_.size(); i++)
 		{
 			std::string id = boost::lexical_cast<std::string>(i);
-			workers_[i] = boost::shared_ptr<worker>(new worker(settings_.workers_[i], f, "worker " + id));
+			workers_[i] = boost::shared_ptr<worker>(new worker(
+				settings_.workers_[i], f, "worker " + id));
 		}
 
-		LOG_INFO() << "starting workers...";
+		LOG_INFO() 
+			<< "starting workers...";
 
 		for (auto & i : workers_) i->start();
 

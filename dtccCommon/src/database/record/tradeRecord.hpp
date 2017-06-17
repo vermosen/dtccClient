@@ -24,10 +24,8 @@ namespace dtcc
 		typedef boost::optional<collateralization> tOptCollat;
 		typedef boost::optional<optionType> tOptType;
 
-		class tradeRecord
+		struct tradeRecord
 		{
-			friend class tradeRecordset;
-		public:
 			int								DISSEMINATION_ID;
 			boost::optional<int>			ORIGINAL_DISSEMINATION_ID;
 			action							ACTION;
@@ -74,37 +72,10 @@ namespace dtcc
 			boost::optional<double>			PRICE_NOTATION3;
 			boost::gregorian::date			FILE_DATE;
 
-			boost::optional<double> roundedNotionalAmount1() const 
-			{
-				if (ROUNDED_NOTIONAL_AMOUNT_1 == boost::none)
-					return boost::none;
-				else
-					return ROUNDED_NOTIONAL_AMOUNT_1->get<0>();
-			}
-
-			boost::optional<bool> roundedNotionalAmountPlus1() const
-			{
-				if (ROUNDED_NOTIONAL_AMOUNT_1 == boost::none)
-					return boost::none;
-				else
-					return ROUNDED_NOTIONAL_AMOUNT_1->get<1>();
-			}
-
-			boost::optional<double> roundedNotionalAmount2() const
-			{
-				if (ROUNDED_NOTIONAL_AMOUNT_2 == boost::none)
-					return boost::none;
-				else
-					return ROUNDED_NOTIONAL_AMOUNT_2->get<0>();
-			}
-
-			boost::optional<bool> roundedNotionalAmountPlus2() const
-			{
-				if (ROUNDED_NOTIONAL_AMOUNT_2 == boost::none)
-					return boost::none;
-				else
-					return ROUNDED_NOTIONAL_AMOUNT_2->get<1>();
-			}
+			boost::optional<double> roundedNotionalAmount1		() const;
+			boost::optional<bool>	roundedNotionalAmountPlus1	() const;
+			boost::optional<double> roundedNotionalAmount2		() const;
+			boost::optional<bool>	roundedNotionalAmountPlus2	() const;
 		};
 	}
 }

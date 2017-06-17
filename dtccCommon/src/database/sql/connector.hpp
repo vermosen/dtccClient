@@ -32,7 +32,7 @@ namespace dtcc
 				void setConnectionString(const std::string &);
 				boost::shared_ptr<soci::session> session() { return session_; }
 
-				static registerTypeNoArgs<database::connector, std::string, connector> register_;
+				//static registerTypeNoArgs<database::connector, std::string, connector> register_;
 
 			private:
 				boost::shared_ptr<soci::session> session_;

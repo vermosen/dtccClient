@@ -36,12 +36,12 @@ namespace dtcc
 		class zip
 		{
 		public:
-			explicit zip(std::string &&);
+			explicit zip(std::string && raw);
 			~zip();
 
 			// for now, we return a single string, i.e. the archive only contains 1 file
 			std::set<std::string> getFileSystem();
-			std::stringstream decompress(const std::string &);
+			std::string decompress(const std::string &);
 			bool readArchiveStructure();
 			bool open();
 			void close();

@@ -13,34 +13,30 @@ namespace dtcc
 	class archive
 	{
 	public:
-
-		// TODO: stupid design, replace boost::shared_ptr<string> with string...
-		archive(std::string && stream) 
+		archive(std::string && raw) 
 			: isOpen_(false)
-		{
-			method_ = new T(std::move(stream));
-		};
+			, method_(std::forward<std::string>(raw)) {};
 
-		~archive() { close(); delete method_; }
+		~archive() { close(); }
 		bool isOpen() const { return isOpen_; }
 
 		bool open()
 		{
-			if (method_->open())
+			if (method_.open())
 			{
 				isOpen_ = true;
 				return true;
 			}
 			else return false;
 		}
-		void close() { method_->close(); }
+		void close() { method_.close(); }
 		void add(const std::string & file) {}
-		std::stringstream get(const std::string & file) { return std::move(method_->decompress(file)); }
+		std::string get(const std::string & file) { return method_.decompress(file); }
 
-		std::set<std::string> fileSystem() const { return method_->getFileSystem(); }
+		std::set<std::string> fileSystem() { return method_.getFileSystem(); }
 
 	private:
-		T * method_;
+		T method_;
 		bool isOpen_;
 	};
 }

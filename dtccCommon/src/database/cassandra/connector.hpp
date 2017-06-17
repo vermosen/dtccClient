@@ -15,6 +15,19 @@ namespace dtcc
 		{
 			class connector;
 
+			struct future
+			{
+				CassFuture * inst_ = NULL;
+
+				std::string error() const
+				{
+					const char * message;
+					size_t message_length;
+					cass_future_error_message(inst_, &message, &message_length);
+					return std::string(message, message_length);
+				}
+			};
+
 			class cluster
 			{
 				friend connector;
@@ -41,7 +54,7 @@ namespace dtcc
 			class connector : public database::connector
 			{
 			public:
-				connector();
+				explicit connector(const std::string & keyspace);
 				~connector()
 				{
 					cass_session_free(session_);
@@ -54,12 +67,15 @@ namespace dtcc
 				virtual void execute(const std::string &);
 
 				void setCluster(const boost::shared_ptr<cluster> & cluster);
+				const std::string & keyspace() const;
+				CassSession * session() { return session_; }
 
-				static registerTypeNoArgs<database::connector, std::string, connector> register_;
+				//static registerTypeNoArgs<database::connector, std::string, connector> register_;
 
 			private:
 				boost::shared_ptr<cluster> cluster_;
 				CassSession * session_;
+				std::string keyspace_;
 			};
 		}
 	}

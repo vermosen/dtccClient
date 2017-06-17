@@ -83,5 +83,6 @@
     <ClCompile Include="src\database\cassandra\recordsets\tradeRecordset.cpp" />
     <ClCompile Include="src\database\sql\connector.cpp" />
     <ClCompile Include="src\database\cassandra\connector.cpp" />
+    <ClCompile Include="src\database\record\tradeRecord.cpp" />
   </ItemGroup>
 </Project>

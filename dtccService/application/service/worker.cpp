@@ -106,7 +106,7 @@ namespace dtcc
 
 					for (auto jt = fs.begin(); jt != fs.end(); jt++)
 					{
-						std::string file = ar.get(*jt).str();
+						std::string file = ar.get(*jt);
 
 						LOG_INFO() << "Zip extraction successful...";
 

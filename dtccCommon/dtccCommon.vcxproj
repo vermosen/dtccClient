@@ -170,6 +170,7 @@
     <ClCompile Include="src\database\cassandra\recordsets\tradeRecordset.cpp" />
     <ClCompile Include="src\database\connector.cpp" />
     <ClCompile Include="src\database\cassandra\connector.cpp" />
+    <ClCompile Include="src\database\record\tradeRecord.cpp" />
     <ClCompile Include="src\utils\debugger.cpp" />
     <ClInclude Include="src\application\asset\description.hpp" />
     <ClInclude Include="src\application\compression\archive.hpp" />

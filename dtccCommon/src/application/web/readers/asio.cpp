@@ -97,13 +97,16 @@ namespace dtcc
 								boost::asio::placeholders::error,
 								boost::asio::placeholders::bytes_transferred)));
 					}
-					else if (status_code == 403)							// forbidden
+					else if (status_code == 403)							// forbidden,indicates the file does not exist
 					{
-						throw std::exception();
+						write_(boost::system::errc::make_error_code(
+							boost::system::errc::no_such_file_or_directory), content_);
 					}
 					else
 					{
-						throw std::exception();
+						std::ostringstream os;
+						os << "unexpected error code: " << status_code << "'";
+						throw std::exception(os.str().c_str());
 					}
 				}
 				else

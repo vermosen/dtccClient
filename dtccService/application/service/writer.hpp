@@ -52,6 +52,18 @@ namespace dtcc
 			}
 		};
 
+		void cleanup(const boost::gregorian::date & dt)
+		{
+			database::sql::tradeRecordset rs(cnx_);
+
+			std::ostringstream os;
+			auto * temp(new boost::gregorian::date_facet("%Y-%m-%d"));
+			os.imbue(std::locale(os.getloc(), temp));
+			os << "FILE_DATE = '" << dt << "'";
+
+			rs.remove(os.str());
+		}
+
 	private:
 
 		void save()
@@ -68,6 +80,5 @@ namespace dtcc
 		boost::shared_ptr<database::sql::connector> cnx_;
 	};
 }
-
 
 #endif

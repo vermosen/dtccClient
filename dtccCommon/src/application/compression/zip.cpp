@@ -4,8 +4,8 @@ namespace dtcc
 {
 	namespace zip
 	{
-		zip::zip (std::string && file) 
-			: file_(file) {}
+		zip::zip (std::string && raw) 
+			: file_(raw) {}
 		zip::~zip() {}
 		std::set<std::string> zip::getFileSystem()
 		{
@@ -21,7 +21,7 @@ namespace dtcc
 
 			return ret;
 		}
-		std::stringstream zip::decompress(const std::string & file)
+		std::string zip::decompress(const std::string & file)
 		{
 			std::stringstream sOut;
 
@@ -45,7 +45,7 @@ namespace dtcc
 				boost::iostreams::copy(in, out);
 			}
 
-			return std::move(sOut);
+			return sOut.str();
 		}
 		bool zip::readArchiveStructure()
 		{

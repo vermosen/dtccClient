@@ -8,8 +8,8 @@ namespace dtcc
 	{
 		namespace sql
 		{
-			registerTypeNoArgs<database::connector, std::string, connector>
-				connector::register_(std::string("sql server"));
+			//registerTypeNoArgs<database::connector, std::string, connector>
+			//	connector::register_(std::string("sql server"));
 
 			connector::connector() : database::connector() {}
 

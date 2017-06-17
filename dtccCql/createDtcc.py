@@ -10,7 +10,7 @@ log.addHandler(handler)
 try:
 
     keyspace    = "dtcc"
-    table       = "test"
+    table       = "transactions"
     cluster     = Cluster(['127.0.0.1']) 
     session     = cluster.connect()
 

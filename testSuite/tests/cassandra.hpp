@@ -12,6 +12,7 @@ namespace testSuite
 	public:
 		static void connect();
 		static void createTable();
+		static void insertRecord();
 		static void deleteTable();
 		static void disconnect();
 		static boost::unit_test_framework::test_suite* suite();

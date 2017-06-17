@@ -30,11 +30,11 @@ namespace dtcc
 
 			private:
 				// client callbacks
-				void handle_write_request(const boost::system::error_code& err, size_t bytes_transferred);
+				void handle_write_request	(const boost::system::error_code& err, size_t bytes_transferred);
 				void handle_read_status_line(const boost::system::error_code& err, size_t bytes_transferred);
-				void handle_redirection(const boost::system::error_code& err, size_t bytes_transferred);
-				void handle_read_headers(const boost::system::error_code& err, size_t bytes_transferred);
-				void handle_read_content(const boost::system::error_code& err, size_t bytes_transferred);
+				void handle_redirection		(const boost::system::error_code& err, size_t bytes_transferred);
+				void handle_read_headers	(const boost::system::error_code& err, size_t bytes_transferred);
+				void handle_read_content	(const boost::system::error_code& err, size_t bytes_transferred);
 
 			private:
 				content content_;
